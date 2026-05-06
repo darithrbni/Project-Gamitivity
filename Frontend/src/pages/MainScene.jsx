@@ -9,6 +9,7 @@ import TugasMenuPage from "./TugasMenuPage";
 import MemoMenuPage from "./MemoMenuPage";
 import JadwalMenuPage from "./JadwalMenuPage";
 import TokoMenuPage from "./TokoMenuPage";
+import BasicTimerPage from "./BasicTimerPage";
 
 function MainScene() {
   const [page, setPage] = useState("main");
@@ -20,6 +21,8 @@ function MainScene() {
       {page === "menu" && <MenuPage setPage={setPage} />}
 
       {page === "timerMenu" && <TimerMenuPage setPage={setPage} />}
+
+      {page === "basicTimer" && <BasicTimerPage setPage={setPage} />}
 
       {page === "grafikMenu" && <GrafikMenuPage setPage={setPage} />}
 

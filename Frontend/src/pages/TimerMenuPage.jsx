@@ -15,7 +15,11 @@ function TimerMenuPage({ setPage }) {
 
       <div className="menu-wrapper">
         <div className="menu-grid">
-          <MenuCard title="BASIC TIMER" icon={BasicTimerIcon} />
+          <MenuCard
+            title="BASIC TIMER"
+            icon={BasicTimerIcon}
+            onClick={() => setPage("basicTimer")}
+          />
 
           <MenuCard title="STOPWATCH" icon={StopwatchIcon} />
 
