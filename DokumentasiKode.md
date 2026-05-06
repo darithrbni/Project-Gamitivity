@@ -22,6 +22,7 @@ src/
 
 
 
+
 // Corkboard.jsx
 import { useState } from "react";
 
@@ -29,7 +30,7 @@ import idleImage from "../assets/placeholderIdle.png";
 import hoverImage from "../assets/placeholderHover.png";
 import clickImage from "../assets/placeholderClick.png";
 
-function Corkboard() {
+function Corkboard({ onClick }) {
   const [boardState, setBoardState] = useState("idle");
 
   function getCurrentImage() {
@@ -44,14 +45,13 @@ function Corkboard() {
       className="corkboard"
       src={getCurrentImage()}
       alt="Corkboard"
+
       onMouseEnter={() => setBoardState("hover")}
       onMouseLeave={() => setBoardState("idle")}
       onMouseDown={() => setBoardState("click")}
       onMouseUp={() => setBoardState("hover")}
 
-      onClick={() => {
-        console.log("Corkboard diklik");
-      }}
+      onClick={onClick}
     />
   );
 }
@@ -66,9 +66,9 @@ export default Corkboard;
 
 // MenuCard.jsx
 function MenuCard({ title, icon }) {
-return (
-<button className="menu-card">
-<img
+  return (
+    <button className="menu-card">
+      <img
         className="menu-card-icon"
         src={icon}
         alt={title}
@@ -78,8 +78,7 @@ return (
         {title}
       </p>
     </button>
-
-);
+  );
 }
 
 export default MenuCard;
@@ -91,6 +90,8 @@ export default MenuCard;
 
 
 // MainScene.jsx
+import { useState } from "react";
+
 import Corkboard from "../components/Corkboard";
 import MenuCard from "../components/MenuCard";
 
@@ -102,15 +103,70 @@ import JadwalIcon from "../assets/JadwalIcon.png"
 import TokoIcon from "../assets/TokoIcon.png"
 
 function MainScene() {
-return (
-<div className="scene">
-<Corkboard />
-<MenuCard
-        title="GRAFIK"
-        icon={GrafikIcon}
-        />
-</div>
-);
+  const [page, setPage] = useState("main");
+
+  return (
+    <div className="scene">
+
+      {/* MAIN PAGE */}
+      {page === "main" && (
+        <>
+          <Corkboard
+            onClick={() => setPage("menu")}
+          />
+        </>
+      )}
+
+      {/* MENU PAGE */}
+      {page === "menu" && (
+        <>
+          <div className="menu-overlay"></div>
+
+          <button
+            className="back-button"
+            onClick={() => setPage("main")}
+          >
+            BACK
+          </button>
+
+          <div className="menu-grid">
+
+            <MenuCard
+              title="GRAFIK"
+              icon={GrafikIcon}
+            />
+
+            <MenuCard
+              title="TUGAS"
+              icon={TugasIcon}
+            />
+
+            <MenuCard
+              title="MEMO"
+              icon={MemoIcon}
+            />
+
+            <MenuCard
+              title="TIMER"
+              icon={TimerIcon}
+            />
+
+            <MenuCard
+              title="JADWAL"
+              icon={JadwalIcon}
+            />
+
+            <MenuCard
+              title="TOKO"
+              icon={TokoIcon}
+            />
+
+          </div>
+        </>
+      )}
+
+    </div>
+  );
 }
 
 export default MainScene;
@@ -143,8 +199,6 @@ export default MainScene;
 
   user-select: none;
 }
-
-
 
 .menu-card {
   width: 260px;
@@ -196,19 +250,115 @@ export default MainScene;
   font-weight: bold;
 }
 
+.menu-overlay {
+  position: absolute;
+  inset: 0;
+
+  background-color: rgba(0, 0, 0, 0.55);
+
+  z-index: 10;
+}
+
+.menu-grid {
+  position: absolute;
+  inset: 0;
+
+  z-index: 20;
+
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  justify-items: center;
+  align-items: center;
+
+  padding: 80px 120px;
+}
+
+.back-button {
+  position: absolute;
+
+  top: 20px;
+  left: 20px;
+
+  z-index: 30;
+
+  padding: 12px 20px;
+
+  font-size: 1rem;
+  font-weight: bold;
+
+  cursor: pointer;
+}
 
 
 
 
 
-main.jsx
+
+// index.css
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  overflow: hidden;
+  font-family: sans-serif;
+}
+
+
+
+
+
+
+
+
+// App.jsx
+import MainScene from "./pages/MainScene"
+import "./styles/App.css";
+
+function App() {
+  return <MainScene />
+}
+
+export default App
+
+
+
+
+
+
+
+// main.jsx
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './styles/index.css'
 import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(
-<StrictMode>
-<App />
-</StrictMode>,
+  <StrictMode>
+    <App />
+  </StrictMode>,
 )
+
+
+
+
+
+//index.html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>project-gamitivity</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+

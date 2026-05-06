@@ -70,3 +70,44 @@
 
   font-weight: bold;
 }
+
+.menu-overlay {
+  position: absolute;
+  inset: 0;
+
+  background-color: rgba(0, 0, 0, 0.55);
+
+  z-index: 10;
+}
+
+.menu-grid {
+  position: absolute;
+  inset: 0;
+
+  z-index: 20;
+
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  justify-items: center;
+  align-items: center;
+
+  padding: 80px 120px;
+}
+
+.back-button {
+  position: absolute;
+
+  top: 20px;
+  left: 20px;
+
+  z-index: 30;
+
+  padding: 12px 20px;
+
+  font-size: 1rem;
+  font-weight: bold;
+
+  cursor: pointer;
+}
