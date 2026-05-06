@@ -1,6 +1,9 @@
-function MenuCard({ title, icon }) {
+function MenuCard({ title, icon, onClick }) {
   return (
-    <button className="menu-card">
+    <button
+      className="menu-card"
+      onClick={onClick}
+    >
       <img
         className="menu-card-icon"
         src={icon}
