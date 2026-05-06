@@ -9,12 +9,12 @@
 
 .corkboard {
   width: 350px;
-  height: 250px;
-
-  background-color: #b98d58;
-  border: 12px solid #5e3c1b;
 
   position: absolute;
   top: 100px;
   left: 80px;
+
+  cursor: pointer;
+
+  user-select: none;
 }
