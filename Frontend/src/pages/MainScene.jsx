@@ -1,153 +1,35 @@
 import { useState } from "react";
 
 import Corkboard from "../components/Corkboard";
-import MenuCard from "../components/MenuCard";
 
-import GrafikIcon from "../assets/GrafikIcon.png";
-import TugasIcon from "../assets/TugasIcon.png";
-import MemoIcon from "../assets/MemoIcon.png";
-import TimerIcon from "../assets/TimerIcon.png";
-import JadwalIcon from "../assets/JadwalIcon.png";
-import TokoIcon from "../assets/TokoIcon.png";
+import MenuPage from "./MenuPage";
+import TimerMenuPage from "./TimerMenuPage";
+import GrafikMenuPage from "./GrafikMenuPage";
+import TugasMenuPage from "./TugasMenuPage";
+import MemoMenuPage from "./MemoMenuPage";
+import JadwalMenuPage from "./JadwalMenuPage";
+import TokoMenuPage from "./TokoMenuPage";
 
 function MainScene() {
   const [page, setPage] = useState("main");
 
   return (
     <div className="scene">
-      {/* MAIN PAGE */}
-      {page === "main" && (
-        <>
-          <Corkboard onClick={() => setPage("menu")} />
-        </>
-      )}
+      {page === "main" && <Corkboard onClick={() => setPage("menu")} />}
 
-      {/* MENU PAGE */}
-      {page === "menu" && (
-        <>
-          <div className="menu-overlay"></div>
+      {page === "menu" && <MenuPage setPage={setPage} />}
 
-          <button className="back-button" onClick={() => setPage("main")}>
-            BACK
-          </button>
+      {page === "timerMenu" && <TimerMenuPage setPage={setPage} />}
 
-          <div className="menu-wrapper">
-            <div className="menu-grid">
-              <MenuCard
-                title="GRAFIK"
-                icon={GrafikIcon}
-                onClick={() => setPage("grafikMenu")}
-              />
+      {page === "grafikMenu" && <GrafikMenuPage setPage={setPage} />}
 
-              <MenuCard
-                title="TUGAS"
-                icon={TugasIcon}
-                onClick={() => setPage("tugasMenu")}
-              />
+      {page === "tugasMenu" && <TugasMenuPage setPage={setPage} />}
 
-              <MenuCard
-                title="MEMO"
-                icon={MemoIcon}
-                onClick={() => setPage("memoMenu")}
-              />
+      {page === "memoMenu" && <MemoMenuPage setPage={setPage} />}
 
-              <MenuCard
-                title="TIMER"
-                icon={TimerIcon}
-                onClick={() => setPage("timerMenu")}
-              />
+      {page === "jadwalMenu" && <JadwalMenuPage setPage={setPage} />}
 
-              <MenuCard
-                title="JADWAL"
-                icon={JadwalIcon}
-                onClick={() => setPage("jadwalMenu")}
-              />
-
-              <MenuCard
-                title="TOKO"
-                icon={TokoIcon}
-                onClick={() => setPage("tokoMenu")}
-              />
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* TIMER MENU */}
-      {page === "timerMenu" && (
-        <>
-          <div className="menu-overlay"></div>
-
-          <button className="back-button" onClick={() => setPage("menu")}>
-            BACK
-          </button>
-
-          <div className="menu-wrapper">
-            <div className="menu-grid">
-              <MenuCard title="TIMER" icon={TimerIcon} />
-
-              <MenuCard title="POMODORO" icon={TimerIcon} />
-
-              <MenuCard title="STOPWATCH" icon={TimerIcon} />
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* GRAFIK MENU */}
-      {page === "grafikMenu" && (
-        <>
-          <div className="menu-overlay"></div>
-
-          <button className="back-button" onClick={() => setPage("menu")}>
-            BACK
-          </button>
-        </>
-      )}
-
-      {/* TUGAS MENU */}
-      {page === "tugasMenu" && (
-        <>
-          <div className="menu-overlay"></div>
-
-          <button className="back-button" onClick={() => setPage("menu")}>
-            BACK
-          </button>
-        </>
-      )}
-
-      {/* MEMO MENU */}
-      {page === "memoMenu" && (
-        <>
-          <div className="menu-overlay"></div>
-
-          <button className="back-button" onClick={() => setPage("menu")}>
-            BACK
-          </button>
-        </>
-      )}
-
-      {/* JADWAL MENU */}
-      {page === "jadwalMenu" && (
-        <>
-          <div className="menu-overlay"></div>
-
-          <button className="back-button" onClick={() => setPage("menu")}>
-            BACK
-          </button>
-        </>
-      )}
-
-      {/* TOKO MENU */}
-      {page === "tokoMenu" && (
-        <>
-          <div className="menu-overlay"></div>
-
-          <button className="back-button" onClick={() => setPage("menu")}>
-            BACK
-          </button>
-        </>
-      )}
+      {page === "tokoMenu" && <TokoMenuPage setPage={setPage} />}
     </div>
   );
 }
