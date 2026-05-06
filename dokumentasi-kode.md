@@ -143,6 +143,7 @@ export default MainScene;
 
 
 
+
 ## MenuPage.jsx
 import MenuCard from "../components/MenuCard";
 
@@ -156,7 +157,7 @@ import TokoIcon from "../assets/TokoIcon.png";
 function MenuPage({ setPage }) {
   return (
     <>
-      <div className="menu-overlay"></div>
+      <div className="menu-overlay" onClick={() => setPage("main")} />
 
       <button className="back-button" onClick={() => setPage("main")}>
         BACK
@@ -212,15 +213,18 @@ export default MenuPage;
 
 
 
+
 ## TimerMenuPage.jsx
 import MenuCard from "../components/MenuCard";
 
-import TimerIcon from "../assets/TimerIcon.png";
+import BasicTimerIcon from "../assets/BasicTimerIcon.png";
+import StopwatchIcon from "../assets/StopwatchIcon.png";
+import PomodoroIcon from "../assets/PomodoroIcon.png";
 
 function TimerMenuPage({ setPage }) {
   return (
     <>
-      <div className="menu-overlay"></div>
+      <div className="menu-overlay" onClick={() => setPage("main")} />
 
       <button className="back-button" onClick={() => setPage("menu")}>
         BACK
@@ -228,11 +232,11 @@ function TimerMenuPage({ setPage }) {
 
       <div className="menu-wrapper">
         <div className="menu-grid">
-          <MenuCard title="TIMER" icon={TimerIcon} />
+          <MenuCard title="BASIC TIMER" icon={BasicTimerIcon} />
 
-          <MenuCard title="POMODORO" icon={TimerIcon} />
+          <MenuCard title="STOPWATCH" icon={StopwatchIcon} />
 
-          <MenuCard title="STOPWATCH" icon={TimerIcon} />
+          <MenuCard title="POMODORO" icon={PomodoroIcon} />
         </div>
       </div>
     </>
@@ -246,11 +250,12 @@ export default TimerMenuPage;
 
 
 
+
 ## GrafikMenuPage.jsx
 function GrafikMenuPage({ setPage }) {
   return (
     <>
-      <div className="menu-overlay"></div>
+      <div className="menu-overlay" onClick={() => setPage("main")} />
 
       <button className="back-button" onClick={() => setPage("menu")}>
         BACK
@@ -268,11 +273,12 @@ export default GrafikMenuPage;
 
 
 
+
 ## JadwalMenuPage.jsx
 function JadwalMenuPage({ setPage }) {
   return (
     <>
-      <div className="menu-overlay"></div>
+      <div className="menu-overlay" onClick={() => setPage("main")} />
 
       <button className="back-button" onClick={() => setPage("menu")}>
         BACK
@@ -287,11 +293,12 @@ export default JadwalMenuPage;
 
 
 
+
 ## TugasMenuPage.jsx
 function TugasMenuPage({ setPage }) {
   return (
     <>
-      <div className="menu-overlay"></div>
+      <div className="menu-overlay" onClick={() => setPage("main")} />
 
       <button className="back-button" onClick={() => setPage("menu")}>
         BACK
@@ -308,11 +315,12 @@ export default TugasMenuPage;
 
 
 
+
 ## MemoMenuPage.jsx
 function MemoMenuPage({ setPage }) {
   return (
     <>
-      <div className="menu-overlay"></div>
+      <div className="menu-overlay" onClick={() => setPage("main")} />
 
       <button className="back-button" onClick={() => setPage("menu")}>
         BACK
@@ -327,11 +335,12 @@ export default MemoMenuPage;
 
 
 
+
 ## TokoMenuPage.jsx
 function TokoMenuPage({ setPage }) {
   return (
     <>
-      <div className="menu-overlay"></div>
+      <div className="menu-overlay" onClick={() => setPage("main")} />
 
       <button className="back-button" onClick={() => setPage("menu")}>
         BACK
@@ -341,6 +350,7 @@ function TokoMenuPage({ setPage }) {
 }
 
 export default TokoMenuPage;
+
 
 
 
@@ -433,6 +443,8 @@ export default TokoMenuPage;
 }
 
 .menu-wrapper {
+  pointer-events: none;
+
   position: absolute;
   inset: 0;
 
@@ -446,6 +458,8 @@ export default TokoMenuPage;
 }
 
 .menu-grid {
+  pointer-events: auto;
+
   display: grid;
 
   grid-template-columns: repeat(3, 260px);
@@ -540,6 +554,7 @@ createRoot(document.getElementById('root')).render(
     <App />
   </StrictMode>,
 )
+
 
 
 
