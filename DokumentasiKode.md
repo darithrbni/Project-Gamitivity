@@ -17,69 +17,189 @@ src/
 ├── App.jsx
 └── main.jsx
 
+
+
+
+
+
 // Corkboard.jsx
+import { useState } from "react";
+
+import idleImage from "../assets/placeholderIdle.png";
+import hoverImage from "../assets/placeholderHover.png";
+import clickImage from "../assets/placeholderClick.png";
+
 function Corkboard() {
+  const [boardState, setBoardState] = useState("idle");
+
+  function getCurrentImage() {
+    if (boardState === "hover") return hoverImage;
+    if (boardState === "click") return clickImage;
+
+    return idleImage;
+  }
+
+  return (
+    <img
+      className="corkboard"
+      src={getCurrentImage()}
+      alt="Corkboard"
+      onMouseEnter={() => setBoardState("hover")}
+      onMouseLeave={() => setBoardState("idle")}
+      onMouseDown={() => setBoardState("click")}
+      onMouseUp={() => setBoardState("hover")}
+
+      onClick={() => {
+        console.log("Corkboard diklik");
+      }}
+    />
+  );
+}
+
+export default Corkboard;
+
+
+
+
+
+
+
+// MenuCard.jsx
+function MenuCard({ title, icon }) {
 return (
-<div className="corkboard"></div>
+<button className="menu-card">
+<img
+        className="menu-card-icon"
+        src={icon}
+        alt={title}
+      />
+
+      <p className="menu-card-title">
+        {title}
+      </p>
+    </button>
+
 );
 }
-export default Corkboard;
+
+export default MenuCard;
+
+
+
+
+
+
 
 // MainScene.jsx
 import Corkboard from "../components/Corkboard";
+import MenuCard from "../components/MenuCard";
+
+import GrafikIcon from "../assets/GrafikIcon.png"
+import TugasIcon from "../assets/TugasIcon.png"
+import MemoIcon from "../assets/MemoIcon.png"
+import TimerIcon from "../assets/TimerIcon.png"
+import JadwalIcon from "../assets/JadwalIcon.png"
+import TokoIcon from "../assets/TokoIcon.png"
+
 function MainScene() {
 return (
 <div className="scene">
 <Corkboard />
+<MenuCard
+        title="GRAFIK"
+        icon={GrafikIcon}
+        />
 </div>
 );
 }
+
 export default MainScene;
+
+
+
+
+
+
+
 
 // App.css
 .scene {
-width: 100vw;
-height: 100vh;
+  width: 100vw;
+  height: 100vh;
 
-background-color: #d8c7aa;
+  background-color: #d8c7aa;
 
-position: relative;
+  position: relative;
 }
 
 .corkboard {
-width: 350px;
-height: 250px;
+  width: 350px;
 
-background-color: #b98d58;
-border: 12px solid #5e3c1b;
+  position: absolute;
+  top: 100px;
+  left: 80px;
 
-position: absolute;
-top: 100px;
-left: 80px;
+  cursor: pointer;
+
+  user-select: none;
 }
 
-// index.css
 
-- {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  }
 
-body {
-overflow: hidden;
-font-family: sans-serif;
+.menu-card {
+  width: 260px;
+  height: 260px;
+
+  border-radius: 40px;
+  border: 6px solid #f07c7c;
+
+  background-color: #f5f5f5;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.15);
 }
 
-App.jsx
-import MainScene from "./pages/MainScene"
-import "./styles/App.css";
+.menu-card:hover {
+  transform: scale(1.05);
 
-function App() {
-return <MainScene />
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
 }
 
-export default App
+.menu-card:active {
+  transform: scale(0.97);
+
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.menu-card-icon {
+  width: 120px;
+  height: 120px;
+
+  object-fit: contain;
+}
+
+.menu-card-title {
+  font-size: 2rem;
+  color: #d17b00;
+
+  font-weight: bold;
+}
+
+
+
+
+
 
 main.jsx
 import { StrictMode } from 'react'

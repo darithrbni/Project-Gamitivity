@@ -23,6 +23,10 @@ function Corkboard() {
       onMouseLeave={() => setBoardState("idle")}
       onMouseDown={() => setBoardState("click")}
       onMouseUp={() => setBoardState("hover")}
+
+      onClick={() => {
+        console.log("Corkboard diklik");
+      }}
     />
   );
 }
