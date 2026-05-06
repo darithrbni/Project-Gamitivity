@@ -14,7 +14,8 @@ src/
 │   ├── TugasMenuPage.jsx
 │   ├── MemoMenuPage.jsx
 │   ├── JadwalMenuPage.jsx
-│   └── TokoMenuPage.jsx
+│   ├── TokoMenuPage.jsx
+│   └── BasicTimerPage.jsx
 │
 ├── styles/
 │   ├── App.css
@@ -110,6 +111,7 @@ import TugasMenuPage from "./TugasMenuPage";
 import MemoMenuPage from "./MemoMenuPage";
 import JadwalMenuPage from "./JadwalMenuPage";
 import TokoMenuPage from "./TokoMenuPage";
+import BasicTimerPage from "./BasicTimerPage";
 
 function MainScene() {
   const [page, setPage] = useState("main");
@@ -121,6 +123,8 @@ function MainScene() {
       {page === "menu" && <MenuPage setPage={setPage} />}
 
       {page === "timerMenu" && <TimerMenuPage setPage={setPage} />}
+
+      {page === "basicTimer" && <BasicTimerPage setPage={setPage} />}
 
       {page === "grafikMenu" && <GrafikMenuPage setPage={setPage} />}
 
@@ -136,6 +140,7 @@ function MainScene() {
 }
 
 export default MainScene;
+
 
 
 
@@ -214,6 +219,7 @@ export default MenuPage;
 
 
 
+
 ## TimerMenuPage.jsx
 import MenuCard from "../components/MenuCard";
 
@@ -232,7 +238,11 @@ function TimerMenuPage({ setPage }) {
 
       <div className="menu-wrapper">
         <div className="menu-grid">
-          <MenuCard title="BASIC TIMER" icon={BasicTimerIcon} />
+          <MenuCard
+            title="BASIC TIMER"
+            icon={BasicTimerIcon}
+            onClick={() => setPage("basicTimer")}
+          />
 
           <MenuCard title="STOPWATCH" icon={StopwatchIcon} />
 
@@ -244,6 +254,7 @@ function TimerMenuPage({ setPage }) {
 }
 
 export default TimerMenuPage;
+
 
 
 
@@ -352,6 +363,207 @@ function TokoMenuPage({ setPage }) {
 export default TokoMenuPage;
 
 
+
+
+
+## BasicTimerPage.jsx
+import { useState } from "react";
+
+function BasicTimerPage({ setPage }) {
+  // TIMER SELECTION STATE
+  const [selectedPart, setSelectedPart] = useState(null);
+
+  // TIMER VALUE STATE
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+
+  // INCREMENT TIMER VALUE
+  function incrementTime(part) {
+    setSelectedPart(part);
+    // HOURS
+    if (part === "hours") {
+      if (hours < 99) {
+        setHours(hours + 1);
+      } else {
+        setHours(0);
+      }
+    }
+
+    // MINUTES
+    if (part === "minutes") {
+      if (minutes < 59) {
+        setMinutes(minutes + 1);
+      } else {
+        setMinutes(0);
+      }
+    }
+
+    // SECONDS
+    if (part === "seconds") {
+      if (seconds < 59) {
+        setSeconds(seconds + 1);
+      } else {
+        setSeconds(0);
+      }
+    }
+  }
+
+  // DECREMENT TIMER VALUE
+  function decrementTime(part) {
+    setSelectedPart(part);
+    // HOURS
+    if (part === "hours") {
+      if (hours > 0) {
+        setHours(hours - 1);
+      } else {
+        setHours(99);
+      }
+    }
+
+    // MINUTES
+    if (part === "minutes") {
+      if (minutes > 0) {
+        setMinutes(minutes - 1);
+      } else {
+        setMinutes(59);
+      }
+    }
+
+    // SECONDS
+    if (part === "seconds") {
+      if (seconds > 0) {
+        setSeconds(seconds - 1);
+      } else {
+        setSeconds(59);
+      }
+    }
+  }
+
+  return (
+    <>
+      {/* OVERLAY */}
+      <div className="menu-overlay" onClick={() => setPage("main")} />
+
+      {/* BACK BUTTON */}
+      <button className="back-button" onClick={() => setPage("timerMenu")}>
+        BACK
+      </button>
+
+      {/* TIMER LAYOUT */}
+      <div className="menu-wrapper">
+        {/* TIMER PANEL */}
+        <div className="timer-panel">
+          {/* TIMER DISPLAY */}
+          <div className="timer-display">
+            {/* HOURS */}
+            <div className="time-column">
+              {/* INCREMENT */}
+              <button
+                className="arrow-button"
+                onClick={() => incrementTime("hours")}
+              >
+                ▲
+              </button>
+
+              {/* HOURS VALUE */}
+              <button
+                className={
+                  selectedPart === "hours" ? "time-part selected" : "time-part"
+                }
+                onClick={() =>
+                  setSelectedPart(selectedPart === "hours" ? null : "hours")
+                }
+              >
+                {String(hours).padStart(2, "0")}
+              </button>
+
+              {/* DECREMENT */}
+              <button
+                className="arrow-button"
+                onClick={() => decrementTime("hours")}
+              >
+                ▼
+              </button>
+            </div>
+
+            <span className="time-separator">:</span>
+
+            {/* MINUTES */}
+            <div className="time-column">
+              {/* INCREMENT */}
+              <button
+                className="arrow-button"
+                onClick={() => incrementTime("minutes")}
+              >
+                ▲
+              </button>
+
+              {/* MINUTES VALUE */}
+              <button
+                className={
+                  selectedPart === "minutes"
+                    ? "time-part selected"
+                    : "time-part"
+                }
+                onClick={() =>
+                  setSelectedPart(selectedPart === "minutes" ? null : "minutes")
+                }
+              >
+                {String(minutes).padStart(2, "0")}
+              </button>
+
+              {/* DECREMENT */}
+              <button
+                className="arrow-button"
+                onClick={() => decrementTime("minutes")}
+              >
+                ▼
+              </button>
+            </div>
+
+            <span className="time-separator">:</span>
+
+            {/* SECONDS */}
+            <div className="time-column">
+              {/* INCREMENT */}
+              <button
+                className="arrow-button"
+                onClick={() => incrementTime("seconds")}
+              >
+                ▲
+              </button>
+
+              {/* SECONDS VALUE */}
+              <button
+                className={
+                  selectedPart === "seconds"
+                    ? "time-part selected"
+                    : "time-part"
+                }
+                onClick={() =>
+                  setSelectedPart(selectedPart === "seconds" ? null : "seconds")
+                }
+              >
+                {String(seconds).padStart(2, "0")}
+              </button>
+
+              {/* DECREMENT */}
+              <button
+                className="arrow-button"
+                onClick={() => decrementTime("seconds")}
+              >
+                ▼
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default BasicTimerPage;
 
 
 
@@ -485,6 +697,63 @@ export default TokoMenuPage;
   cursor: pointer;
 }
 
+.timer-panel {
+  pointer-events: auto;
+
+  width: 750px;
+  height: 300px;
+
+  border-radius: 50px;
+  border: 6px solid #f07c7c;
+
+  background-color: #f5f5f5;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 20;
+}
+
+.timer-display {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.time-part {
+  border: none;
+  background: transparent;
+
+  font-size: 6rem;
+  font-weight: bold;
+
+  color: #d86d55;
+
+  cursor: pointer;
+
+  padding: 25px 30px;
+
+  border-radius: 20px;
+
+  transition: background-color 0.15s ease;
+}
+
+.time-separator {
+  font-size: 6rem;
+  font-weight: bold;
+
+  color: #d86d55;
+}
+
+.time-part:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.time-part.selected {
+  background-color: rgba(0, 0, 0, 0.14);
+}
+
 @media (min-width: 1600px) {
   .menu-grid {
     transform: scale(1.1);
@@ -502,6 +771,24 @@ export default TokoMenuPage;
     transform: scale(0.7);
   }
 }
+
+.time-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.arrow-button {
+  border: none;
+  background: transparent;
+
+  font-size: 2rem;
+
+  cursor: pointer;
+
+  color: #d86d55;
+}
+
 
 
 
