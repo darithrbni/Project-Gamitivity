@@ -129,39 +129,42 @@ function MainScene() {
             BACK
           </button>
 
-          <div className="menu-grid">
+          <div className="menu-wrapper">
 
-            <MenuCard
-              title="GRAFIK"
-              icon={GrafikIcon}
-            />
+            <div className="menu-grid">
 
-            <MenuCard
-              title="TUGAS"
-              icon={TugasIcon}
-            />
+                <MenuCard
+                title="GRAFIK"
+                icon={GrafikIcon}
+                />
 
-            <MenuCard
-              title="MEMO"
-              icon={MemoIcon}
-            />
+                <MenuCard
+                title="TUGAS"
+                icon={TugasIcon}
+                />
 
-            <MenuCard
-              title="TIMER"
-              icon={TimerIcon}
-            />
+                <MenuCard
+                title="MEMO"
+                icon={MemoIcon}
+                />
 
-            <MenuCard
-              title="JADWAL"
-              icon={JadwalIcon}
-            />
+                <MenuCard
+                title="TIMER"
+                icon={TimerIcon}
+                />
 
-            <MenuCard
-              title="TOKO"
-              icon={TokoIcon}
-            />
+                <MenuCard
+                title="JADWAL"
+                icon={JadwalIcon}
+                />
 
-          </div>
+                <MenuCard
+                title="TOKO"
+                icon={TokoIcon}
+                />
+
+            </div>
+        </div>
         </>
       )}
 
@@ -259,20 +262,27 @@ export default MainScene;
   z-index: 10;
 }
 
-.menu-grid {
+.menu-wrapper {
   position: absolute;
   inset: 0;
 
   z-index: 20;
 
-  display: grid;
-
-  grid-template-columns: repeat(3, 1fr);
-
-  justify-items: center;
+  display: flex;
+  justify-content: center;
   align-items: center;
 
-  padding: 80px 120px;
+  overflow: hidden;
+}
+
+.menu-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, 260px);
+
+  gap: 40px;
+
+  transform: scale(0.9);
 }
 
 .back-button {
@@ -289,6 +299,24 @@ export default MainScene;
   font-weight: bold;
 
   cursor: pointer;
+}
+
+@media (min-width: 1600px) {
+  .menu-grid {
+    transform: scale(1.1);
+  }
+}
+
+@media (max-width: 1200px) {
+  .menu-grid {
+    transform: scale(0.8);
+  }
+}
+
+@media (max-width: 900px) {
+  .menu-grid {
+    transform: scale(0.7);
+  }
 }
 
 

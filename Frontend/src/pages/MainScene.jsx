@@ -37,39 +37,42 @@ function MainScene() {
             BACK
           </button>
 
-          <div className="menu-grid">
+          <div className="menu-wrapper">
 
-            <MenuCard
-              title="GRAFIK"
-              icon={GrafikIcon}
-            />
+            <div className="menu-grid">
 
-            <MenuCard
-              title="TUGAS"
-              icon={TugasIcon}
-            />
+                <MenuCard
+                title="GRAFIK"
+                icon={GrafikIcon}
+                />
 
-            <MenuCard
-              title="MEMO"
-              icon={MemoIcon}
-            />
+                <MenuCard
+                title="TUGAS"
+                icon={TugasIcon}
+                />
 
-            <MenuCard
-              title="TIMER"
-              icon={TimerIcon}
-            />
+                <MenuCard
+                title="MEMO"
+                icon={MemoIcon}
+                />
 
-            <MenuCard
-              title="JADWAL"
-              icon={JadwalIcon}
-            />
+                <MenuCard
+                title="TIMER"
+                icon={TimerIcon}
+                />
 
-            <MenuCard
-              title="TOKO"
-              icon={TokoIcon}
-            />
+                <MenuCard
+                title="JADWAL"
+                icon={JadwalIcon}
+                />
 
-          </div>
+                <MenuCard
+                title="TOKO"
+                icon={TokoIcon}
+                />
+
+            </div>
+        </div>
         </>
       )}
 
