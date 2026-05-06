@@ -79,6 +79,8 @@
 }
 
 .menu-wrapper {
+  pointer-events: none;
+
   position: absolute;
   inset: 0;
 
@@ -92,6 +94,8 @@
 }
 
 .menu-grid {
+  pointer-events: auto;
+
   display: grid;
 
   grid-template-columns: repeat(3, 260px);

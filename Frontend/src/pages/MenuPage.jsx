@@ -10,7 +10,7 @@ import TokoIcon from "../assets/TokoIcon.png";
 function MenuPage({ setPage }) {
   return (
     <>
-      <div className="menu-overlay"></div>
+      <div className="menu-overlay" onClick={() => setPage("main")} />
 
       <button className="back-button" onClick={() => setPage("main")}>
         BACK
