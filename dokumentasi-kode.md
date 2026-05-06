@@ -100,7 +100,7 @@ export default MenuCard;
 
 # pages
 ## MainScene.jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Corkboard from "../components/Corkboard";
 
@@ -115,16 +115,66 @@ import BasicTimerPage from "./BasicTimerPage";
 
 function MainScene() {
   const [page, setPage] = useState("main");
+  // GLOBAL TIMER STATE
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+
+  // TIMER COUNTDOWN
+  useEffect(() => {
+    if (!isTimerRunning) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      // HOURS : MINUTES : SECONDS
+
+      if (seconds > 0) {
+        setSeconds(seconds - 1);
+      } else if (minutes > 0) {
+        setMinutes(minutes - 1);
+        setSeconds(59);
+      } else if (hours > 0) {
+        setHours(hours - 1);
+        setMinutes(59);
+        setSeconds(59);
+      } else {
+        setIsTimerRunning(false);
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isTimerRunning, hours, minutes, seconds]);
 
   return (
     <div className="scene">
-      {page === "main" && <Corkboard onClick={() => setPage("menu")} />}
+      {page === "main" && (
+        <>
+          <Corkboard onClick={() => setPage("menu")} />
+
+          <div className="main-timer-display">
+            {String(hours).padStart(2, "0")}:{String(minutes).padStart(2, "0")}:
+            {String(seconds).padStart(2, "0")}
+          </div>
+        </>
+      )}
 
       {page === "menu" && <MenuPage setPage={setPage} />}
 
       {page === "timerMenu" && <TimerMenuPage setPage={setPage} />}
 
-      {page === "basicTimer" && <BasicTimerPage setPage={setPage} />}
+      {page === "basicTimer" && (
+        <BasicTimerPage
+          setPage={setPage}
+          setMainHours={setHours}
+          setMainMinutes={setMinutes}
+          setMainSeconds={setSeconds}
+          setIsTimerRunning={setIsTimerRunning}
+        />
+      )}
 
       {page === "grafikMenu" && <GrafikMenuPage setPage={setPage} />}
 
@@ -140,6 +190,7 @@ function MainScene() {
 }
 
 export default MainScene;
+
 
 
 
@@ -220,6 +271,7 @@ export default MenuPage;
 
 
 
+
 ## TimerMenuPage.jsx
 import MenuCard from "../components/MenuCard";
 
@@ -254,6 +306,7 @@ function TimerMenuPage({ setPage }) {
 }
 
 export default TimerMenuPage;
+
 
 
 
@@ -367,13 +420,21 @@ export default TokoMenuPage;
 
 
 ## BasicTimerPage.jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-function BasicTimerPage({ setPage }) {
+function BasicTimerPage({
+  setPage,
+
+  setMainHours,
+  setMainMinutes,
+  setMainSeconds,
+
+  setIsTimerRunning,
+}) {
   // TIMER SELECTION STATE
   const [selectedPart, setSelectedPart] = useState(null);
 
-  // TIMER VALUE STATE
+  // LOCAL TIMER EDITOR STATE
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
@@ -439,6 +500,74 @@ function BasicTimerPage({ setPage }) {
       }
     }
   }
+
+  useEffect(() => {
+    function handleKeyDown(event) {
+      const key = event.key;
+
+      if (key === "Backspace") {
+        if (selectedPart === "hours") {
+          setHours(0);
+        }
+
+        if (selectedPart === "minutes") {
+          setMinutes(0);
+        }
+
+        if (selectedPart === "seconds") {
+          setSeconds(0);
+        }
+
+        return;
+      }
+
+      if (key < "0" || key > "9") {
+        return;
+      }
+
+      if (selectedPart === "hours") {
+        const currentValue = String(hours).padStart(2, "0");
+
+        const newValueString = currentValue[1] + key;
+
+        setHours(Number(newValueString));
+      }
+
+      if (selectedPart === "minutes") {
+        const currentValue = String(minutes).padStart(2, "0");
+
+        const newValueString = currentValue[1] + key;
+
+        let newValue = Number(newValueString);
+
+        if (newValue > 59) {
+          newValue = Number("0" + key);
+        }
+
+        setMinutes(newValue);
+      }
+
+      if (selectedPart === "seconds") {
+        const currentValue = String(seconds).padStart(2, "0");
+
+        const newValueString = currentValue[1] + key;
+
+        let newValue = Number(newValueString);
+
+        if (newValue > 59) {
+          newValue = Number("0" + key);
+        }
+
+        setSeconds(newValue);
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedPart, hours, minutes, seconds]);
 
   return (
     <>
@@ -557,6 +686,21 @@ function BasicTimerPage({ setPage }) {
               </button>
             </div>
           </div>
+
+          <button
+            className="set-timer-button"
+            onClick={() => {
+              setMainHours(hours);
+              setMainMinutes(minutes);
+              setMainSeconds(seconds);
+
+              setIsTimerRunning(true);
+
+              setPage("main");
+            }}
+          >
+            SET TIMER
+          </button>
         </div>
       </div>
     </>
@@ -564,6 +708,7 @@ function BasicTimerPage({ setPage }) {
 }
 
 export default BasicTimerPage;
+
 
 
 
@@ -701,7 +846,7 @@ export default BasicTimerPage;
   pointer-events: auto;
 
   width: 750px;
-  height: 300px;
+  height: 400px;
 
   border-radius: 50px;
   border: 6px solid #f07c7c;
@@ -709,6 +854,7 @@ export default BasicTimerPage;
   background-color: #f5f5f5;
 
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 
@@ -787,6 +933,35 @@ export default BasicTimerPage;
   cursor: pointer;
 
   color: #d86d55;
+}
+
+.main-timer-display {
+  position: absolute;
+
+  top: 20px;
+  left: 20px;
+
+  font-size: 3rem;
+  font-weight: bold;
+
+  color: #d86d55;
+}
+
+.set-timer-button {
+  margin-top: 30px;
+
+  padding: 12px 24px;
+
+  font-size: 1.2rem;
+  font-weight: bold;
+
+  border: none;
+  border-radius: 20px;
+
+  background-color: #f07c7c;
+  color: white;
+
+  cursor: pointer;
 }
 
 

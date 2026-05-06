@@ -3,13 +3,8 @@ import { useEffect, useState } from "react";
 function BasicTimerPage({
   setPage,
 
-  mainHours,
   setMainHours,
-
-  mainMinutes,
   setMainMinutes,
-
-  mainSeconds,
   setMainSeconds,
 
   setIsTimerRunning,

@@ -67,11 +67,8 @@ function MainScene() {
       {page === "basicTimer" && (
         <BasicTimerPage
           setPage={setPage}
-          mainHours={hours}
           setMainHours={setHours}
-          mainMinutes={minutes}
           setMainMinutes={setMinutes}
-          mainSeconds={seconds}
           setMainSeconds={setSeconds}
           setIsTimerRunning={setIsTimerRunning}
         />
