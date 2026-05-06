@@ -1,10 +1,23 @@
 import { useEffect, useState } from "react";
 
-function BasicTimerPage({ setPage }) {
+function BasicTimerPage({
+  setPage,
+
+  mainHours,
+  setMainHours,
+
+  mainMinutes,
+  setMainMinutes,
+
+  mainSeconds,
+  setMainSeconds,
+
+  setIsTimerRunning,
+}) {
   // TIMER SELECTION STATE
   const [selectedPart, setSelectedPart] = useState(null);
 
-  // TIMER VALUE STATE
+  // LOCAL TIMER EDITOR STATE
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
@@ -256,6 +269,21 @@ function BasicTimerPage({ setPage }) {
               </button>
             </div>
           </div>
+
+          <button
+            className="set-timer-button"
+            onClick={() => {
+              setMainHours(hours);
+              setMainMinutes(minutes);
+              setMainSeconds(seconds);
+
+              setIsTimerRunning(true);
+
+              setPage("main");
+            }}
+          >
+            SET TIMER
+          </button>
         </div>
       </div>
     </>
