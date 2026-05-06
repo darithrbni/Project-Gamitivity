@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function BasicTimerPage({ setPage }) {
   // TIMER SELECTION STATE
@@ -70,6 +70,74 @@ function BasicTimerPage({ setPage }) {
       }
     }
   }
+
+  useEffect(() => {
+    function handleKeyDown(event) {
+      const key = event.key;
+
+      if (key === "Backspace") {
+        if (selectedPart === "hours") {
+          setHours(0);
+        }
+
+        if (selectedPart === "minutes") {
+          setMinutes(0);
+        }
+
+        if (selectedPart === "seconds") {
+          setSeconds(0);
+        }
+
+        return;
+      }
+
+      if (key < "0" || key > "9") {
+        return;
+      }
+
+      if (selectedPart === "hours") {
+        const currentValue = String(hours).padStart(2, "0");
+
+        const newValueString = currentValue[1] + key;
+
+        setHours(Number(newValueString));
+      }
+
+      if (selectedPart === "minutes") {
+        const currentValue = String(minutes).padStart(2, "0");
+
+        const newValueString = currentValue[1] + key;
+
+        let newValue = Number(newValueString);
+
+        if (newValue > 59) {
+          newValue = Number("0" + key);
+        }
+
+        setMinutes(newValue);
+      }
+
+      if (selectedPart === "seconds") {
+        const currentValue = String(seconds).padStart(2, "0");
+
+        const newValueString = currentValue[1] + key;
+
+        let newValue = Number(newValueString);
+
+        if (newValue > 59) {
+          newValue = Number("0" + key);
+        }
+
+        setSeconds(newValue);
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedPart, hours, minutes, seconds]);
 
   return (
     <>
