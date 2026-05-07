@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 
 import Corkboard from "../components/Corkboard";
+import PauseIcon from "../assets/PauseIcon.png";
+import ResumeIcon from "../assets/ResumeIcon.png";
+import StopIcon from "../assets/StopIcon.png";
 
 import MenuPage from "./MenuPage";
 import TimerMenuPage from "./TimerMenuPage";
@@ -53,9 +56,43 @@ function MainScene() {
         <>
           <Corkboard onClick={() => setPage("menu")} />
 
-          <div className="main-timer-display">
-            {String(hours).padStart(2, "0")}:{String(minutes).padStart(2, "0")}:
-            {String(seconds).padStart(2, "0")}
+          <div className="main-timer-container">
+            <div className="main-timer-display">
+              {String(hours).padStart(2, "0")}:
+              {String(minutes).padStart(2, "0")}:
+              {String(seconds).padStart(2, "0")}
+            </div>
+            {(hours > 0 || minutes > 0 || seconds > 0) && (
+              <>
+                <button
+                  className="timer-control-button"
+                  onClick={() => setIsTimerRunning(!isTimerRunning)}
+                >
+                  <img
+                    src={isTimerRunning ? PauseIcon : ResumeIcon}
+                    alt="Timer Control"
+                    className="timer-control-icon"
+                  />
+                </button>
+
+                <button
+                  className="timer-control-button"
+                  onClick={() => {
+                    setHours(0);
+                    setMinutes(0);
+                    setSeconds(0);
+
+                    setIsTimerRunning(false);
+                  }}
+                >
+                  <img
+                    src={StopIcon}
+                    alt="Stop"
+                    className="timer-control-icon"
+                  />
+                </button>
+              </>
+            )}
           </div>
         </>
       )}

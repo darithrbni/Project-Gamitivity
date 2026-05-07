@@ -103,6 +103,9 @@ export default MenuCard;
 import { useEffect, useState } from "react";
 
 import Corkboard from "../components/Corkboard";
+import PauseIcon from "../assets/PauseIcon.png";
+import ResumeIcon from "../assets/ResumeIcon.png";
+import StopIcon from "../assets/StopIcon.png";
 
 import MenuPage from "./MenuPage";
 import TimerMenuPage from "./TimerMenuPage";
@@ -155,9 +158,43 @@ function MainScene() {
         <>
           <Corkboard onClick={() => setPage("menu")} />
 
-          <div className="main-timer-display">
-            {String(hours).padStart(2, "0")}:{String(minutes).padStart(2, "0")}:
-            {String(seconds).padStart(2, "0")}
+          <div className="main-timer-container">
+            <div className="main-timer-display">
+              {String(hours).padStart(2, "0")}:
+              {String(minutes).padStart(2, "0")}:
+              {String(seconds).padStart(2, "0")}
+            </div>
+            {(hours > 0 || minutes > 0 || seconds > 0) && (
+              <>
+                <button
+                  className="timer-control-button"
+                  onClick={() => setIsTimerRunning(!isTimerRunning)}
+                >
+                  <img
+                    src={isTimerRunning ? PauseIcon : ResumeIcon}
+                    alt="Timer Control"
+                    className="timer-control-icon"
+                  />
+                </button>
+
+                <button
+                  className="timer-control-button"
+                  onClick={() => {
+                    setHours(0);
+                    setMinutes(0);
+                    setSeconds(0);
+
+                    setIsTimerRunning(false);
+                  }}
+                >
+                  <img
+                    src={StopIcon}
+                    alt="Stop"
+                    className="timer-control-icon"
+                  />
+                </button>
+              </>
+            )}
           </div>
         </>
       )}
@@ -190,6 +227,7 @@ function MainScene() {
 }
 
 export default MainScene;
+
 
 
 
@@ -935,12 +973,19 @@ export default BasicTimerPage;
   color: #d86d55;
 }
 
-.main-timer-display {
+.main-timer-container {
   position: absolute;
 
   top: 20px;
   left: 20px;
 
+  display: flex;
+  align-items: center;
+
+  gap: 20px;
+}
+
+.main-timer-display {
   font-size: 3rem;
   font-weight: bold;
 
@@ -963,6 +1008,37 @@ export default BasicTimerPage;
 
   cursor: pointer;
 }
+
+.timer-control-button {
+  border: none;
+  outline: none;
+
+  background-color: transparent;
+
+  cursor: pointer;
+
+  padding: 0;
+
+  appearance: none;
+}
+
+.timer-control-button:hover {
+  filter: brightness(1.15);
+}
+
+.timer-control-button:active {
+  filter: brightness(0.9);
+}
+
+.timer-control-icon {
+  width: 50px;
+  height: 50px;
+
+  object-fit: contain;
+
+  transition: filter 0.15s ease;
+}
+
 
 
 
