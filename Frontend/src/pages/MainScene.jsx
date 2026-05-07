@@ -111,37 +111,75 @@ function MainScene() {
                 </>
               )}
             </div>
-            {(hours > 0 || minutes > 0 || seconds > 0) && (
-              <>
-                <button
-                  className="timer-control-button"
-                  onClick={() => setIsTimerRunning(!isTimerRunning)}
-                >
-                  <img
-                    src={isTimerRunning ? PauseIcon : ResumeIcon}
-                    alt="Timer Control"
-                    className="timer-control-icon"
-                  />
-                </button>
+            {/* TIMER CONTROLS */}
+            {activeDisplay === "timer" &&
+              (hours > 0 || minutes > 0 || seconds > 0) && (
+                <>
+                  <button
+                    className="timer-control-button"
+                    onClick={() => setIsTimerRunning(!isTimerRunning)}
+                  >
+                    <img
+                      src={isTimerRunning ? PauseIcon : ResumeIcon}
+                      alt="Timer Control"
+                      className="timer-control-icon"
+                    />
+                  </button>
 
-                <button
-                  className="timer-control-button"
-                  onClick={() => {
-                    setHours(0);
-                    setMinutes(0);
-                    setSeconds(0);
+                  <button
+                    className="timer-control-button"
+                    onClick={() => {
+                      setHours(0);
+                      setMinutes(0);
+                      setSeconds(0);
 
-                    setIsTimerRunning(false);
-                  }}
-                >
-                  <img
-                    src={StopIcon}
-                    alt="Stop"
-                    className="timer-control-icon"
-                  />
-                </button>
-              </>
-            )}
+                      setIsTimerRunning(false);
+                    }}
+                  >
+                    <img
+                      src={StopIcon}
+                      alt="Stop"
+                      className="timer-control-icon"
+                    />
+                  </button>
+                </>
+              )}
+
+            {/* STOPWATCH CONTROLS */}
+            {activeDisplay === "stopwatch" &&
+              (stopwatchHours > 0 ||
+                stopwatchMinutes > 0 ||
+                stopwatchSeconds > 0) && (
+                <>
+                  <button
+                    className="timer-control-button"
+                    onClick={() => setIsStopwatchRunning(!isStopwatchRunning)}
+                  >
+                    <img
+                      src={isStopwatchRunning ? PauseIcon : ResumeIcon}
+                      alt="Stopwatch Control"
+                      className="timer-control-icon"
+                    />
+                  </button>
+
+                  <button
+                    className="timer-control-button"
+                    onClick={() => {
+                      setIsStopwatchRunning(false);
+
+                      setStopwatchHours(0);
+                      setStopwatchMinutes(0);
+                      setStopwatchSeconds(0);
+                    }}
+                  >
+                    <img
+                      src={StopIcon}
+                      alt="Stop"
+                      className="timer-control-icon"
+                    />
+                  </button>
+                </>
+              )}
           </div>
         </>
       )}
