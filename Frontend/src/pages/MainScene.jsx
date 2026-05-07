@@ -13,14 +13,24 @@ import MemoMenuPage from "./MemoMenuPage";
 import JadwalMenuPage from "./JadwalMenuPage";
 import TokoMenuPage from "./TokoMenuPage";
 import BasicTimerPage from "./BasicTimerPage";
+import StopwatchPage from "./StopwatchPage";
 
 function MainScene() {
   const [page, setPage] = useState("main");
+
+  const [activeDisplay, setActiveDisplay] = useState("timer");
+
   // GLOBAL TIMER STATE
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+
+  // GLOBAL STOPWATCH STATE
+  const [stopwatchHours, setStopwatchHours] = useState(0);
+  const [stopwatchMinutes, setStopwatchMinutes] = useState(0);
+  const [stopwatchSeconds, setStopwatchSeconds] = useState(0);
+  const [isStopwatchRunning, setIsStopwatchRunning] = useState(false);
 
   // TIMER COUNTDOWN
   useEffect(() => {
@@ -50,6 +60,33 @@ function MainScene() {
     };
   }, [isTimerRunning, hours, minutes, seconds]);
 
+  // STOPWATCH COUNTUP
+  useEffect(() => {
+    if (!isStopwatchRunning) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      if (stopwatchSeconds < 59) {
+        setStopwatchSeconds(stopwatchSeconds + 1);
+      } else if (stopwatchMinutes < 59) {
+        setStopwatchSeconds(0);
+
+        setStopwatchMinutes(stopwatchMinutes + 1);
+      } else {
+        setStopwatchSeconds(0);
+
+        setStopwatchMinutes(0);
+
+        setStopwatchHours(stopwatchHours + 1);
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isStopwatchRunning, stopwatchHours, stopwatchMinutes, stopwatchSeconds]);
+
   return (
     <div className="scene">
       {page === "main" && (
@@ -58,9 +95,21 @@ function MainScene() {
 
           <div className="main-timer-container">
             <div className="main-timer-display">
-              {String(hours).padStart(2, "0")}:
-              {String(minutes).padStart(2, "0")}:
-              {String(seconds).padStart(2, "0")}
+              {activeDisplay === "timer" && (
+                <>
+                  {String(hours).padStart(2, "0")}:
+                  {String(minutes).padStart(2, "0")}:
+                  {String(seconds).padStart(2, "0")}
+                </>
+              )}
+
+              {activeDisplay === "stopwatch" && (
+                <>
+                  {String(stopwatchHours).padStart(2, "0")}:
+                  {String(stopwatchMinutes).padStart(2, "0")}:
+                  {String(stopwatchSeconds).padStart(2, "0")}
+                </>
+              )}
             </div>
             {(hours > 0 || minutes > 0 || seconds > 0) && (
               <>
@@ -99,7 +148,20 @@ function MainScene() {
 
       {page === "menu" && <MenuPage setPage={setPage} />}
 
-      {page === "timerMenu" && <TimerMenuPage setPage={setPage} />}
+      {page === "timerMenu" && (
+        <TimerMenuPage
+          setPage={setPage}
+          setActiveDisplay={setActiveDisplay}
+          setIsTimerRunning={setIsTimerRunning}
+          setIsStopwatchRunning={setIsStopwatchRunning}
+          setHours={setHours}
+          setMinutes={setMinutes}
+          setSeconds={setSeconds}
+          setStopwatchHours={setStopwatchHours}
+          setStopwatchMinutes={setStopwatchMinutes}
+          setStopwatchSeconds={setStopwatchSeconds}
+        />
+      )}
 
       {page === "basicTimer" && (
         <BasicTimerPage
@@ -108,6 +170,30 @@ function MainScene() {
           setMainMinutes={setMinutes}
           setMainSeconds={setSeconds}
           setIsTimerRunning={setIsTimerRunning}
+          setStopwatchHours={setStopwatchHours}
+          setStopwatchMinutes={setStopwatchMinutes}
+          setStopwatchSeconds={setStopwatchSeconds}
+          setIsStopwatchRunning={setIsStopwatchRunning}
+          setActiveDisplay={setActiveDisplay}
+        />
+      )}
+
+      {page === "stopwatch" && (
+        <StopwatchPage
+          setPage={setPage}
+          stopwatchHours={stopwatchHours}
+          stopwatchMinutes={stopwatchMinutes}
+          stopwatchSeconds={stopwatchSeconds}
+          isStopwatchRunning={isStopwatchRunning}
+          setIsStopwatchRunning={setIsStopwatchRunning}
+          setStopwatchHours={setStopwatchHours}
+          setStopwatchMinutes={setStopwatchMinutes}
+          setStopwatchSeconds={setStopwatchSeconds}
+          setHours={setHours}
+          setMinutes={setMinutes}
+          setSeconds={setSeconds}
+          setIsTimerRunning={setIsTimerRunning}
+          setActiveDisplay={setActiveDisplay}
         />
       )}
 

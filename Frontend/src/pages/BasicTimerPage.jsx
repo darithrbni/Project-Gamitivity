@@ -8,6 +8,14 @@ function BasicTimerPage({
   setMainSeconds,
 
   setIsTimerRunning,
+
+  setStopwatchHours,
+  setStopwatchMinutes,
+  setStopwatchSeconds,
+
+  setIsStopwatchRunning,
+
+  setActiveDisplay,
 }) {
   // TIMER SELECTION STATE
   const [selectedPart, setSelectedPart] = useState(null);
@@ -268,6 +276,12 @@ function BasicTimerPage({
           <button
             className="set-timer-button"
             onClick={() => {
+              // STOP STOPWATCH
+              setIsStopwatchRunning(false);
+              setStopwatchHours(0);
+              setStopwatchMinutes(0);
+              setStopwatchSeconds(0);
+              setActiveDisplay("timer");
               setMainHours(hours);
               setMainMinutes(minutes);
               setMainSeconds(seconds);

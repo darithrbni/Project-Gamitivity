@@ -4,7 +4,18 @@ import BasicTimerIcon from "../assets/BasicTimerIcon.png";
 import StopwatchIcon from "../assets/StopwatchIcon.png";
 import PomodoroIcon from "../assets/PomodoroIcon.png";
 
-function TimerMenuPage({ setPage }) {
+function TimerMenuPage({
+  setPage,
+  setActiveDisplay,
+  setIsTimerRunning,
+  setIsStopwatchRunning,
+  setHours,
+  setMinutes,
+  setSeconds,
+  setStopwatchHours,
+  setStopwatchMinutes,
+  setStopwatchSeconds,
+}) {
   return (
     <>
       <div className="menu-overlay" onClick={() => setPage("main")} />
@@ -18,10 +29,20 @@ function TimerMenuPage({ setPage }) {
           <MenuCard
             title="BASIC TIMER"
             icon={BasicTimerIcon}
-            onClick={() => setPage("basicTimer")}
+            onClick={() => {
+              // SWITCH DISPLAY
+              setPage("basicTimer");
+            }}
           />
 
-          <MenuCard title="STOPWATCH" icon={StopwatchIcon} />
+          <MenuCard
+            title="STOPWATCH"
+            icon={StopwatchIcon}
+            onClick={() => {
+              // SWITCH DISPLAY
+              setPage("stopwatch");
+            }}
+          />
 
           <MenuCard title="POMODORO" icon={PomodoroIcon} />
         </div>
