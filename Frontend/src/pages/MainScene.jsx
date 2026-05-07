@@ -16,8 +16,10 @@ import BasicTimerPage from "./BasicTimerPage";
 import StopwatchPage from "./StopwatchPage";
 
 function MainScene() {
+  // PAGE STATE
   const [page, setPage] = useState("main");
 
+  // ACTIVE DISPLAY
   const [activeDisplay, setActiveDisplay] = useState("timer");
 
   // GLOBAL TIMER STATE
@@ -186,20 +188,7 @@ function MainScene() {
 
       {page === "menu" && <MenuPage setPage={setPage} />}
 
-      {page === "timerMenu" && (
-        <TimerMenuPage
-          setPage={setPage}
-          setActiveDisplay={setActiveDisplay}
-          setIsTimerRunning={setIsTimerRunning}
-          setIsStopwatchRunning={setIsStopwatchRunning}
-          setHours={setHours}
-          setMinutes={setMinutes}
-          setSeconds={setSeconds}
-          setStopwatchHours={setStopwatchHours}
-          setStopwatchMinutes={setStopwatchMinutes}
-          setStopwatchSeconds={setStopwatchSeconds}
-        />
-      )}
+      {page === "timerMenu" && <TimerMenuPage setPage={setPage} />}
 
       {page === "basicTimer" && (
         <BasicTimerPage

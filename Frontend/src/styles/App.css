@@ -233,23 +233,6 @@
   color: #d86d55;
 }
 
-.set-timer-button {
-  margin-top: 30px;
-
-  padding: 12px 24px;
-
-  font-size: 1.2rem;
-  font-weight: bold;
-
-  border: none;
-  border-radius: 20px;
-
-  background-color: #f07c7c;
-  color: white;
-
-  cursor: pointer;
-}
-
 .timer-control-button {
   border: none;
   outline: none;
@@ -298,6 +281,21 @@
 }
 
 .set-timer-button {
+  margin-top: 30px;
+
+  padding: 12px 24px;
+
+  font-size: 1.2rem;
+  font-weight: bold;
+
+  border: none;
+  border-radius: 20px;
+
+  background-color: #f07c7c;
+  color: white;
+
+  cursor: pointer;
+
   transition: filter 0.15s ease;
 }
 

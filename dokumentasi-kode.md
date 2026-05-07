@@ -15,7 +15,8 @@ src/
 │   ├── MemoMenuPage.jsx
 │   ├── JadwalMenuPage.jsx
 │   ├── TokoMenuPage.jsx
-│   └── BasicTimerPage.jsx
+│   ├── BasicTimerPage.jsx
+│   └── StopwatchPage.jsx
 │
 ├── styles/
 │   ├── App.css
@@ -118,8 +119,10 @@ import BasicTimerPage from "./BasicTimerPage";
 import StopwatchPage from "./StopwatchPage";
 
 function MainScene() {
+  // PAGE STATE
   const [page, setPage] = useState("main");
 
+  // ACTIVE DISPLAY
   const [activeDisplay, setActiveDisplay] = useState("timer");
 
   // GLOBAL TIMER STATE
@@ -213,57 +216,82 @@ function MainScene() {
                 </>
               )}
             </div>
-            {(hours > 0 || minutes > 0 || seconds > 0) && (
-              <>
-                <button
-                  className="timer-control-button"
-                  onClick={() => setIsTimerRunning(!isTimerRunning)}
-                >
-                  <img
-                    src={isTimerRunning ? PauseIcon : ResumeIcon}
-                    alt="Timer Control"
-                    className="timer-control-icon"
-                  />
-                </button>
+            {/* TIMER CONTROLS */}
+            {activeDisplay === "timer" &&
+              (hours > 0 || minutes > 0 || seconds > 0) && (
+                <>
+                  <button
+                    className="timer-control-button"
+                    onClick={() => setIsTimerRunning(!isTimerRunning)}
+                  >
+                    <img
+                      src={isTimerRunning ? PauseIcon : ResumeIcon}
+                      alt="Timer Control"
+                      className="timer-control-icon"
+                    />
+                  </button>
 
-                <button
-                  className="timer-control-button"
-                  onClick={() => {
-                    setHours(0);
-                    setMinutes(0);
-                    setSeconds(0);
+                  <button
+                    className="timer-control-button"
+                    onClick={() => {
+                      setHours(0);
+                      setMinutes(0);
+                      setSeconds(0);
 
-                    setIsTimerRunning(false);
-                  }}
-                >
-                  <img
-                    src={StopIcon}
-                    alt="Stop"
-                    className="timer-control-icon"
-                  />
-                </button>
-              </>
-            )}
+                      setIsTimerRunning(false);
+                    }}
+                  >
+                    <img
+                      src={StopIcon}
+                      alt="Stop"
+                      className="timer-control-icon"
+                    />
+                  </button>
+                </>
+              )}
+
+            {/* STOPWATCH CONTROLS */}
+            {activeDisplay === "stopwatch" &&
+              (stopwatchHours > 0 ||
+                stopwatchMinutes > 0 ||
+                stopwatchSeconds > 0) && (
+                <>
+                  <button
+                    className="timer-control-button"
+                    onClick={() => setIsStopwatchRunning(!isStopwatchRunning)}
+                  >
+                    <img
+                      src={isStopwatchRunning ? PauseIcon : ResumeIcon}
+                      alt="Stopwatch Control"
+                      className="timer-control-icon"
+                    />
+                  </button>
+
+                  <button
+                    className="timer-control-button"
+                    onClick={() => {
+                      setIsStopwatchRunning(false);
+
+                      setStopwatchHours(0);
+                      setStopwatchMinutes(0);
+                      setStopwatchSeconds(0);
+                    }}
+                  >
+                    <img
+                      src={StopIcon}
+                      alt="Stop"
+                      className="timer-control-icon"
+                    />
+                  </button>
+                </>
+              )}
           </div>
         </>
       )}
 
       {page === "menu" && <MenuPage setPage={setPage} />}
 
-      {page === "timerMenu" && (
-        <TimerMenuPage
-          setPage={setPage}
-          setActiveDisplay={setActiveDisplay}
-          setIsTimerRunning={setIsTimerRunning}
-          setIsStopwatchRunning={setIsStopwatchRunning}
-          setHours={setHours}
-          setMinutes={setMinutes}
-          setSeconds={setSeconds}
-          setStopwatchHours={setStopwatchHours}
-          setStopwatchMinutes={setStopwatchMinutes}
-          setStopwatchSeconds={setStopwatchSeconds}
-        />
-      )}
+      {page === "timerMenu" && <TimerMenuPage setPage={setPage} />}
 
       {page === "basicTimer" && (
         <BasicTimerPage
@@ -276,6 +304,7 @@ function MainScene() {
           setStopwatchMinutes={setStopwatchMinutes}
           setStopwatchSeconds={setStopwatchSeconds}
           setIsStopwatchRunning={setIsStopwatchRunning}
+          setActiveDisplay={setActiveDisplay}
         />
       )}
 
@@ -294,6 +323,7 @@ function MainScene() {
           setMinutes={setMinutes}
           setSeconds={setSeconds}
           setIsTimerRunning={setIsTimerRunning}
+          setActiveDisplay={setActiveDisplay}
         />
       )}
 
@@ -311,6 +341,7 @@ function MainScene() {
 }
 
 export default MainScene;
+
 
 
 
@@ -395,24 +426,13 @@ export default MenuPage;
 
 
 ## TimerMenuPage.jsx
-iimport MenuCard from "../components/MenuCard";
+import MenuCard from "../components/MenuCard";
 
 import BasicTimerIcon from "../assets/BasicTimerIcon.png";
 import StopwatchIcon from "../assets/StopwatchIcon.png";
 import PomodoroIcon from "../assets/PomodoroIcon.png";
 
-function TimerMenuPage({
-  setPage,
-  setActiveDisplay,
-  setIsTimerRunning,
-  setIsStopwatchRunning,
-  setHours,
-  setMinutes,
-  setSeconds,
-  setStopwatchHours,
-  setStopwatchMinutes,
-  setStopwatchSeconds,
-}) {
+function TimerMenuPage({ setPage }) {
   return (
     <>
       <div className="menu-overlay" onClick={() => setPage("main")} />
@@ -427,8 +447,6 @@ function TimerMenuPage({
             title="BASIC TIMER"
             icon={BasicTimerIcon}
             onClick={() => {
-              // SWITCH DISPLAY
-              setActiveDisplay("timer");
               setPage("basicTimer");
             }}
           />
@@ -437,8 +455,6 @@ function TimerMenuPage({
             title="STOPWATCH"
             icon={StopwatchIcon}
             onClick={() => {
-              // SWITCH DISPLAY
-              setActiveDisplay("stopwatch");
               setPage("stopwatch");
             }}
           />
@@ -451,6 +467,8 @@ function TimerMenuPage({
 }
 
 export default TimerMenuPage;
+
+
 
 
 
@@ -582,6 +600,8 @@ function BasicTimerPage({
   setStopwatchSeconds,
 
   setIsStopwatchRunning,
+
+  setActiveDisplay,
 }) {
   // TIMER SELECTION STATE
   const [selectedPart, setSelectedPart] = useState(null);
@@ -847,6 +867,7 @@ function BasicTimerPage({
               setStopwatchHours(0);
               setStopwatchMinutes(0);
               setStopwatchSeconds(0);
+              setActiveDisplay("timer");
               setMainHours(hours);
               setMainMinutes(minutes);
               setMainSeconds(seconds);
@@ -895,6 +916,7 @@ function StopwatchPage({
   setMinutes,
   setSeconds,
 
+  setActiveDisplay,
   setIsTimerRunning,
 }) {
   return (
@@ -948,6 +970,7 @@ function StopwatchPage({
                 setHours(0);
                 setMinutes(0);
                 setSeconds(0);
+                setActiveDisplay("stopwatch");
                 // START STOPWATCH
                 setIsStopwatchRunning(true);
               }}
@@ -988,6 +1011,7 @@ function StopwatchPage({
 }
 
 export default StopwatchPage;
+
 
 
 
@@ -1232,23 +1256,6 @@ export default StopwatchPage;
   color: #d86d55;
 }
 
-.set-timer-button {
-  margin-top: 30px;
-
-  padding: 12px 24px;
-
-  font-size: 1.2rem;
-  font-weight: bold;
-
-  border: none;
-  border-radius: 20px;
-
-  background-color: #f07c7c;
-  color: white;
-
-  cursor: pointer;
-}
-
 .timer-control-button {
   border: none;
   outline: none;
@@ -1297,6 +1304,21 @@ export default StopwatchPage;
 }
 
 .set-timer-button {
+  margin-top: 30px;
+
+  padding: 12px 24px;
+
+  font-size: 1.2rem;
+  font-weight: bold;
+
+  border: none;
+  border-radius: 20px;
+
+  background-color: #f07c7c;
+  color: white;
+
+  cursor: pointer;
+
   transition: filter 0.15s ease;
 }
 
@@ -1307,6 +1329,7 @@ export default StopwatchPage;
 .set-timer-button:active {
   filter: brightness(0.9);
 }
+
 
 
 
