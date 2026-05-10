@@ -10,18 +10,26 @@ function PomodoroPage({ setPage }) {
 
   const [selectedPart, setSelectedPart] = useState(null);
 
+  const [inputBuffer, setInputBuffer] = useState("");
+
   // INCREMENT
   function incrementValue(type) {
     if (type === "session") {
-      setSessionMinutes(sessionMinutes + 1);
+      if (sessionMinutes < 90) {
+        setSessionMinutes(sessionMinutes + 1);
+      }
     }
 
     if (type === "break") {
-      setBreakMinutes(breakMinutes + 1);
+      if (breakMinutes < 60) {
+        setBreakMinutes(breakMinutes + 1);
+      }
     }
 
     if (type === "count") {
-      setSessionCount(sessionCount + 1);
+      if (sessionCount < 10) {
+        setSessionCount(sessionCount + 1);
+      }
     }
   }
 
@@ -49,31 +57,35 @@ function PomodoroPage({ setPage }) {
         return;
       }
 
+      const newBuffer = inputBuffer + key;
+
+      const newValue = Number(newBuffer);
+
       // SESSION
       if (selectedPart === "session") {
-        const currentValue = String(sessionMinutes).padStart(2, "0");
+        if (newValue <= 90) {
+          setSessionMinutes(newValue);
 
-        const newValueString = currentValue[1] + key;
-
-        setSessionMinutes(Number(newValueString));
+          setInputBuffer(newBuffer);
+        }
       }
 
       // BREAK
       if (selectedPart === "break") {
-        const currentValue = String(breakMinutes).padStart(2, "0");
+        if (newValue <= 60) {
+          setBreakMinutes(newValue);
 
-        const newValueString = currentValue[1] + key;
-
-        setBreakMinutes(Number(newValueString));
+          setInputBuffer(newBuffer);
+        }
       }
 
-      // SESSION COUNT
+      // COUNT
       if (selectedPart === "count") {
-        const currentValue = String(sessionCount).padStart(2, "0");
+        if (newValue <= 10) {
+          setSessionCount(newValue);
 
-        const newValueString = currentValue[1] + key;
-
-        setSessionCount(Number(newValueString));
+          setInputBuffer(newBuffer);
+        }
       }
     }
 
@@ -82,7 +94,7 @@ function PomodoroPage({ setPage }) {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [selectedPart, sessionMinutes, breakMinutes, sessionCount]);
+  }, [selectedPart, sessionMinutes, breakMinutes, sessionCount, inputBuffer]);
 
   return (
     <>
@@ -117,11 +129,13 @@ function PomodoroPage({ setPage }) {
                       ? "pomodoro-value-box selected"
                       : "pomodoro-value-box"
                   }
-                  onClick={() =>
+                  onClick={() => {
                     setSelectedPart(
                       selectedPart === "session" ? null : "session",
-                    )
-                  }
+                    );
+
+                    setInputBuffer("");
+                  }}
                 >
                   {sessionMinutes}
                 </button>
@@ -155,9 +169,11 @@ function PomodoroPage({ setPage }) {
                       ? "pomodoro-value-box selected"
                       : "pomodoro-value-box"
                   }
-                  onClick={() =>
-                    setSelectedPart(selectedPart === "break" ? null : "break")
-                  }
+                  onClick={() => {
+                    setSelectedPart(selectedPart === "break" ? null : "break");
+
+                    setInputBuffer("");
+                  }}
                 >
                   {breakMinutes}
                 </button>
@@ -190,9 +206,11 @@ function PomodoroPage({ setPage }) {
                     ? "pomodoro-value-box selected"
                     : "pomodoro-value-box"
                 }
-                onClick={() =>
-                  setSelectedPart(selectedPart === "count" ? null : "count")
-                }
+                onClick={() => {
+                  setSelectedPart(selectedPart === "count" ? null : "count");
+
+                  setInputBuffer("");
+                }}
               >
                 {sessionCount}
               </button>
