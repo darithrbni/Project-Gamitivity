@@ -403,6 +403,14 @@ function MainScene() {
           setCurrentPomodoroSession={setCurrentPomodoroSession}
           setPomodoroPhase={setPomodoroPhase}
           setIsPomodoroRunning={setIsPomodoroRunning}
+          setHours={setHours}
+          setMinutes={setMinutes}
+          setSeconds={setSeconds}
+          setIsTimerRunning={setIsTimerRunning}
+          setStopwatchHours={setStopwatchHours}
+          setStopwatchMinutes={setStopwatchMinutes}
+          setStopwatchSeconds={setStopwatchSeconds}
+          setIsStopwatchRunning={setIsStopwatchRunning}
         />
       )}
 
@@ -420,6 +428,7 @@ function MainScene() {
 }
 
 export default MainScene;
+
 
 
 
@@ -1126,16 +1135,24 @@ function PomodoroPage({
   setPomodoroPhase,
 
   setIsPomodoroRunning,
+
+  setHours,
+  setMinutes,
+  setSeconds,
+
+  setIsTimerRunning,
+
+  setStopwatchHours,
+  setStopwatchMinutes,
+  setStopwatchSeconds,
+
+  setIsStopwatchRunning,
 }) {
   // POMODORO SETTINGS STATE
   const [sessionMinutes, setSessionMinutes] = useState(60);
-
   const [breakMinutes, setBreakMinutes] = useState(15);
-
   const [sessionCount, setSessionCount] = useState(4);
-
   const [selectedPart, setSelectedPart] = useState(null);
-
   const [inputBuffer, setInputBuffer] = useState("");
 
   // INCREMENT
@@ -1183,7 +1200,7 @@ function PomodoroPage({
         return;
       }
 
-      const newBuffer = inputBuffer + key;
+      const newBuffer = (inputBuffer + key).slice(-2);
 
       const newValue = Number(newBuffer);
 
@@ -1358,6 +1375,20 @@ function PomodoroPage({
               // SWITCH DISPLAY
               setActiveDisplay("pomodoro");
 
+              // STOP TIMER
+              setIsTimerRunning(false);
+
+              setHours(0);
+              setMinutes(0);
+              setSeconds(0);
+
+              // STOP STOPWATCH
+              setIsStopwatchRunning(false);
+
+              setStopwatchHours(0);
+              setStopwatchMinutes(0);
+              setStopwatchSeconds(0);
+
               // SAVE SETTINGS
               setPomodoroSessionMinutes(sessionMinutes);
               setPomodoroBreakMinutes(breakMinutes);
@@ -1386,6 +1417,7 @@ function PomodoroPage({
 }
 
 export default PomodoroPage;
+
 
 
 

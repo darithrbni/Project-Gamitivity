@@ -300,6 +300,14 @@ function MainScene() {
           setCurrentPomodoroSession={setCurrentPomodoroSession}
           setPomodoroPhase={setPomodoroPhase}
           setIsPomodoroRunning={setIsPomodoroRunning}
+          setHours={setHours}
+          setMinutes={setMinutes}
+          setSeconds={setSeconds}
+          setIsTimerRunning={setIsTimerRunning}
+          setStopwatchHours={setStopwatchHours}
+          setStopwatchMinutes={setStopwatchMinutes}
+          setStopwatchSeconds={setStopwatchSeconds}
+          setIsStopwatchRunning={setIsStopwatchRunning}
         />
       )}
 
