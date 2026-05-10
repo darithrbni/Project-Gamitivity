@@ -1035,16 +1035,17 @@ function BasicTimerPage({
               setMainMinutes(minutes);
               setMainSeconds(seconds);
 
-              setIsTimerRunning(true);
-
-              setPage("main");
-
               // STOP POMODORO
               setIsPomodoroRunning(false);
 
+              // START TIMER
+              setIsTimerRunning(true);
               setPomodoroHours(0);
               setPomodoroMinutes(0);
               setPomodoroSeconds(0);
+
+              // BACK TO MAIN
+              setPage("main");
             }}
           >
             SET TIMER
