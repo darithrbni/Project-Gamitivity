@@ -1029,7 +1029,7 @@ export default StopwatchPage;
 
 
 ## PomodoroPage.jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function PomodoroPage({ setPage }) {
   // POMODORO SETTINGS STATE
@@ -1038,6 +1038,8 @@ function PomodoroPage({ setPage }) {
   const [breakMinutes, setBreakMinutes] = useState(15);
 
   const [sessionCount, setSessionCount] = useState(4);
+
+  const [selectedPart, setSelectedPart] = useState(null);
 
   // INCREMENT
   function incrementValue(type) {
@@ -1069,6 +1071,50 @@ function PomodoroPage({ setPage }) {
     }
   }
 
+  useEffect(() => {
+    function handleKeyDown(event) {
+      const key = event.key;
+
+      // ONLY NUMBER
+      if (key < "0" || key > "9") {
+        return;
+      }
+
+      // SESSION
+      if (selectedPart === "session") {
+        const currentValue = String(sessionMinutes).padStart(2, "0");
+
+        const newValueString = currentValue[1] + key;
+
+        setSessionMinutes(Number(newValueString));
+      }
+
+      // BREAK
+      if (selectedPart === "break") {
+        const currentValue = String(breakMinutes).padStart(2, "0");
+
+        const newValueString = currentValue[1] + key;
+
+        setBreakMinutes(Number(newValueString));
+      }
+
+      // SESSION COUNT
+      if (selectedPart === "count") {
+        const currentValue = String(sessionCount).padStart(2, "0");
+
+        const newValueString = currentValue[1] + key;
+
+        setSessionCount(Number(newValueString));
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedPart, sessionMinutes, breakMinutes, sessionCount]);
+
   return (
     <>
       {/* OVERLAY */}
@@ -1096,7 +1142,20 @@ function PomodoroPage({ setPage }) {
                   ❮
                 </button>
 
-                <div className="pomodoro-value-box">{sessionMinutes}</div>
+                <button
+                  className={
+                    selectedPart === "session"
+                      ? "pomodoro-value-box selected"
+                      : "pomodoro-value-box"
+                  }
+                  onClick={() =>
+                    setSelectedPart(
+                      selectedPart === "session" ? null : "session",
+                    )
+                  }
+                >
+                  {sessionMinutes}
+                </button>
 
                 <button
                   className="pomodoro-arrow"
@@ -1121,7 +1180,18 @@ function PomodoroPage({ setPage }) {
                   ❮
                 </button>
 
-                <div className="pomodoro-value-box">{breakMinutes}</div>
+                <button
+                  className={
+                    selectedPart === "break"
+                      ? "pomodoro-value-box selected"
+                      : "pomodoro-value-box"
+                  }
+                  onClick={() =>
+                    setSelectedPart(selectedPart === "break" ? null : "break")
+                  }
+                >
+                  {breakMinutes}
+                </button>
 
                 <button
                   className="pomodoro-arrow"
@@ -1145,7 +1215,18 @@ function PomodoroPage({ setPage }) {
                 ❮
               </button>
 
-              <div className="pomodoro-value-box">{sessionCount}</div>
+              <button
+                className={
+                  selectedPart === "count"
+                    ? "pomodoro-value-box selected"
+                    : "pomodoro-value-box"
+                }
+                onClick={() =>
+                  setSelectedPart(selectedPart === "count" ? null : "count")
+                }
+              >
+                {sessionCount}
+              </button>
 
               <button
                 className="pomodoro-arrow"
@@ -1166,6 +1247,7 @@ function PomodoroPage({ setPage }) {
 }
 
 export default PomodoroPage;
+
 
 
 
@@ -1560,6 +1642,12 @@ export default PomodoroPage;
   display: flex;
   justify-content: center;
   align-items: center;
+
+  border: none;
+
+  cursor: pointer;
+
+  transition: background-color 0.15s ease;
 }
 
 .pomodoro-subtext {
@@ -1599,6 +1687,15 @@ export default PomodoroPage;
 .pomodoro-start-button:active {
   filter: brightness(0.9);
 }
+
+.pomodoro-value-box:hover {
+  background-color: #8d8d8d;
+}
+
+.pomodoro-value-box.selected {
+  background-color: #4a4a4a;
+}
+
 
 
 

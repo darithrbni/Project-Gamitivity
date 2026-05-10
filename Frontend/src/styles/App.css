@@ -383,6 +383,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
+  border: none;
+
+  cursor: pointer;
+
+  transition: background-color 0.15s ease;
 }
 
 .pomodoro-subtext {
@@ -421,4 +427,12 @@
 
 .pomodoro-start-button:active {
   filter: brightness(0.9);
+}
+
+.pomodoro-value-box:hover {
+  background-color: #8d8d8d;
+}
+
+.pomodoro-value-box.selected {
+  background-color: #4a4a4a;
 }
