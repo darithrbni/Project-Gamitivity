@@ -443,6 +443,7 @@ export default MainScene;
 
 
 
+
 ## MenuPage.jsx
 import MenuCard from "../components/MenuCard";
 
@@ -1372,6 +1373,15 @@ function PomodoroPage({
           <button
             className="pomodoro-start-button"
             onClick={() => {
+              // INVALID SETTINGS
+              if (
+                sessionMinutes === 0 ||
+                breakMinutes === 0 ||
+                sessionCount === 0
+              ) {
+                return;
+              }
+
               // SWITCH DISPLAY
               setActiveDisplay("pomodoro");
 
@@ -1417,6 +1427,7 @@ function PomodoroPage({
 }
 
 export default PomodoroPage;
+
 
 
 
