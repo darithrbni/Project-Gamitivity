@@ -208,19 +208,34 @@ function MainScene() {
             <div className="main-timer-display">
               {activeDisplay === "timer" && (
                 <>
-                  {String(hours).padStart(2, "0")}:
-                  {String(minutes).padStart(2, "0")}:
-                  {String(seconds).padStart(2, "0")}
+                  <div>
+                    {String(hours).padStart(2, "0")}:
+                    {String(minutes).padStart(2, "0")}:
+                    {String(seconds).padStart(2, "0")}
+                  </div>
+
+                  {(hours > 0 || minutes > 0 || seconds > 0) && (
+                    <div className="pomodoro-phase-text">Basic Timer</div>
+                  )}
                 </>
               )}
 
               {activeDisplay === "stopwatch" && (
                 <>
-                  {String(stopwatchHours).padStart(2, "0")}:
-                  {String(stopwatchMinutes).padStart(2, "0")}:
-                  {String(stopwatchSeconds).padStart(2, "0")}
+                  <div>
+                    {String(stopwatchHours).padStart(2, "0")}:
+                    {String(stopwatchMinutes).padStart(2, "0")}:
+                    {String(stopwatchSeconds).padStart(2, "0")}
+                  </div>
+
+                  {(stopwatchHours > 0 ||
+                    stopwatchMinutes > 0 ||
+                    stopwatchSeconds > 0) && (
+                    <div className="pomodoro-phase-text">Stopwatch</div>
+                  )}
                 </>
               )}
+
               {activeDisplay === "pomodoro" && (
                 <>
                   <div>
