@@ -138,6 +138,17 @@ function MainScene() {
   const [stopwatchSeconds, setStopwatchSeconds] = useState(0);
   const [isStopwatchRunning, setIsStopwatchRunning] = useState(false);
 
+  // GLOBAL POMODORO STATE
+  const [pomodoroHours, setPomodoroHours] = useState(0);
+  const [pomodoroMinutes, setPomodoroMinutes] = useState(0);
+  const [pomodoroSeconds, setPomodoroSeconds] = useState(0);
+  const [pomodoroSessionMinutes, setPomodoroSessionMinutes] = useState(25);
+  const [pomodoroBreakMinutes, setPomodoroBreakMinutes] = useState(5);
+  const [pomodoroSessionCount, setPomodoroSessionCount] = useState(4);
+  const [currentPomodoroSession, setCurrentPomodoroSession] = useState(1);
+  const [pomodoroPhase, setPomodoroPhase] = useState("focus");
+  const [isPomodoroRunning, setIsPomodoroRunning] = useState(false);
+
   // TIMER COUNTDOWN
   useEffect(() => {
     if (!isTimerRunning) {
@@ -193,6 +204,45 @@ function MainScene() {
     };
   }, [isStopwatchRunning, stopwatchHours, stopwatchMinutes, stopwatchSeconds]);
 
+  // POMODORO COUNTDOWN
+  useEffect(() => {
+    if (!isPomodoroRunning) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      // SECONDS
+      if (pomodoroSeconds > 0) {
+        setPomodoroSeconds(pomodoroSeconds - 1);
+      }
+
+      // MINUTES
+      else if (pomodoroMinutes > 0) {
+        setPomodoroMinutes(pomodoroMinutes - 1);
+
+        setPomodoroSeconds(59);
+      }
+
+      // HOURS
+      else if (pomodoroHours > 0) {
+        setPomodoroHours(pomodoroHours - 1);
+
+        setPomodoroMinutes(59);
+
+        setPomodoroSeconds(59);
+      }
+
+      // FINISHED
+      else {
+        setIsPomodoroRunning(false);
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isPomodoroRunning, pomodoroHours, pomodoroMinutes, pomodoroSeconds]);
+
   return (
     <div className="scene">
       {page === "main" && (
@@ -214,6 +264,18 @@ function MainScene() {
                   {String(stopwatchHours).padStart(2, "0")}:
                   {String(stopwatchMinutes).padStart(2, "0")}:
                   {String(stopwatchSeconds).padStart(2, "0")}
+                </>
+              )}
+              {activeDisplay === "pomodoro" && (
+                <>
+                  <div>
+                    {String(pomodoroHours).padStart(2, "0")}:
+                    {String(pomodoroMinutes).padStart(2, "0")}:
+                    {String(pomodoroSeconds).padStart(2, "0")}
+                  </div>
+                  <div className="pomodoro-phase-text">
+                    {pomodoroPhase === "focus" ? "Focus Time" : "Break Time"}
+                  </div>
                 </>
               )}
             </div>
@@ -328,7 +390,21 @@ function MainScene() {
         />
       )}
 
-      {page === "pomodoro" && <PomodoroPage setPage={setPage} />}
+      {page === "pomodoro" && (
+        <PomodoroPage
+          setPage={setPage}
+          setActiveDisplay={setActiveDisplay}
+          setPomodoroHours={setPomodoroHours}
+          setPomodoroMinutes={setPomodoroMinutes}
+          setPomodoroSeconds={setPomodoroSeconds}
+          setPomodoroSessionMinutes={setPomodoroSessionMinutes}
+          setPomodoroBreakMinutes={setPomodoroBreakMinutes}
+          setPomodoroSessionCount={setPomodoroSessionCount}
+          setCurrentPomodoroSession={setCurrentPomodoroSession}
+          setPomodoroPhase={setPomodoroPhase}
+          setIsPomodoroRunning={setIsPomodoroRunning}
+        />
+      )}
 
       {page === "grafikMenu" && <GrafikMenuPage setPage={setPage} />}
 
@@ -344,6 +420,7 @@ function MainScene() {
 }
 
 export default MainScene;
+
 
 
 
@@ -1031,7 +1108,25 @@ export default StopwatchPage;
 ## PomodoroPage.jsx
 import { useEffect, useState } from "react";
 
-function PomodoroPage({ setPage }) {
+function PomodoroPage({
+  setPage,
+
+  setActiveDisplay,
+
+  setPomodoroHours,
+  setPomodoroMinutes,
+  setPomodoroSeconds,
+
+  setPomodoroSessionMinutes,
+  setPomodoroBreakMinutes,
+  setPomodoroSessionCount,
+
+  setCurrentPomodoroSession,
+
+  setPomodoroPhase,
+
+  setIsPomodoroRunning,
+}) {
   // POMODORO SETTINGS STATE
   const [sessionMinutes, setSessionMinutes] = useState(60);
 
@@ -1257,7 +1352,33 @@ function PomodoroPage({ setPage }) {
             <p className="pomodoro-subtext">Number of Sessions</p>
           </div>
 
-          <button className="pomodoro-start-button">START</button>
+          <button
+            className="pomodoro-start-button"
+            onClick={() => {
+              // SWITCH DISPLAY
+              setActiveDisplay("pomodoro");
+
+              // SAVE SETTINGS
+              setPomodoroSessionMinutes(sessionMinutes);
+              setPomodoroBreakMinutes(breakMinutes);
+              setPomodoroSessionCount(sessionCount);
+
+              // INITIALIZE RUNTIME
+              setPomodoroHours(Math.floor(sessionMinutes / 60));
+              setPomodoroMinutes(sessionMinutes % 60);
+              setPomodoroSeconds(0);
+              setCurrentPomodoroSession(1);
+              setPomodoroPhase("focus");
+
+              // START
+              setIsPomodoroRunning(true);
+
+              // BACK TO MAIN
+              setPage("main");
+            }}
+          >
+            START
+          </button>
         </div>
       </div>
     </>
@@ -1289,7 +1410,7 @@ export default PomodoroPage;
   width: 350px;
 
   position: absolute;
-  top: 100px;
+  top: 150px;
   left: 80px;
 
   cursor: pointer;
@@ -1509,6 +1630,11 @@ export default PomodoroPage;
   font-weight: bold;
 
   color: #d86d55;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
 }
 
 .timer-control-button {
@@ -1713,6 +1839,16 @@ export default PomodoroPage;
 
 .pomodoro-value-box.selected {
   background-color: #4a4a4a;
+}
+
+.pomodoro-phase-text {
+  font-size: 1.5rem;
+
+  margin-top: 5px;
+
+  color: #d86d55;
+
+  font-weight: bold;
 }
 
 

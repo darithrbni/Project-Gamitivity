@@ -1,6 +1,24 @@
 import { useEffect, useState } from "react";
 
-function PomodoroPage({ setPage }) {
+function PomodoroPage({
+  setPage,
+
+  setActiveDisplay,
+
+  setPomodoroHours,
+  setPomodoroMinutes,
+  setPomodoroSeconds,
+
+  setPomodoroSessionMinutes,
+  setPomodoroBreakMinutes,
+  setPomodoroSessionCount,
+
+  setCurrentPomodoroSession,
+
+  setPomodoroPhase,
+
+  setIsPomodoroRunning,
+}) {
   // POMODORO SETTINGS STATE
   const [sessionMinutes, setSessionMinutes] = useState(60);
 
@@ -226,7 +244,33 @@ function PomodoroPage({ setPage }) {
             <p className="pomodoro-subtext">Number of Sessions</p>
           </div>
 
-          <button className="pomodoro-start-button">START</button>
+          <button
+            className="pomodoro-start-button"
+            onClick={() => {
+              // SWITCH DISPLAY
+              setActiveDisplay("pomodoro");
+
+              // SAVE SETTINGS
+              setPomodoroSessionMinutes(sessionMinutes);
+              setPomodoroBreakMinutes(breakMinutes);
+              setPomodoroSessionCount(sessionCount);
+
+              // INITIALIZE RUNTIME
+              setPomodoroHours(Math.floor(sessionMinutes / 60));
+              setPomodoroMinutes(sessionMinutes % 60);
+              setPomodoroSeconds(0);
+              setCurrentPomodoroSession(1);
+              setPomodoroPhase("focus");
+
+              // START
+              setIsPomodoroRunning(true);
+
+              // BACK TO MAIN
+              setPage("main");
+            }}
+          >
+            START
+          </button>
         </div>
       </div>
     </>
