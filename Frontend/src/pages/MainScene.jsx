@@ -170,9 +170,13 @@ function MainScene() {
                     {String(pomodoroMinutes).padStart(2, "0")}:
                     {String(pomodoroSeconds).padStart(2, "0")}
                   </div>
-                  <div className="pomodoro-phase-text">
-                    {pomodoroPhase === "focus" ? "Focus Time" : "Break Time"}
-                  </div>
+                  {(pomodoroHours > 0 ||
+                    pomodoroMinutes > 0 ||
+                    pomodoroSeconds > 0) && (
+                    <div className="pomodoro-phase-text">
+                      {pomodoroPhase === "focus" ? "Focus Time" : "Break Time"}
+                    </div>
+                  )}
                 </>
               )}
             </div>
@@ -235,6 +239,50 @@ function MainScene() {
                       setStopwatchHours(0);
                       setStopwatchMinutes(0);
                       setStopwatchSeconds(0);
+                    }}
+                  >
+                    <img
+                      src={StopIcon}
+                      alt="Stop"
+                      className="timer-control-icon"
+                    />
+                  </button>
+                </>
+              )}
+
+            {/* POMODORO CONTROLS */}
+            {activeDisplay === "pomodoro" &&
+              (pomodoroHours > 0 ||
+                pomodoroMinutes > 0 ||
+                pomodoroSeconds > 0) && (
+                <>
+                  <button
+                    className="timer-control-button"
+                    onClick={() => setIsPomodoroRunning(!isPomodoroRunning)}
+                  >
+                    <img
+                      src={isPomodoroRunning ? PauseIcon : ResumeIcon}
+                      alt="Pomodoro Control"
+                      className="timer-control-icon"
+                    />
+                  </button>
+
+                  <button
+                    className="timer-control-button"
+                    onClick={() => {
+                      // STOP
+                      setIsPomodoroRunning(false);
+
+                      // RESET TIME
+                      setPomodoroHours(0);
+                      setPomodoroMinutes(0);
+                      setPomodoroSeconds(0);
+
+                      // RESET SESSION
+                      setCurrentPomodoroSession(1);
+
+                      // RESET PHASE
+                      setPomodoroPhase("focus");
                     }}
                   >
                     <img
