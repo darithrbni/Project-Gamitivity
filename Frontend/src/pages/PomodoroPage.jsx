@@ -78,6 +78,21 @@ function PomodoroPage({
     function handleKeyDown(event) {
       const key = event.key;
 
+      // BACKSPACE
+      if (key === "Backspace") {
+        if (selectedPart === "session") {
+          setSessionMinutes(0);
+        }
+        if (selectedPart === "break") {
+          setBreakMinutes(0);
+        }
+        if (selectedPart === "count") {
+          setSessionCount(0);
+        }
+        setInputBuffer("");
+        return;
+      }
+
       // ONLY NUMBER
       if (key < "0" || key > "9") {
         return;

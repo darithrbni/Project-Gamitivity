@@ -16,6 +16,12 @@ function BasicTimerPage({
   setIsStopwatchRunning,
 
   setActiveDisplay,
+
+  setPomodoroHours,
+  setPomodoroMinutes,
+  setPomodoroSeconds,
+
+  setIsPomodoroRunning,
 }) {
   // TIMER SELECTION STATE
   const [selectedPart, setSelectedPart] = useState(null);
@@ -289,6 +295,13 @@ function BasicTimerPage({
               setIsTimerRunning(true);
 
               setPage("main");
+
+              // STOP POMODORO
+              setIsPomodoroRunning(false);
+
+              setPomodoroHours(0);
+              setPomodoroMinutes(0);
+              setPomodoroSeconds(0);
             }}
           >
             SET TIMER

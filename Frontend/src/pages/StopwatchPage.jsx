@@ -22,6 +22,12 @@ function StopwatchPage({
 
   setActiveDisplay,
   setIsTimerRunning,
+
+  setPomodoroHours,
+  setPomodoroMinutes,
+  setPomodoroSeconds,
+
+  setIsPomodoroRunning,
 }) {
   return (
     <>
@@ -75,6 +81,14 @@ function StopwatchPage({
                 setMinutes(0);
                 setSeconds(0);
                 setActiveDisplay("stopwatch");
+
+                // STOP POMODORO
+                setIsPomodoroRunning(false);
+
+                setPomodoroHours(0);
+                setPomodoroMinutes(0);
+                setPomodoroSeconds(0);
+
                 // START STOPWATCH
                 setIsStopwatchRunning(true);
               }}

@@ -16,7 +16,8 @@ src/
 │   ├── JadwalMenuPage.jsx
 │   ├── TokoMenuPage.jsx
 │   ├── BasicTimerPage.jsx
-│   └── StopwatchPage.jsx
+│   ├── StopwatchPage.jsx
+│   └── PomodoroPage.jsx
 │
 ├── styles/
 │   ├── App.css
@@ -416,6 +417,10 @@ function MainScene() {
           setStopwatchSeconds={setStopwatchSeconds}
           setIsStopwatchRunning={setIsStopwatchRunning}
           setActiveDisplay={setActiveDisplay}
+          setPomodoroHours={setPomodoroHours}
+          setPomodoroMinutes={setPomodoroMinutes}
+          setPomodoroSeconds={setPomodoroSeconds}
+          setIsPomodoroRunning={setIsPomodoroRunning}
         />
       )}
 
@@ -435,6 +440,10 @@ function MainScene() {
           setSeconds={setSeconds}
           setIsTimerRunning={setIsTimerRunning}
           setActiveDisplay={setActiveDisplay}
+          setPomodoroHours={setPomodoroHours}
+          setPomodoroMinutes={setPomodoroMinutes}
+          setPomodoroSeconds={setPomodoroSeconds}
+          setIsPomodoroRunning={setIsPomodoroRunning}
         />
       )}
 
@@ -476,6 +485,7 @@ function MainScene() {
 }
 
 export default MainScene;
+
 
 
 
@@ -749,6 +759,12 @@ function BasicTimerPage({
   setIsStopwatchRunning,
 
   setActiveDisplay,
+
+  setPomodoroHours,
+  setPomodoroMinutes,
+  setPomodoroSeconds,
+
+  setIsPomodoroRunning,
 }) {
   // TIMER SELECTION STATE
   const [selectedPart, setSelectedPart] = useState(null);
@@ -1022,6 +1038,13 @@ function BasicTimerPage({
               setIsTimerRunning(true);
 
               setPage("main");
+
+              // STOP POMODORO
+              setIsPomodoroRunning(false);
+
+              setPomodoroHours(0);
+              setPomodoroMinutes(0);
+              setPomodoroSeconds(0);
             }}
           >
             SET TIMER
@@ -1033,6 +1056,7 @@ function BasicTimerPage({
 }
 
 export default BasicTimerPage;
+
 
 
 
@@ -1065,6 +1089,12 @@ function StopwatchPage({
 
   setActiveDisplay,
   setIsTimerRunning,
+
+  setPomodoroHours,
+  setPomodoroMinutes,
+  setPomodoroSeconds,
+
+  setIsPomodoroRunning,
 }) {
   return (
     <>
@@ -1118,6 +1148,14 @@ function StopwatchPage({
                 setMinutes(0);
                 setSeconds(0);
                 setActiveDisplay("stopwatch");
+
+                // STOP POMODORO
+                setIsPomodoroRunning(false);
+
+                setPomodoroHours(0);
+                setPomodoroMinutes(0);
+                setPomodoroSeconds(0);
+
                 // START STOPWATCH
                 setIsStopwatchRunning(true);
               }}
@@ -1158,6 +1196,7 @@ function StopwatchPage({
 }
 
 export default StopwatchPage;
+
 
 
 
@@ -1244,6 +1283,21 @@ function PomodoroPage({
   useEffect(() => {
     function handleKeyDown(event) {
       const key = event.key;
+
+      // BACKSPACE
+      if (key === "Backspace") {
+        if (selectedPart === "session") {
+          setSessionMinutes(0);
+        }
+        if (selectedPart === "break") {
+          setBreakMinutes(0);
+        }
+        if (selectedPart === "count") {
+          setSessionCount(0);
+        }
+        setInputBuffer("");
+        return;
+      }
 
       // ONLY NUMBER
       if (key < "0" || key > "9") {
@@ -1476,6 +1530,7 @@ function PomodoroPage({
 }
 
 export default PomodoroPage;
+
 
 
 

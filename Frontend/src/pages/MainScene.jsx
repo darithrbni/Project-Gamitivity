@@ -313,6 +313,10 @@ function MainScene() {
           setStopwatchSeconds={setStopwatchSeconds}
           setIsStopwatchRunning={setIsStopwatchRunning}
           setActiveDisplay={setActiveDisplay}
+          setPomodoroHours={setPomodoroHours}
+          setPomodoroMinutes={setPomodoroMinutes}
+          setPomodoroSeconds={setPomodoroSeconds}
+          setIsPomodoroRunning={setIsPomodoroRunning}
         />
       )}
 
@@ -332,6 +336,10 @@ function MainScene() {
           setSeconds={setSeconds}
           setIsTimerRunning={setIsTimerRunning}
           setActiveDisplay={setActiveDisplay}
+          setPomodoroHours={setPomodoroHours}
+          setPomodoroMinutes={setPomodoroMinutes}
+          setPomodoroSeconds={setPomodoroSeconds}
+          setIsPomodoroRunning={setIsPomodoroRunning}
         />
       )}
 
