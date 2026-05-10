@@ -214,7 +214,56 @@ function MainScene() {
     const interval = setInterval(() => {
       // SECONDS
       if (pomodoroSeconds > 0) {
-        setPomodoroSeconds(pomodoroSeconds - 1);
+        // LAST SECOND
+        if (
+          pomodoroHours === 0 &&
+          pomodoroMinutes === 0 &&
+          pomodoroSeconds === 1
+        ) {
+          // FOCUS FINISHED
+          if (pomodoroPhase === "focus") {
+            // LAST SESSION
+            if (currentPomodoroSession === pomodoroSessionCount) {
+              setPomodoroSeconds(0);
+
+              setIsPomodoroRunning(false);
+
+              // RESET STATE
+              setCurrentPomodoroSession(1);
+
+              setPomodoroPhase("focus");
+            }
+
+            // GO TO BREAK
+            else {
+              setPomodoroPhase("break");
+
+              setPomodoroHours(Math.floor(pomodoroBreakMinutes / 60));
+
+              setPomodoroMinutes(pomodoroBreakMinutes % 60);
+
+              setPomodoroSeconds(0);
+            }
+          }
+
+          // BREAK FINISHED
+          else {
+            setCurrentPomodoroSession(currentPomodoroSession + 1);
+
+            setPomodoroPhase("focus");
+
+            setPomodoroHours(Math.floor(pomodoroSessionMinutes / 60));
+
+            setPomodoroMinutes(pomodoroSessionMinutes % 60);
+
+            setPomodoroSeconds(0);
+          }
+        }
+
+        // NORMAL COUNTDOWN
+        else {
+          setPomodoroSeconds(pomodoroSeconds - 1);
+        }
       }
 
       // MINUTES
@@ -232,17 +281,26 @@ function MainScene() {
 
         setPomodoroSeconds(59);
       }
-
-      // FINISHED
-      else {
-        setIsPomodoroRunning(false);
-      }
     }, 1000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [isPomodoroRunning, pomodoroHours, pomodoroMinutes, pomodoroSeconds]);
+  }, [
+    isPomodoroRunning,
+
+    pomodoroHours,
+    pomodoroMinutes,
+    pomodoroSeconds,
+
+    pomodoroPhase,
+
+    pomodoroBreakMinutes,
+    pomodoroSessionMinutes,
+
+    currentPomodoroSession,
+    pomodoroSessionCount,
+  ]);
 
   return (
     <div className="scene">
