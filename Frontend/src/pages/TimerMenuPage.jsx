@@ -31,7 +31,13 @@ function TimerMenuPage({ setPage }) {
             }}
           />
 
-          <MenuCard title="POMODORO" icon={PomodoroIcon} />
+          <MenuCard
+            title="POMODORO"
+            icon={PomodoroIcon}
+            onClick={() => {
+              setPage("pomodoro");
+            }}
+          />
         </div>
       </div>
     </>

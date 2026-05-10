@@ -117,6 +117,7 @@ import JadwalMenuPage from "./JadwalMenuPage";
 import TokoMenuPage from "./TokoMenuPage";
 import BasicTimerPage from "./BasicTimerPage";
 import StopwatchPage from "./StopwatchPage";
+import PomodoroPage from "./PomodoroPage";
 
 function MainScene() {
   // PAGE STATE
@@ -327,6 +328,8 @@ function MainScene() {
         />
       )}
 
+      {page === "pomodoro" && <PomodoroPage setPage={setPage} />}
+
       {page === "grafikMenu" && <GrafikMenuPage setPage={setPage} />}
 
       {page === "tugasMenu" && <TugasMenuPage setPage={setPage} />}
@@ -341,6 +344,7 @@ function MainScene() {
 }
 
 export default MainScene;
+
 
 
 
@@ -459,7 +463,13 @@ function TimerMenuPage({ setPage }) {
             }}
           />
 
-          <MenuCard title="POMODORO" icon={PomodoroIcon} />
+          <MenuCard
+            title="POMODORO"
+            icon={PomodoroIcon}
+            onClick={() => {
+              setPage("pomodoro");
+            }}
+          />
         </div>
       </div>
     </>
@@ -467,6 +477,7 @@ function TimerMenuPage({ setPage }) {
 }
 
 export default TimerMenuPage;
+
 
 
 
@@ -1017,6 +1028,149 @@ export default StopwatchPage;
 
 
 
+## PomodoroPage.jsx
+import { useState } from "react";
+
+function PomodoroPage({ setPage }) {
+  // POMODORO SETTINGS STATE
+  const [sessionMinutes, setSessionMinutes] = useState(60);
+
+  const [breakMinutes, setBreakMinutes] = useState(15);
+
+  const [sessionCount, setSessionCount] = useState(4);
+
+  // INCREMENT
+  function incrementValue(type) {
+    if (type === "session") {
+      setSessionMinutes(sessionMinutes + 1);
+    }
+
+    if (type === "break") {
+      setBreakMinutes(breakMinutes + 1);
+    }
+
+    if (type === "count") {
+      setSessionCount(sessionCount + 1);
+    }
+  }
+
+  // DECREMENT
+  function decrementValue(type) {
+    if (type === "session" && sessionMinutes > 1) {
+      setSessionMinutes(sessionMinutes - 1);
+    }
+
+    if (type === "break" && breakMinutes > 1) {
+      setBreakMinutes(breakMinutes - 1);
+    }
+
+    if (type === "count" && sessionCount > 1) {
+      setSessionCount(sessionCount - 1);
+    }
+  }
+
+  return (
+    <>
+      {/* OVERLAY */}
+      <div className="menu-overlay" onClick={() => setPage("main")} />
+
+      {/* BACK BUTTON */}
+      <button className="back-button" onClick={() => setPage("timerMenu")}>
+        BACK
+      </button>
+
+      {/* POMODORO LAYOUT */}
+      <div className="menu-wrapper">
+        <div className="pomodoro-panel">
+          {/* TOP SETTINGS */}
+          <div className="pomodoro-top-row">
+            {/* SESSION */}
+            <div className="pomodoro-setting">
+              <p className="pomodoro-label">Session</p>
+
+              <div className="pomodoro-control">
+                <button
+                  className="pomodoro-arrow"
+                  onClick={() => decrementValue("session")}
+                >
+                  ❮
+                </button>
+
+                <div className="pomodoro-value-box">{sessionMinutes}</div>
+
+                <button
+                  className="pomodoro-arrow"
+                  onClick={() => incrementValue("session")}
+                >
+                  ❯
+                </button>
+              </div>
+
+              <p className="pomodoro-subtext">Minutes</p>
+            </div>
+
+            {/* BREAK */}
+            <div className="pomodoro-setting">
+              <p className="pomodoro-label">Break</p>
+
+              <div className="pomodoro-control">
+                <button
+                  className="pomodoro-arrow"
+                  onClick={() => decrementValue("break")}
+                >
+                  ❮
+                </button>
+
+                <div className="pomodoro-value-box">{breakMinutes}</div>
+
+                <button
+                  className="pomodoro-arrow"
+                  onClick={() => incrementValue("break")}
+                >
+                  ❯
+                </button>
+              </div>
+
+              <p className="pomodoro-subtext">Minutes</p>
+            </div>
+          </div>
+
+          {/* SESSION COUNT */}
+          <div className="pomodoro-setting pomodoro-session-count">
+            <div className="pomodoro-control">
+              <button
+                className="pomodoro-arrow"
+                onClick={() => decrementValue("count")}
+              >
+                ❮
+              </button>
+
+              <div className="pomodoro-value-box">{sessionCount}</div>
+
+              <button
+                className="pomodoro-arrow"
+                onClick={() => incrementValue("count")}
+              >
+                ❯
+              </button>
+            </div>
+
+            <p className="pomodoro-subtext">Number of Sessions</p>
+          </div>
+
+          <button className="pomodoro-start-button">START</button>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default PomodoroPage;
+
+
+
+
+
 
 
 # styles
@@ -1330,7 +1484,121 @@ export default StopwatchPage;
   filter: brightness(0.9);
 }
 
+.pomodoro-panel {
+  pointer-events: auto;
 
+  width: 850px;
+  height: 500px;
+
+  border-radius: 50px;
+  border: 6px solid #f07c7c;
+
+  background-color: #f5f5f5;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  gap: 70px;
+
+  padding-bottom: 10px;
+}
+
+.pomodoro-top-row {
+  display: flex;
+
+  gap: 120px;
+}
+
+.pomodoro-setting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 15px;
+}
+
+.pomodoro-label {
+  font-size: 2rem;
+  font-weight: bold;
+
+  color: #444;
+}
+
+.pomodoro-control {
+  display: flex;
+  align-items: center;
+
+  gap: 25px;
+}
+
+.pomodoro-arrow {
+  border: none;
+  background: transparent;
+
+  font-size: 3rem;
+
+  cursor: pointer;
+
+  color: #333;
+}
+
+.pomodoro-value-box {
+  width: 120px;
+  height: 90px;
+
+  border-radius: 12px;
+
+  background-color: #777;
+
+  color: white;
+
+  font-size: 3rem;
+  font-weight: bold;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pomodoro-subtext {
+  font-size: 1.5rem;
+
+  color: #555;
+}
+
+.pomodoro-session-count {
+  margin-top: -50px;
+}
+
+.pomodoro-start-button {
+  margin-top: -20px;
+
+  padding: 14px 32px;
+
+  border: none;
+  border-radius: 20px;
+
+  background-color: #f07c7c;
+
+  color: white;
+
+  font-size: 1.3rem;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: filter 0.15s ease;
+}
+
+.pomodoro-start-button:hover {
+  filter: brightness(1.15);
+}
+
+.pomodoro-start-button:active {
+  filter: brightness(0.9);
+}
 
 
 

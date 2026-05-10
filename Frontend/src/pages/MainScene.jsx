@@ -14,6 +14,7 @@ import JadwalMenuPage from "./JadwalMenuPage";
 import TokoMenuPage from "./TokoMenuPage";
 import BasicTimerPage from "./BasicTimerPage";
 import StopwatchPage from "./StopwatchPage";
+import PomodoroPage from "./PomodoroPage";
 
 function MainScene() {
   // PAGE STATE
@@ -223,6 +224,8 @@ function MainScene() {
           setActiveDisplay={setActiveDisplay}
         />
       )}
+
+      {page === "pomodoro" && <PomodoroPage setPage={setPage} />}
 
       {page === "grafikMenu" && <GrafikMenuPage setPage={setPage} />}
 
