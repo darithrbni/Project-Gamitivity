@@ -1083,6 +1083,11 @@ function BasicTimerPage({
           <button
             className="set-timer-button"
             onClick={() => {
+              // INVALID TIME
+              if (hours === 0 && minutes === 0 && seconds === 0) {
+                return;
+              }
+
               // STOP STOPWATCH
               setIsStopwatchRunning(false);
               setStopwatchHours(0);
