@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import auth from "../firebase/auth";
 
 import Corkboard from "../components/Corkboard";
@@ -55,6 +55,16 @@ function MainScene() {
   const [currentPomodoroSession, setCurrentPomodoroSession] = useState(1);
   const [pomodoroPhase, setPomodoroPhase] = useState("focus");
   const [isPomodoroRunning, setIsPomodoroRunning] = useState(false);
+
+  async function handleLogout() {
+    try {
+      await signOut(auth);
+
+      setIsProfileDropdownOpen(false);
+    } catch (error) {
+      alert(error.message);
+    }
+  }
 
   // FIREBASE AUTH LISTENER
   useEffect(() => {
@@ -247,7 +257,12 @@ function MainScene() {
 
                 <button className="profile-dropdown-item">Settings</button>
 
-                <button className="profile-dropdown-item">Logout</button>
+                <button
+                  className="profile-dropdown-item"
+                  onClick={handleLogout}
+                >
+                  Log Out
+                </button>
               </div>
             )}
           </div>
