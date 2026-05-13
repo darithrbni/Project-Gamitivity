@@ -6,6 +6,10 @@ src/
 │   ├── Corkboard.jsx
 │   └── MenuCard.jsx
 │
+├── firebase/
+│   ├── auth.js
+│   └── config.js
+│
 ├── pages/
 │   ├── MainScene.jsx
 │   ├── MenuPage.jsx
@@ -19,7 +23,8 @@ src/
 │   ├── StopwatchPage.jsx
 │   ├── PomodoroPage.jsx
 │   ├── LoginPage.jsx
-│   └── RegisterPage.jsx
+│   ├── RegisterPage.jsx
+│   └── AccountPage.jsx
 │
 ├── styles/
 │   ├── App.css
@@ -37,9 +42,9 @@ src/
 ## Corkboard.jsx
 import { useState } from "react";
 
-import idleImage from "../assets/placeholderIdle.png";
-import hoverImage from "../assets/placeholderHover.png";
-import clickImage from "../assets/placeholderClick.png";
+import idleImage from "../assets/PlaceholderIdle.png";
+import hoverImage from "../assets/PlaceholderHover.png";
+import clickImage from "../assets/PlaceholderClick.png";
 
 function Corkboard({ onClick }) {
   const [boardState, setBoardState] = useState("idle");
@@ -56,18 +61,17 @@ function Corkboard({ onClick }) {
       className="corkboard"
       src={getCurrentImage()}
       alt="Corkboard"
-
       onMouseEnter={() => setBoardState("hover")}
       onMouseLeave={() => setBoardState("idle")}
       onMouseDown={() => setBoardState("click")}
       onMouseUp={() => setBoardState("hover")}
-
       onClick={onClick}
     />
   );
 }
 
 export default Corkboard;
+
 
 
 
@@ -102,9 +106,46 @@ export default MenuCard;
 
 
 
+# firebase
+## auth.js
+import { getAuth } from "firebase/auth";
+
+import app from "./config";
+
+const auth = getAuth(app);
+
+export default auth;
+
+
+
+
+## config.js
+import { initializeApp } from "firebase/app";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAEmn2P_0WFFb-RzejZ3UVEfzVC1fpmto4",
+  authDomain: "gamitivity.firebaseapp.com",
+  projectId: "gamitivity",
+  storageBucket: "gamitivity.firebasestorage.app",
+  messagingSenderId: "1065595999695",
+  appId: "1:1065595999695:web:6b7927a21066f46b792eba",
+};
+
+const app = initializeApp(firebaseConfig);
+
+export default app;
+
+
+
+
+
+
 # pages
 ## MainScene.jsx
 import { useEffect, useState } from "react";
+
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import auth from "../firebase/auth";
 
 import Corkboard from "../components/Corkboard";
 import PauseIcon from "../assets/PauseIcon.png";
@@ -124,14 +165,16 @@ import StopwatchPage from "./StopwatchPage";
 import PomodoroPage from "./PomodoroPage";
 import LoginPage from "./LoginPage";
 import RegisterPage from "./RegisterPage";
+import AccountPage from "./AccountPage";
 
 function MainScene() {
   // PAGE STATE
   const [page, setPage] = useState("main");
   // PROFILE DROPDOWN
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-  // LOGIN STATE
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isProfilePageOpen, setIsProfilePageOpen] = useState(false);
+  // CURRENT USER
+  const [currentUser, setCurrentUser] = useState(null);
 
   // ACTIVE DISPLAY
   const [activeDisplay, setActiveDisplay] = useState("timer");
@@ -158,6 +201,25 @@ function MainScene() {
   const [currentPomodoroSession, setCurrentPomodoroSession] = useState(1);
   const [pomodoroPhase, setPomodoroPhase] = useState("focus");
   const [isPomodoroRunning, setIsPomodoroRunning] = useState(false);
+
+  async function handleLogout() {
+    try {
+      await signOut(auth);
+
+      setIsProfileDropdownOpen(false);
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
+  // FIREBASE AUTH LISTENER
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   // TIMER COUNTDOWN
   useEffect(() => {
@@ -317,7 +379,7 @@ function MainScene() {
       onClick={() => setIsProfileDropdownOpen(false)}
     >
       <>
-        {isLoggedIn ? (
+        {currentUser ? (
           <div
             className="profile-menu-container"
             onClick={(event) => event.stopPropagation()}
@@ -335,13 +397,27 @@ function MainScene() {
 
             {isProfileDropdownOpen && (
               <div className="profile-dropdown">
-                <button className="profile-dropdown-item">My Account</button>
+                <button
+                  className="profile-dropdown-item"
+                  onClick={() => {
+                    setPage("account");
+
+                    setIsProfileDropdownOpen(false);
+                  }}
+                >
+                  My Account
+                </button>
 
                 <button className="profile-dropdown-item">Tutorial</button>
 
                 <button className="profile-dropdown-item">Settings</button>
 
-                <button className="profile-dropdown-item">Logout</button>
+                <button
+                  className="profile-dropdown-item"
+                  onClick={handleLogout}
+                >
+                  Log Out
+                </button>
               </div>
             )}
           </div>
@@ -600,22 +676,19 @@ function MainScene() {
       {page === "login" && <LoginPage setPage={setPage} />}
 
       {page === "register" && <RegisterPage setPage={setPage} />}
+
+      {page === "account" && (
+        <AccountPage
+          setPage={setPage}
+          currentUser={currentUser}
+          handleLogout={handleLogout}
+        />
+      )}
     </div>
   );
 }
 
 export default MainScene;
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -747,6 +820,7 @@ function TimerMenuPage({ setPage }) {
 }
 
 export default TimerMenuPage;
+
 
 
 
@@ -1186,6 +1260,7 @@ function BasicTimerPage({
 }
 
 export default BasicTimerPage;
+
 
 
 
@@ -1669,15 +1744,56 @@ export default PomodoroPage;
 ## LoginPage.jsx
 import { useState } from "react";
 
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
+
+import auth from "../firebase/auth";
+
+const provider = new GoogleAuthProvider();
+
 import PasswordVisible from "../assets/PasswordVisible.png";
 
 import PasswordInvisible from "../assets/PasswordInvisible.png";
 
 function LoginPage({ setPage }) {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function handleLogin() {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+
+      alert("Login berhasil!");
+
+      setPage("main");
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
+  async function handleGoogleLogin() {
+    try {
+      await signInWithPopup(auth, provider);
+
+      alert("Login Google berhasil!");
+
+      setPage("main");
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
   return (
     <>
       <div className="menu-overlay" onClick={() => setPage("main")} />
+
+      <button className="back-button" onClick={() => setPage("main")}>
+        BACK
+      </button>
 
       <div className="login-wrapper">
         <div className="modern-login-panel">
@@ -1691,7 +1807,7 @@ function LoginPage({ setPage }) {
           {/* GOOGLE LOGIN */}
           <p className="modern-google-label">Masuk dengan</p>
 
-          <button className="google-login-button">
+          <button className="google-login-button" onClick={handleGoogleLogin}>
             <span className="google-logo">G</span>
 
             <span>Lanjutkan dengan Google</span>
@@ -1714,6 +1830,8 @@ function LoginPage({ setPage }) {
               type="text"
               placeholder="Masukkan email"
               className="modern-login-input"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
             />
           </div>
 
@@ -1726,6 +1844,8 @@ function LoginPage({ setPage }) {
                 type={showPassword ? "text" : "password"}
                 placeholder="Masukkan password"
                 className="modern-login-input"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
               />
 
               <button
@@ -1753,7 +1873,9 @@ function LoginPage({ setPage }) {
           </div>
 
           {/* LOGIN BUTTON */}
-          <button className="modern-login-button">Masuk</button>
+          <button className="modern-login-button" onClick={handleLogin}>
+            Masuk
+          </button>
 
           {/* REGISTER */}
           <p className="login-register-text">
@@ -1781,8 +1903,18 @@ export default LoginPage;
 
 
 
+
+
+
+
+
+
 ## RegisterPage.jsx
 import { useState } from "react";
+
+import { createUserWithEmailAndPassword } from "firebase/auth";
+
+import auth from "../firebase/auth";
 
 import PasswordVisible from "../assets/PasswordVisible.png";
 
@@ -1790,11 +1922,36 @@ import PasswordInvisible from "../assets/PasswordInvisible.png";
 
 function RegisterPage({ setPage }) {
   const [showPassword, setShowPassword] = useState(false);
-
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  async function handleRegister() {
+    if (password !== confirmPassword) {
+      alert("Password tidak sama");
+      return;
+    }
+
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+
+      alert("Register berhasil!");
+
+      setPage("main");
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
   return (
     <>
       <div className="menu-overlay" onClick={() => setPage("main")} />
+
+      <button className="back-button" onClick={() => setPage("main")}>
+        BACK
+      </button>
 
       <div className="login-wrapper">
         <div className="register-panel">
@@ -1812,6 +1969,8 @@ function RegisterPage({ setPage }) {
               type="text"
               placeholder="Masukkan username"
               className="login-input"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
             />
           </div>
 
@@ -1823,6 +1982,8 @@ function RegisterPage({ setPage }) {
               type="text"
               placeholder="Masukkan email"
               className="login-input"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
             />
           </div>
 
@@ -1835,6 +1996,8 @@ function RegisterPage({ setPage }) {
                 type={showPassword ? "text" : "password"}
                 placeholder="Masukkan password"
                 className="login-input"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
               />
 
               <button
@@ -1859,6 +2022,8 @@ function RegisterPage({ setPage }) {
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Masukkan password lagi"
                 className="login-input"
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
               />
 
               <button
@@ -1876,7 +2041,9 @@ function RegisterPage({ setPage }) {
             </div>
           </div>
 
-          <button className="register-submit-button">Daftar</button>
+          <button className="register-submit-button" onClick={handleRegister}>
+            Daftar
+          </button>
 
           <p className="register-login-text">
             Sudah punya akun?
@@ -1900,6 +2067,67 @@ export default RegisterPage;
 
 
 
+## AccountPage.jsx
+import ProfilePlaceholder from "../assets/ProfilePlaceholder.png";
+
+function AccountPage({ setPage, currentUser, handleLogout }) {
+  return (
+    <div className="accountpage-overlay">
+      <div className="accountpage-container">
+        <button
+          className="accountpage-close-button"
+          onClick={() => setPage("main")}
+        >
+          ✕
+        </button>
+
+        <h1 className="accountpage-title">My Profile</h1>
+
+        <div className="accountpage-header">
+          <img
+            src={ProfilePlaceholder}
+            alt="Profile"
+            className="accountpage-avatar"
+          />
+
+          <div className="accountpage-userinfo">
+            <h2>{currentUser?.displayName || "User"}</h2>
+
+            <p>{currentUser?.email}</p>
+          </div>
+        </div>
+
+        <div className="accountpage-stats">
+          <div className="accountpage-stat-card">
+            <h3>Focus Time</h3>
+
+            <p>0 Hours</p>
+          </div>
+
+          <div className="accountpage-stat-card">
+            <h3>Pomodoro</h3>
+
+            <p>0 Sessions</p>
+          </div>
+
+          <div className="accountpage-stat-card">
+            <h3>Tasks Done</h3>
+
+            <p>0 Tasks</p>
+          </div>
+        </div>
+
+        <button className="accountpage-logout-button" onClick={handleLogout}>
+          Logout
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default AccountPage;
+
+
 
 
 
@@ -1910,9 +2138,13 @@ export default RegisterPage;
   width: 100vw;
   height: 100vh;
 
-  background-color: #d8c7aa;
-
   position: relative;
+
+  background-image: url("../assets/Background.png");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .corkboard {
@@ -2569,14 +2801,13 @@ export default RegisterPage;
 
   box-sizing: border-box;
 
-  padding: 16px 24px;
-
   border-radius: 999px;
   border: 5px solid #f07c7c;
 
   outline: none;
 
-  font-size: 1.2rem;
+  padding: 14px 22px;
+  font-size: 1rem;
 
   margin-bottom: 20px;
 
@@ -2593,7 +2824,7 @@ export default RegisterPage;
 
   color: white;
 
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: bold;
 
   cursor: pointer;
@@ -2617,7 +2848,7 @@ export default RegisterPage;
 
   color: #4ea3ff;
 
-  font-size: 1.2rem;
+  font-size: 1rem;
 
   cursor: pointer;
 }
@@ -2625,7 +2856,7 @@ export default RegisterPage;
 /* REGISTER PAGE */
 
 .register-panel {
-  width: 460px;
+  width: 400px;
 
   display: flex;
   flex-direction: column;
@@ -2633,7 +2864,7 @@ export default RegisterPage;
 }
 
 .register-title {
-  font-size: 3.8rem;
+  font-size: 2.8rem;
 
   color: #d17b00;
 
@@ -2643,15 +2874,15 @@ export default RegisterPage;
 .register-subtitle {
   color: #e0e0e0;
 
-  font-size: 1.2rem;
+  font-size: 1rem;
 
-  margin-bottom: 35px;
+  margin-bottom: 15px;
 }
 
 .register-input-group {
   width: 100%;
 
-  margin-bottom: 2px;
+  margin-bottom: -8px;
 
   display: flex;
   flex-direction: column;
@@ -2663,7 +2894,7 @@ export default RegisterPage;
 
   color: #f0f0f0;
 
-  font-size: 1.2rem;
+  font-size: 1rem;
 
   margin-bottom: 8px;
 }
@@ -2671,9 +2902,10 @@ export default RegisterPage;
 .register-submit-button {
   align-self: center;
 
-  margin-top: 20px;
+  margin-top: 10px;
 
-  padding: 14px 48px;
+  font-size: 1.2rem;
+  padding: 12px 42px;
 
   border: none;
   border-radius: 20px;
@@ -2681,8 +2913,6 @@ export default RegisterPage;
   background-color: #f07c7c;
 
   color: white;
-
-  font-size: 1.5rem;
 
   font-weight: bold;
 
@@ -2706,7 +2936,7 @@ export default RegisterPage;
 
   color: #f0f0f0;
 
-  font-size: 1.2rem;
+  font-size: 1rem;
 
   margin-top: 20px;
 }
@@ -2720,7 +2950,7 @@ export default RegisterPage;
 /* MODERN LOGIN PAGE */
 
 .modern-login-panel {
-  width: 460px;
+  width: 400px;
 
   display: flex;
   flex-direction: column;
@@ -2728,7 +2958,7 @@ export default RegisterPage;
 }
 
 .modern-login-title {
-  font-size: 3.8rem;
+  font-size: 3.2rem;
 
   color: #d17b00;
 
@@ -2738,26 +2968,27 @@ export default RegisterPage;
 .modern-login-subtitle {
   color: #e8e8e8;
 
-  font-size: 1.2rem;
+  font-size: 1rem;
 
   text-align: center;
 
-  margin-bottom: 24px;
+  margin-bottom: 18px;
 }
 
 .modern-google-label {
   color: white;
 
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bold;
 
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .google-login-button {
   width: 100%;
 
-  padding: 14px;
+  padding: 12px;
+  font-size: 1rem;
 
   border: none;
   border-radius: 10px;
@@ -2769,11 +3000,9 @@ export default RegisterPage;
   justify-content: center;
   gap: 14px;
 
-  font-size: 1.2rem;
-
   cursor: pointer;
 
-  margin-bottom: 24px;
+  margin-bottom: 18px;
 
   transition: filter 0.15s ease;
 }
@@ -2801,9 +3030,9 @@ export default RegisterPage;
 
   color: white;
 
-  font-size: 1.2rem;
+  font-size: 1rem;
 
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 }
 
 .divider-line {
@@ -2817,13 +3046,13 @@ export default RegisterPage;
 .modern-input-group {
   width: 100%;
 
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .modern-input-label {
   color: white;
 
-  font-size: 1.2rem;
+  font-size: 1rem;
 
   margin-bottom: 10px;
 }
@@ -2833,7 +3062,8 @@ export default RegisterPage;
 
   box-sizing: border-box;
 
-  padding: 16px 24px;
+  padding: 14px 22px;
+  font-size: 1rem;
 
   border-radius: 999px;
   border: 5px solid #f07c7c;
@@ -2841,8 +3071,6 @@ export default RegisterPage;
   outline: none;
 
   background-color: #f5f5f5;
-
-  font-size: 1.2rem;
 }
 
 .login-options-row {
@@ -2852,8 +3080,8 @@ export default RegisterPage;
   justify-content: space-between;
   align-items: center;
 
-  margin-top: 8px;
-  margin-bottom: 28px;
+  margin-top: 2px;
+  margin-bottom: 18px;
 }
 
 .remember-me {
@@ -2863,7 +3091,7 @@ export default RegisterPage;
 
   color: white;
 
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 .remember-me input {
@@ -2877,14 +3105,12 @@ export default RegisterPage;
 
   color: #ff8b8b;
 
-  font-size: 1.2rem;
+  font-size: 1rem;
 
   cursor: pointer;
 }
 
 .modern-login-button {
-  padding: 14px 48px;
-
   border: none;
   border-radius: 20px;
 
@@ -2892,7 +3118,9 @@ export default RegisterPage;
 
   color: white;
 
-  font-size: 1.5rem;
+  font-size: 1.2rem;
+  padding: 12px 42px;
+
   font-weight: bold;
 
   cursor: pointer;
@@ -2913,7 +3141,7 @@ export default RegisterPage;
 
   color: white;
 
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 .login-register-link {
@@ -2970,6 +3198,180 @@ export default RegisterPage;
 .register-panel .password-visibility-button {
   top: calc(50% - 10px);
 }
+
+/* =========================
+   LOGIN & REGISTER RESPONSIVE
+========================= */
+
+/* Monitor besar */
+@media (min-width: 1600px) {
+  .modern-login-panel,
+  .register-panel {
+    transform: scale(1.1);
+  }
+}
+
+/* Monitor sangat besar */
+@media (min-width: 2200px) {
+  .modern-login-panel,
+  .register-panel {
+    transform: scale(1.5);
+  }
+}
+
+/* Laptop kecil */
+@media (max-width: 900px) {
+  .modern-login-panel,
+  .register-panel {
+    transform: scale(0.95);
+  }
+}
+
+/* Tablet / layar kecil */
+@media (max-width: 700px) {
+  .modern-login-panel,
+  .register-panel {
+    transform: scale(0.85);
+  }
+}
+
+/* HP */
+@media (max-width: 500px) {
+  .modern-login-panel,
+  .register-panel {
+    transform: scale(0.75);
+  }
+}
+
+.accountpage-overlay {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(0, 0, 0, 0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 999;
+}
+
+.accountpage-container {
+  position: relative;
+
+  width: 750px;
+  max-width: 90%;
+
+  background-color: #f8efe5;
+
+  border-radius: 28px;
+
+  padding: 40px;
+}
+
+.accountpage-close-button {
+  position: absolute;
+
+  top: 20px;
+  right: 20px;
+
+  border: none;
+  background: none;
+
+  font-size: 28px;
+
+  cursor: pointer;
+}
+
+.accountpage-title {
+  margin-bottom: 32px;
+
+  font-size: 42px;
+}
+
+.accountpage-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+
+  margin-bottom: 40px;
+}
+
+.accountpage-avatar {
+  width: 120px;
+  height: 120px;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+}
+
+.accountpage-userinfo h2 {
+  margin-bottom: 12px;
+
+  font-size: 32px;
+}
+
+.accountpage-userinfo p {
+  opacity: 0.7;
+
+  font-size: 18px;
+}
+
+.accountpage-stats {
+  display: flex;
+  gap: 20px;
+
+  margin-bottom: 40px;
+}
+
+.accountpage-stat-card {
+  flex: 1;
+
+  background-color: white;
+
+  border-radius: 18px;
+
+  padding: 24px;
+
+  text-align: center;
+}
+
+.accountpage-stat-card h3 {
+  margin-bottom: 12px;
+}
+
+.accountpage-stat-card p {
+  font-size: 24px;
+
+  font-weight: bold;
+}
+
+.accountpage-logout-button {
+  width: 100%;
+
+  padding: 16px;
+
+  border: none;
+
+  border-radius: 16px;
+
+  background-color: #ef7b7b;
+
+  color: white;
+
+  font-size: 20px;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+
 
 
 
