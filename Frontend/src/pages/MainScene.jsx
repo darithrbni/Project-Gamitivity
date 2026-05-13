@@ -17,6 +17,7 @@ import BasicTimerPage from "./BasicTimerPage";
 import StopwatchPage from "./StopwatchPage";
 import PomodoroPage from "./PomodoroPage";
 import LoginPage from "./LoginPage";
+import RegisterPage from "./RegisterPage";
 
 function MainScene() {
   // PAGE STATE
@@ -491,6 +492,8 @@ function MainScene() {
       {page === "tokoMenu" && <TokoMenuPage setPage={setPage} />}
 
       {page === "login" && <LoginPage setPage={setPage} />}
+
+      {page === "register" && <RegisterPage setPage={setPage} />}
     </div>
   );
 }
