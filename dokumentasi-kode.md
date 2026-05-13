@@ -17,7 +17,8 @@ src/
 │   ├── TokoMenuPage.jsx
 │   ├── BasicTimerPage.jsx
 │   ├── StopwatchPage.jsx
-│   └── PomodoroPage.jsx
+│   ├── PomodoroPage.jsx
+│   └── LoginPage.jsx
 │
 ├── styles/
 │   ├── App.css
@@ -120,12 +121,15 @@ import TokoMenuPage from "./TokoMenuPage";
 import BasicTimerPage from "./BasicTimerPage";
 import StopwatchPage from "./StopwatchPage";
 import PomodoroPage from "./PomodoroPage";
+import LoginPage from "./LoginPage";
 
 function MainScene() {
   // PAGE STATE
   const [page, setPage] = useState("main");
   // PROFILE DROPDOWN
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  // LOGIN STATE
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // ACTIVE DISPLAY
   const [activeDisplay, setActiveDisplay] = useState("timer");
@@ -309,33 +313,39 @@ function MainScene() {
     <div className="scene" onClick={() => setIsProfileDropdownOpen(false)}>
       {page === "main" && (
         <>
-          <div
-            className="profile-menu-container"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <button
-              className="profile-button"
-              onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+          {isLoggedIn ? (
+            <div
+              className="profile-menu-container"
+              onClick={(event) => event.stopPropagation()}
             >
-              <img
-                src={ProfilePlaceholder}
-                alt="Profile"
-                className="profile-image"
-              />
+              <button
+                className="profile-button"
+                onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+              >
+                <img
+                  src={ProfilePlaceholder}
+                  alt="Profile"
+                  className="profile-image"
+                />
+              </button>
+
+              {isProfileDropdownOpen && (
+                <div className="profile-dropdown">
+                  <button className="profile-dropdown-item">My Account</button>
+
+                  <button className="profile-dropdown-item">Tutorial</button>
+
+                  <button className="profile-dropdown-item">Settings</button>
+
+                  <button className="profile-dropdown-item">Logout</button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button className="login-button" onClick={() => setPage("login")}>
+              LOGIN
             </button>
-
-            {isProfileDropdownOpen && (
-              <div className="profile-dropdown">
-                <button className="profile-dropdown-item">My Account</button>
-
-                <button className="profile-dropdown-item">Tutorial</button>
-
-                <button className="profile-dropdown-item">Settings</button>
-
-                <button className="profile-dropdown-item">Log Out</button>
-              </div>
-            )}
-          </div>
+          )}
           <Corkboard onClick={() => setPage("menu")} />
 
           <div className="main-timer-container">
@@ -583,11 +593,14 @@ function MainScene() {
       {page === "jadwalMenu" && <JadwalMenuPage setPage={setPage} />}
 
       {page === "tokoMenu" && <TokoMenuPage setPage={setPage} />}
+
+      {page === "login" && <LoginPage setPage={setPage} />}
     </div>
   );
 }
 
 export default MainScene;
+
 
 
 
@@ -1647,7 +1660,8 @@ export default PomodoroPage;
 
 
 
-
+## LoginPage.jsx
+(masih kosong)
 
 
 
@@ -2191,6 +2205,45 @@ export default PomodoroPage;
 
 .profile-dropdown-item:hover {
   background-color: #f3f3f3;
+}
+
+/* LOGIN BUTTON */
+
+.login-button {
+  position: absolute;
+
+  top: 20px;
+  right: 20px;
+
+  z-index: 100;
+
+  padding: 14px 28px;
+
+  border: none;
+  border-radius: 18px;
+
+  background-color: #f07c7c;
+
+  color: white;
+
+  font-size: 1.1rem;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition:
+    filter 0.15s ease,
+    transform 0.05s ease;
+}
+
+.login-button:hover {
+  filter: brightness(0.94);
+}
+
+.login-button:active {
+  filter: brightness(0.82);
+
+  transform: scale(0.97);
 }
 
 

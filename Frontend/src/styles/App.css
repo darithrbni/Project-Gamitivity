@@ -535,3 +535,42 @@
 .profile-dropdown-item:hover {
   background-color: #f3f3f3;
 }
+
+/* LOGIN BUTTON */
+
+.login-button {
+  position: absolute;
+
+  top: 20px;
+  right: 20px;
+
+  z-index: 100;
+
+  padding: 14px 28px;
+
+  border: none;
+  border-radius: 18px;
+
+  background-color: #f07c7c;
+
+  color: white;
+
+  font-size: 1.1rem;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition:
+    filter 0.15s ease,
+    transform 0.05s ease;
+}
+
+.login-button:hover {
+  filter: brightness(0.94);
+}
+
+.login-button:active {
+  filter: brightness(0.82);
+
+  transform: scale(0.97);
+}

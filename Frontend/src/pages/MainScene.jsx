@@ -16,12 +16,15 @@ import TokoMenuPage from "./TokoMenuPage";
 import BasicTimerPage from "./BasicTimerPage";
 import StopwatchPage from "./StopwatchPage";
 import PomodoroPage from "./PomodoroPage";
+import LoginPage from "./LoginPage";
 
 function MainScene() {
   // PAGE STATE
   const [page, setPage] = useState("main");
   // PROFILE DROPDOWN
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  // LOGIN STATE
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // ACTIVE DISPLAY
   const [activeDisplay, setActiveDisplay] = useState("timer");
@@ -205,33 +208,39 @@ function MainScene() {
     <div className="scene" onClick={() => setIsProfileDropdownOpen(false)}>
       {page === "main" && (
         <>
-          <div
-            className="profile-menu-container"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <button
-              className="profile-button"
-              onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+          {isLoggedIn ? (
+            <div
+              className="profile-menu-container"
+              onClick={(event) => event.stopPropagation()}
             >
-              <img
-                src={ProfilePlaceholder}
-                alt="Profile"
-                className="profile-image"
-              />
+              <button
+                className="profile-button"
+                onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+              >
+                <img
+                  src={ProfilePlaceholder}
+                  alt="Profile"
+                  className="profile-image"
+                />
+              </button>
+
+              {isProfileDropdownOpen && (
+                <div className="profile-dropdown">
+                  <button className="profile-dropdown-item">My Account</button>
+
+                  <button className="profile-dropdown-item">Tutorial</button>
+
+                  <button className="profile-dropdown-item">Settings</button>
+
+                  <button className="profile-dropdown-item">Logout</button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button className="login-button" onClick={() => setPage("login")}>
+              LOGIN
             </button>
-
-            {isProfileDropdownOpen && (
-              <div className="profile-dropdown">
-                <button className="profile-dropdown-item">My Account</button>
-
-                <button className="profile-dropdown-item">Tutorial</button>
-
-                <button className="profile-dropdown-item">Settings</button>
-
-                <button className="profile-dropdown-item">Log Out</button>
-              </div>
-            )}
-          </div>
+          )}
           <Corkboard onClick={() => setPage("menu")} />
 
           <div className="main-timer-container">
@@ -479,6 +488,8 @@ function MainScene() {
       {page === "jadwalMenu" && <JadwalMenuPage setPage={setPage} />}
 
       {page === "tokoMenu" && <TokoMenuPage setPage={setPage} />}
+
+      {page === "login" && <LoginPage setPage={setPage} />}
     </div>
   );
 }
