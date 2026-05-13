@@ -37,6 +37,10 @@ function RegisterPage({ setPage }) {
     <>
       <div className="menu-overlay" onClick={() => setPage("main")} />
 
+      <button className="back-button" onClick={() => setPage("main")}>
+        BACK
+      </button>
+
       <div className="login-wrapper">
         <div className="register-panel">
           <h1 className="register-title">REGISTER</h1>

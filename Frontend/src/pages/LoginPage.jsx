@@ -1,8 +1,14 @@
 import { useState } from "react";
 
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
 
 import auth from "../firebase/auth";
+
+const provider = new GoogleAuthProvider();
 
 import PasswordVisible from "../assets/PasswordVisible.png";
 
@@ -25,9 +31,25 @@ function LoginPage({ setPage }) {
     }
   }
 
+  async function handleGoogleLogin() {
+    try {
+      await signInWithPopup(auth, provider);
+
+      alert("Login Google berhasil!");
+
+      setPage("main");
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
   return (
     <>
       <div className="menu-overlay" onClick={() => setPage("main")} />
+
+      <button className="back-button" onClick={() => setPage("main")}>
+        BACK
+      </button>
 
       <div className="login-wrapper">
         <div className="modern-login-panel">
@@ -41,7 +63,7 @@ function LoginPage({ setPage }) {
           {/* GOOGLE LOGIN */}
           <p className="modern-google-label">Masuk dengan</p>
 
-          <button className="google-login-button">
+          <button className="google-login-button" onClick={handleGoogleLogin}>
             <span className="google-logo">G</span>
 
             <span>Lanjutkan dengan Google</span>
