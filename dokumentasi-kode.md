@@ -18,7 +18,8 @@ src/
 │   ├── BasicTimerPage.jsx
 │   ├── StopwatchPage.jsx
 │   ├── PomodoroPage.jsx
-│   └── LoginPage.jsx
+│   ├── LoginPage.jsx
+│   └── RegisterPage.jsx
 │
 ├── styles/
 │   ├── App.css
@@ -122,6 +123,7 @@ import BasicTimerPage from "./BasicTimerPage";
 import StopwatchPage from "./StopwatchPage";
 import PomodoroPage from "./PomodoroPage";
 import LoginPage from "./LoginPage";
+import RegisterPage from "./RegisterPage";
 
 function MainScene() {
   // PAGE STATE
@@ -596,11 +598,14 @@ function MainScene() {
       {page === "tokoMenu" && <TokoMenuPage setPage={setPage} />}
 
       {page === "login" && <LoginPage setPage={setPage} />}
+
+      {page === "register" && <RegisterPage setPage={setPage} />}
     </div>
   );
 }
 
 export default MainScene;
+
 
 
 
@@ -1662,18 +1667,106 @@ export default PomodoroPage;
 
 
 ## LoginPage.jsx
+import { useState } from "react";
+
+import PasswordVisible from "../assets/PasswordVisible.png";
+
+import PasswordInvisible from "../assets/PasswordInvisible.png";
+
 function LoginPage({ setPage }) {
+  const [showPassword, setShowPassword] = useState(false);
   return (
     <>
-      <div className="menu-overlay"></div>
+      <div className="menu-overlay" onClick={() => setPage("main")} />
 
-      <div className="menu-wrapper">
-        <div className="timer-panel">
-          <button className="back-button" onClick={() => setPage("main")}>
-            BACK
+      <div className="login-wrapper">
+        <div className="modern-login-panel">
+          {/* TITLE */}
+          <h1 className="modern-login-title">LOG IN</h1>
+
+          <p className="modern-login-subtitle">
+            Selamat datang! Silakan masuk untuk melanjutkan.
+          </p>
+
+          {/* GOOGLE LOGIN */}
+          <p className="modern-google-label">Masuk dengan</p>
+
+          <button className="google-login-button">
+            <span className="google-logo">G</span>
+
+            <span>Lanjutkan dengan Google</span>
           </button>
 
-          <h1>LOGIN PAGE</h1>
+          {/* DIVIDER */}
+          <div className="login-divider">
+            <div className="divider-line"></div>
+
+            <p>atau</p>
+
+            <div className="divider-line"></div>
+          </div>
+
+          {/* EMAIL */}
+          <div className="modern-input-group">
+            <p className="modern-input-label">Email</p>
+
+            <input
+              type="text"
+              placeholder="Masukkan email"
+              className="modern-login-input"
+            />
+          </div>
+
+          {/* PASSWORD */}
+          <div className="modern-input-group">
+            <p className="modern-input-label">Password</p>
+
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Masukkan password"
+                className="modern-login-input"
+              />
+
+              <button
+                className="password-visibility-button"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                <img
+                  src={showPassword ? PasswordVisible : PasswordInvisible}
+                  alt="toggle password"
+                  className="password-visibility-icon"
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* REMEMBER + FORGOT */}
+          <div className="login-options-row">
+            <label className="remember-me">
+              <input type="checkbox" />
+
+              <span>Ingat saya</span>
+            </label>
+
+            <button className="forgot-password-button">Lupa password?</button>
+          </div>
+
+          {/* LOGIN BUTTON */}
+          <button className="modern-login-button">Masuk</button>
+
+          {/* REGISTER */}
+          <p className="login-register-text">
+            Belum punya akun?
+            <span
+              className="login-register-link"
+              onClick={() => setPage("register")}
+            >
+              {" "}
+              Buat akun
+            </span>
+            .
+          </p>
         </div>
       </div>
     </>
@@ -1681,6 +1774,130 @@ function LoginPage({ setPage }) {
 }
 
 export default LoginPage;
+
+
+
+
+
+
+
+## RegisterPage.jsx
+import { useState } from "react";
+
+import PasswordVisible from "../assets/PasswordVisible.png";
+
+import PasswordInvisible from "../assets/PasswordInvisible.png";
+
+function RegisterPage({ setPage }) {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  return (
+    <>
+      <div className="menu-overlay" onClick={() => setPage("main")} />
+
+      <div className="login-wrapper">
+        <div className="register-panel">
+          <h1 className="register-title">REGISTER</h1>
+
+          <p className="register-subtitle">
+            Buat akun baru untuk memulai perjalananmu.
+          </p>
+
+          {/* USERNAME */}
+          <div className="register-input-group">
+            <p className="register-label">Username</p>
+
+            <input
+              type="text"
+              placeholder="Masukkan username"
+              className="login-input"
+            />
+          </div>
+
+          {/* EMAIL */}
+          <div className="register-input-group">
+            <p className="register-label">Email</p>
+
+            <input
+              type="text"
+              placeholder="Masukkan email"
+              className="login-input"
+            />
+          </div>
+
+          {/* PASSWORD */}
+          <div className="register-input-group">
+            <p className="register-label">Password</p>
+
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Masukkan password"
+                className="login-input"
+              />
+
+              <button
+                className="password-visibility-button"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                <img
+                  src={showPassword ? PasswordVisible : PasswordInvisible}
+                  alt="toggle password"
+                  className="password-visibility-icon"
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* CONFIRM PASSWORD */}
+          <div className="register-input-group">
+            <p className="register-label">Konfirmasi Password</p>
+
+            <div className="password-input-wrapper">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Masukkan password lagi"
+                className="login-input"
+              />
+
+              <button
+                className="password-visibility-button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                <img
+                  src={
+                    showConfirmPassword ? PasswordVisible : PasswordInvisible
+                  }
+                  alt="toggle password"
+                  className="password-visibility-icon"
+                />
+              </button>
+            </div>
+          </div>
+
+          <button className="register-submit-button">Daftar</button>
+
+          <p className="register-login-text">
+            Sudah punya akun?
+            <span
+              className="register-login-link"
+              onClick={() => setPage("login")}
+            >
+              {" "}
+              Masuk di sini
+            </span>
+            .
+          </p>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default RegisterPage;
+
+
 
 
 
@@ -2286,8 +2503,473 @@ export default LoginPage;
   pointer-events: none;
 }
 
+/* LOGIN PAGE */
 
+.login-wrapper {
+  position: absolute;
+  inset: 0;
 
+  z-index: 20;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-panel {
+  width: 420px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-title {
+  font-size: 3.8rem;
+  color: #d17b00;
+
+  margin-bottom: 20px;
+}
+
+.login-subtitle {
+  color: #ddd;
+
+  font-size: 1.1rem;
+
+  margin-bottom: 20px;
+}
+
+.social-login-row {
+  display: flex;
+  gap: 20px;
+
+  margin-bottom: 30px;
+}
+
+.social-button {
+  width: 48px;
+  height: 48px;
+
+  border-radius: 50%;
+  border: none;
+
+  font-size: 1.5rem;
+
+  cursor: pointer;
+
+  transition: filter 0.15s ease;
+}
+
+.social-button:hover {
+  filter: brightness(0.9);
+}
+
+.login-input {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 16px 24px;
+
+  border-radius: 999px;
+  border: 5px solid #f07c7c;
+
+  outline: none;
+
+  font-size: 1.2rem;
+
+  margin-bottom: 20px;
+
+  background-color: #f5f5f5;
+}
+
+.login-submit-button {
+  padding: 12px 28px;
+
+  border: none;
+  border-radius: 20px;
+
+  background-color: #f07c7c;
+
+  color: white;
+
+  font-size: 1.4rem;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: filter 0.15s ease;
+}
+
+.login-submit-button:hover {
+  filter: brightness(1.1);
+}
+
+.login-submit-button:active {
+  filter: brightness(0.9);
+}
+
+.register-link {
+  margin-top: 16px;
+
+  border: none;
+  background: transparent;
+
+  color: #4ea3ff;
+
+  font-size: 1.2rem;
+
+  cursor: pointer;
+}
+
+/* REGISTER PAGE */
+
+.register-panel {
+  width: 460px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.register-title {
+  font-size: 3.8rem;
+
+  color: #d17b00;
+
+  margin-bottom: 10px;
+}
+
+.register-subtitle {
+  color: #e0e0e0;
+
+  font-size: 1.2rem;
+
+  margin-bottom: 35px;
+}
+
+.register-input-group {
+  width: 100%;
+
+  margin-bottom: 2px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.register-label {
+  width: 100%;
+
+  color: #f0f0f0;
+
+  font-size: 1.2rem;
+
+  margin-bottom: 8px;
+}
+
+.register-submit-button {
+  align-self: center;
+
+  margin-top: 20px;
+
+  padding: 14px 48px;
+
+  border: none;
+  border-radius: 20px;
+
+  background-color: #f07c7c;
+
+  color: white;
+
+  font-size: 1.5rem;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: filter 0.15s ease;
+}
+
+.register-submit-button:hover {
+  filter: brightness(0.95);
+}
+
+.register-submit-button:active {
+  filter: brightness(0.85);
+}
+
+.register-login-text {
+  width: 100%;
+
+  text-align: center;
+
+  color: #f0f0f0;
+
+  font-size: 1.2rem;
+
+  margin-top: 20px;
+}
+
+.register-login-link {
+  color: #ff7f7f;
+
+  cursor: pointer;
+}
+
+/* MODERN LOGIN PAGE */
+
+.modern-login-panel {
+  width: 460px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modern-login-title {
+  font-size: 3.8rem;
+
+  color: #d17b00;
+
+  margin-bottom: 12px;
+}
+
+.modern-login-subtitle {
+  color: #e8e8e8;
+
+  font-size: 1.2rem;
+
+  text-align: center;
+
+  margin-bottom: 24px;
+}
+
+.modern-google-label {
+  color: white;
+
+  font-size: 1.2rem;
+  font-weight: bold;
+
+  margin-bottom: 12px;
+}
+
+.google-login-button {
+  width: 100%;
+
+  padding: 14px;
+
+  border: none;
+  border-radius: 10px;
+
+  background-color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+
+  font-size: 1.2rem;
+
+  cursor: pointer;
+
+  margin-bottom: 24px;
+
+  transition: filter 0.15s ease;
+}
+
+.google-login-button:hover {
+  filter: brightness(0.95);
+}
+
+.google-login-button:active {
+  filter: brightness(0.9);
+}
+
+.google-logo {
+  font-weight: bold;
+
+  color: #4285f4;
+}
+
+.login-divider {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  color: white;
+
+  font-size: 1.2rem;
+
+  margin-bottom: 30px;
+}
+
+.divider-line {
+  flex: 1;
+
+  height: 2px;
+
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.modern-input-group {
+  width: 100%;
+
+  margin-bottom: 20px;
+}
+
+.modern-input-label {
+  color: white;
+
+  font-size: 1.2rem;
+
+  margin-bottom: 10px;
+}
+
+.modern-login-input {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 16px 24px;
+
+  border-radius: 999px;
+  border: 5px solid #f07c7c;
+
+  outline: none;
+
+  background-color: #f5f5f5;
+
+  font-size: 1.2rem;
+}
+
+.login-options-row {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 8px;
+  margin-bottom: 28px;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  color: white;
+
+  font-size: 1.2rem;
+}
+
+.remember-me input {
+  width: 22px;
+  height: 22px;
+}
+
+.forgot-password-button {
+  border: none;
+  background: transparent;
+
+  color: #ff8b8b;
+
+  font-size: 1.2rem;
+
+  cursor: pointer;
+}
+
+.modern-login-button {
+  padding: 14px 48px;
+
+  border: none;
+  border-radius: 20px;
+
+  background-color: #f07c7c;
+
+  color: white;
+
+  font-size: 1.5rem;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: filter 0.15s ease;
+}
+
+.modern-login-button:hover {
+  filter: brightness(0.95);
+}
+
+.modern-login-button:active {
+  filter: brightness(0.85);
+}
+
+.login-register-text {
+  margin-top: 20px;
+
+  color: white;
+
+  font-size: 1.2rem;
+}
+
+.login-register-link {
+  color: #4ea3ff;
+
+  cursor: pointer;
+}
+
+/* PASSWORD VISIBILITY */
+
+.password-input-wrapper {
+  position: relative;
+
+  width: 100%;
+}
+
+.password-visibility-button {
+  position: absolute;
+
+  top: 50%;
+  right: 28px;
+
+  transform: translateY(-50%);
+
+  border: none;
+  background: transparent;
+
+  padding: 0;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-visibility-icon {
+  width: 28px;
+  height: 28px;
+
+  object-fit: contain;
+
+  opacity: 0.7;
+
+  transition: opacity 0.15s ease;
+}
+
+.password-visibility-button:hover .password-visibility-icon {
+  opacity: 1;
+}
+
+/* REGISTER PASSWORD ICON FIX */
+
+.register-panel .password-visibility-button {
+  top: calc(50% - 10px);
+}
 
 
 
