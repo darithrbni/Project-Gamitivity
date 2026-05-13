@@ -1,11 +1,30 @@
 import { useState } from "react";
 
+import { signInWithEmailAndPassword } from "firebase/auth";
+
+import auth from "../firebase/auth";
+
 import PasswordVisible from "../assets/PasswordVisible.png";
 
 import PasswordInvisible from "../assets/PasswordInvisible.png";
 
 function LoginPage({ setPage }) {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function handleLogin() {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+
+      alert("Login berhasil!");
+
+      setPage("main");
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
   return (
     <>
       <div className="menu-overlay" onClick={() => setPage("main")} />
@@ -45,6 +64,8 @@ function LoginPage({ setPage }) {
               type="text"
               placeholder="Masukkan email"
               className="modern-login-input"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
             />
           </div>
 
@@ -57,6 +78,8 @@ function LoginPage({ setPage }) {
                 type={showPassword ? "text" : "password"}
                 placeholder="Masukkan password"
                 className="modern-login-input"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
               />
 
               <button
@@ -84,7 +107,9 @@ function LoginPage({ setPage }) {
           </div>
 
           {/* LOGIN BUTTON */}
-          <button className="modern-login-button">Masuk</button>
+          <button className="modern-login-button" onClick={handleLogin}>
+            Masuk
+          </button>
 
           {/* REGISTER */}
           <p className="login-register-text">
