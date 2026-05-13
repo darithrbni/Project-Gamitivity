@@ -76,6 +76,8 @@
   background-color: rgba(0, 0, 0, 0.55);
 
   z-index: 10;
+
+  backdrop-filter: blur(2px);
 }
 
 .menu-wrapper {
@@ -460,7 +462,7 @@
   top: 20px;
   right: 20px;
 
-  z-index: 100;
+  z-index: 5;
 }
 
 .profile-button {
@@ -544,7 +546,7 @@
   top: 20px;
   right: 20px;
 
-  z-index: 100;
+  z-index: 5;
 
   padding: 14px 28px;
 
@@ -573,4 +575,22 @@
   filter: brightness(0.82);
 
   transform: scale(0.97);
+}
+
+/* MODAL OPEN */
+
+.modal-open .corkboard {
+  pointer-events: none;
+}
+
+.modal-open .main-timer-container {
+  pointer-events: none;
+}
+
+.modal-open .login-button {
+  pointer-events: none;
+}
+
+.modal-open .profile-menu-container {
+  pointer-events: none;
 }

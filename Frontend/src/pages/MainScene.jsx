@@ -205,209 +205,210 @@ function MainScene() {
   ]);
 
   return (
-    <div className="scene" onClick={() => setIsProfileDropdownOpen(false)}>
-      {page === "main" && (
-        <>
-          {isLoggedIn ? (
-            <div
-              className="profile-menu-container"
-              onClick={(event) => event.stopPropagation()}
+    <div
+      className={page === "main" ? "scene" : "scene modal-open"}
+      onClick={() => setIsProfileDropdownOpen(false)}
+    >
+      <>
+        {isLoggedIn ? (
+          <div
+            className="profile-menu-container"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              className="profile-button"
+              onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
             >
-              <button
-                className="profile-button"
-                onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-              >
-                <img
-                  src={ProfilePlaceholder}
-                  alt="Profile"
-                  className="profile-image"
-                />
-              </button>
-
-              {isProfileDropdownOpen && (
-                <div className="profile-dropdown">
-                  <button className="profile-dropdown-item">My Account</button>
-
-                  <button className="profile-dropdown-item">Tutorial</button>
-
-                  <button className="profile-dropdown-item">Settings</button>
-
-                  <button className="profile-dropdown-item">Logout</button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <button className="login-button" onClick={() => setPage("login")}>
-              LOGIN
+              <img
+                src={ProfilePlaceholder}
+                alt="Profile"
+                className="profile-image"
+              />
             </button>
-          )}
-          <Corkboard onClick={() => setPage("menu")} />
 
-          <div className="main-timer-container">
-            <div className="main-timer-display">
-              {activeDisplay === "timer" && (
-                <>
-                  <div>
-                    {String(hours).padStart(2, "0")}:
-                    {String(minutes).padStart(2, "0")}:
-                    {String(seconds).padStart(2, "0")}
-                  </div>
+            {isProfileDropdownOpen && (
+              <div className="profile-dropdown">
+                <button className="profile-dropdown-item">My Account</button>
 
-                  {(hours > 0 || minutes > 0 || seconds > 0) && (
-                    <div className="pomodoro-phase-text">Basic Timer</div>
-                  )}
-                </>
-              )}
+                <button className="profile-dropdown-item">Tutorial</button>
 
-              {activeDisplay === "stopwatch" && (
-                <>
-                  <div>
-                    {String(stopwatchHours).padStart(2, "0")}:
-                    {String(stopwatchMinutes).padStart(2, "0")}:
-                    {String(stopwatchSeconds).padStart(2, "0")}
-                  </div>
+                <button className="profile-dropdown-item">Settings</button>
 
-                  {(stopwatchHours > 0 ||
-                    stopwatchMinutes > 0 ||
-                    stopwatchSeconds > 0) && (
-                    <div className="pomodoro-phase-text">Stopwatch</div>
-                  )}
-                </>
-              )}
-
-              {activeDisplay === "pomodoro" && (
-                <>
-                  <div>
-                    {String(pomodoroHours).padStart(2, "0")}:
-                    {String(pomodoroMinutes).padStart(2, "0")}:
-                    {String(pomodoroSeconds).padStart(2, "0")}
-                  </div>
-                  {(pomodoroHours > 0 ||
-                    pomodoroMinutes > 0 ||
-                    pomodoroSeconds > 0) && (
-                    <div className="pomodoro-phase-text">
-                      {pomodoroPhase === "focus" ? "Focus Time" : "Break Time"}
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-            {/* TIMER CONTROLS */}
-            {activeDisplay === "timer" &&
-              (hours > 0 || minutes > 0 || seconds > 0) && (
-                <>
-                  <button
-                    className="timer-control-button"
-                    onClick={() => setIsTimerRunning(!isTimerRunning)}
-                  >
-                    <img
-                      src={isTimerRunning ? PauseIcon : ResumeIcon}
-                      alt="Timer Control"
-                      className="timer-control-icon"
-                    />
-                  </button>
-
-                  <button
-                    className="timer-control-button"
-                    onClick={() => {
-                      setHours(0);
-                      setMinutes(0);
-                      setSeconds(0);
-
-                      setIsTimerRunning(false);
-                    }}
-                  >
-                    <img
-                      src={StopIcon}
-                      alt="Stop"
-                      className="timer-control-icon"
-                    />
-                  </button>
-                </>
-              )}
-
-            {/* STOPWATCH CONTROLS */}
-            {activeDisplay === "stopwatch" &&
-              (stopwatchHours > 0 ||
-                stopwatchMinutes > 0 ||
-                stopwatchSeconds > 0) && (
-                <>
-                  <button
-                    className="timer-control-button"
-                    onClick={() => setIsStopwatchRunning(!isStopwatchRunning)}
-                  >
-                    <img
-                      src={isStopwatchRunning ? PauseIcon : ResumeIcon}
-                      alt="Stopwatch Control"
-                      className="timer-control-icon"
-                    />
-                  </button>
-
-                  <button
-                    className="timer-control-button"
-                    onClick={() => {
-                      setIsStopwatchRunning(false);
-
-                      setStopwatchHours(0);
-                      setStopwatchMinutes(0);
-                      setStopwatchSeconds(0);
-                    }}
-                  >
-                    <img
-                      src={StopIcon}
-                      alt="Stop"
-                      className="timer-control-icon"
-                    />
-                  </button>
-                </>
-              )}
-
-            {/* POMODORO CONTROLS */}
-            {activeDisplay === "pomodoro" &&
-              (pomodoroHours > 0 ||
-                pomodoroMinutes > 0 ||
-                pomodoroSeconds > 0) && (
-                <>
-                  <button
-                    className="timer-control-button"
-                    onClick={() => setIsPomodoroRunning(!isPomodoroRunning)}
-                  >
-                    <img
-                      src={isPomodoroRunning ? PauseIcon : ResumeIcon}
-                      alt="Pomodoro Control"
-                      className="timer-control-icon"
-                    />
-                  </button>
-
-                  <button
-                    className="timer-control-button"
-                    onClick={() => {
-                      // STOP
-                      setIsPomodoroRunning(false);
-
-                      // RESET TIME
-                      setPomodoroHours(0);
-                      setPomodoroMinutes(0);
-                      setPomodoroSeconds(0);
-
-                      // RESET SESSION
-                      setCurrentPomodoroSession(1);
-
-                      // RESET PHASE
-                      setPomodoroPhase("focus");
-                    }}
-                  >
-                    <img
-                      src={StopIcon}
-                      alt="Stop"
-                      className="timer-control-icon"
-                    />
-                  </button>
-                </>
-              )}
+                <button className="profile-dropdown-item">Logout</button>
+              </div>
+            )}
           </div>
-        </>
-      )}
+        ) : (
+          <button className="login-button" onClick={() => setPage("login")}>
+            LOGIN
+          </button>
+        )}
+        <Corkboard onClick={() => setPage("menu")} />
+
+        <div className="main-timer-container">
+          <div className="main-timer-display">
+            {activeDisplay === "timer" && (
+              <>
+                <div>
+                  {String(hours).padStart(2, "0")}:
+                  {String(minutes).padStart(2, "0")}:
+                  {String(seconds).padStart(2, "0")}
+                </div>
+
+                {(hours > 0 || minutes > 0 || seconds > 0) && (
+                  <div className="pomodoro-phase-text">Basic Timer</div>
+                )}
+              </>
+            )}
+
+            {activeDisplay === "stopwatch" && (
+              <>
+                <div>
+                  {String(stopwatchHours).padStart(2, "0")}:
+                  {String(stopwatchMinutes).padStart(2, "0")}:
+                  {String(stopwatchSeconds).padStart(2, "0")}
+                </div>
+
+                {(stopwatchHours > 0 ||
+                  stopwatchMinutes > 0 ||
+                  stopwatchSeconds > 0) && (
+                  <div className="pomodoro-phase-text">Stopwatch</div>
+                )}
+              </>
+            )}
+
+            {activeDisplay === "pomodoro" && (
+              <>
+                <div>
+                  {String(pomodoroHours).padStart(2, "0")}:
+                  {String(pomodoroMinutes).padStart(2, "0")}:
+                  {String(pomodoroSeconds).padStart(2, "0")}
+                </div>
+                {(pomodoroHours > 0 ||
+                  pomodoroMinutes > 0 ||
+                  pomodoroSeconds > 0) && (
+                  <div className="pomodoro-phase-text">
+                    {pomodoroPhase === "focus" ? "Focus Time" : "Break Time"}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+          {/* TIMER CONTROLS */}
+          {activeDisplay === "timer" &&
+            (hours > 0 || minutes > 0 || seconds > 0) && (
+              <>
+                <button
+                  className="timer-control-button"
+                  onClick={() => setIsTimerRunning(!isTimerRunning)}
+                >
+                  <img
+                    src={isTimerRunning ? PauseIcon : ResumeIcon}
+                    alt="Timer Control"
+                    className="timer-control-icon"
+                  />
+                </button>
+
+                <button
+                  className="timer-control-button"
+                  onClick={() => {
+                    setHours(0);
+                    setMinutes(0);
+                    setSeconds(0);
+
+                    setIsTimerRunning(false);
+                  }}
+                >
+                  <img
+                    src={StopIcon}
+                    alt="Stop"
+                    className="timer-control-icon"
+                  />
+                </button>
+              </>
+            )}
+
+          {/* STOPWATCH CONTROLS */}
+          {activeDisplay === "stopwatch" &&
+            (stopwatchHours > 0 ||
+              stopwatchMinutes > 0 ||
+              stopwatchSeconds > 0) && (
+              <>
+                <button
+                  className="timer-control-button"
+                  onClick={() => setIsStopwatchRunning(!isStopwatchRunning)}
+                >
+                  <img
+                    src={isStopwatchRunning ? PauseIcon : ResumeIcon}
+                    alt="Stopwatch Control"
+                    className="timer-control-icon"
+                  />
+                </button>
+
+                <button
+                  className="timer-control-button"
+                  onClick={() => {
+                    setIsStopwatchRunning(false);
+
+                    setStopwatchHours(0);
+                    setStopwatchMinutes(0);
+                    setStopwatchSeconds(0);
+                  }}
+                >
+                  <img
+                    src={StopIcon}
+                    alt="Stop"
+                    className="timer-control-icon"
+                  />
+                </button>
+              </>
+            )}
+
+          {/* POMODORO CONTROLS */}
+          {activeDisplay === "pomodoro" &&
+            (pomodoroHours > 0 ||
+              pomodoroMinutes > 0 ||
+              pomodoroSeconds > 0) && (
+              <>
+                <button
+                  className="timer-control-button"
+                  onClick={() => setIsPomodoroRunning(!isPomodoroRunning)}
+                >
+                  <img
+                    src={isPomodoroRunning ? PauseIcon : ResumeIcon}
+                    alt="Pomodoro Control"
+                    className="timer-control-icon"
+                  />
+                </button>
+
+                <button
+                  className="timer-control-button"
+                  onClick={() => {
+                    // STOP
+                    setIsPomodoroRunning(false);
+
+                    // RESET TIME
+                    setPomodoroHours(0);
+                    setPomodoroMinutes(0);
+                    setPomodoroSeconds(0);
+
+                    // RESET SESSION
+                    setCurrentPomodoroSession(1);
+
+                    // RESET PHASE
+                    setPomodoroPhase("focus");
+                  }}
+                >
+                  <img
+                    src={StopIcon}
+                    alt="Stop"
+                    className="timer-control-icon"
+                  />
+                </button>
+              </>
+            )}
+        </div>
+      </>
 
       {page === "menu" && <MenuPage setPage={setPage} />}
 
