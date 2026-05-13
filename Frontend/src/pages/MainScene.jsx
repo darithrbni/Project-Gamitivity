@@ -4,6 +4,7 @@ import Corkboard from "../components/Corkboard";
 import PauseIcon from "../assets/PauseIcon.png";
 import ResumeIcon from "../assets/ResumeIcon.png";
 import StopIcon from "../assets/StopIcon.png";
+import ProfilePlaceholder from "../assets/ProfilePlaceholder.png";
 
 import MenuPage from "./MenuPage";
 import TimerMenuPage from "./TimerMenuPage";
@@ -19,6 +20,8 @@ import PomodoroPage from "./PomodoroPage";
 function MainScene() {
   // PAGE STATE
   const [page, setPage] = useState("main");
+  // PROFILE DROPDOWN
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   // ACTIVE DISPLAY
   const [activeDisplay, setActiveDisplay] = useState("timer");
@@ -199,9 +202,36 @@ function MainScene() {
   ]);
 
   return (
-    <div className="scene">
+    <div className="scene" onClick={() => setIsProfileDropdownOpen(false)}>
       {page === "main" && (
         <>
+          <div
+            className="profile-menu-container"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              className="profile-button"
+              onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+            >
+              <img
+                src={ProfilePlaceholder}
+                alt="Profile"
+                className="profile-image"
+              />
+            </button>
+
+            {isProfileDropdownOpen && (
+              <div className="profile-dropdown">
+                <button className="profile-dropdown-item">My Account</button>
+
+                <button className="profile-dropdown-item">Tutorial</button>
+
+                <button className="profile-dropdown-item">Settings</button>
+
+                <button className="profile-dropdown-item">Log Out</button>
+              </div>
+            )}
+          </div>
           <Corkboard onClick={() => setPage("menu")} />
 
           <div className="main-timer-container">

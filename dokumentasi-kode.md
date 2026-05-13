@@ -108,6 +108,7 @@ import Corkboard from "../components/Corkboard";
 import PauseIcon from "../assets/PauseIcon.png";
 import ResumeIcon from "../assets/ResumeIcon.png";
 import StopIcon from "../assets/StopIcon.png";
+import ProfilePlaceholder from "../assets/ProfilePlaceholder.png";
 
 import MenuPage from "./MenuPage";
 import TimerMenuPage from "./TimerMenuPage";
@@ -123,6 +124,8 @@ import PomodoroPage from "./PomodoroPage";
 function MainScene() {
   // PAGE STATE
   const [page, setPage] = useState("main");
+  // PROFILE DROPDOWN
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   // ACTIVE DISPLAY
   const [activeDisplay, setActiveDisplay] = useState("timer");
@@ -303,9 +306,36 @@ function MainScene() {
   ]);
 
   return (
-    <div className="scene">
+    <div className="scene" onClick={() => setIsProfileDropdownOpen(false)}>
       {page === "main" && (
         <>
+          <div
+            className="profile-menu-container"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              className="profile-button"
+              onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+            >
+              <img
+                src={ProfilePlaceholder}
+                alt="Profile"
+                className="profile-image"
+              />
+            </button>
+
+            {isProfileDropdownOpen && (
+              <div className="profile-dropdown">
+                <button className="profile-dropdown-item">My Account</button>
+
+                <button className="profile-dropdown-item">Tutorial</button>
+
+                <button className="profile-dropdown-item">Settings</button>
+
+                <button className="profile-dropdown-item">Log Out</button>
+              </div>
+            )}
+          </div>
           <Corkboard onClick={() => setPage("menu")} />
 
           <div className="main-timer-container">
@@ -558,6 +588,7 @@ function MainScene() {
 }
 
 export default MainScene;
+
 
 
 
@@ -2077,6 +2108,91 @@ export default PomodoroPage;
 
   font-weight: bold;
 }
+
+/* PROFILE MENU */
+
+.profile-menu-container {
+  position: absolute;
+
+  top: 20px;
+  right: 20px;
+
+  z-index: 100;
+}
+
+.profile-button {
+  border: none;
+
+  background-color: transparent;
+
+  cursor: pointer;
+
+  padding: 0;
+
+  transition:
+    filter 0.15s ease,
+    transform 0.05s ease;
+}
+
+.profile-button:hover {
+  filter: brightness(0.9);
+}
+
+.profile-button:active {
+  filter: brightness(0.9);
+}
+
+.profile-image {
+  width: 70px;
+  height: 70px;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+}
+
+.profile-dropdown {
+  margin-top: 10px;
+
+  width: 180px;
+
+  background-color: white;
+
+  border-radius: 16px;
+
+  overflow: hidden;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+  display: flex;
+  flex-direction: column;
+
+  position: absolute;
+
+  top: 70px;
+  right: 0;
+}
+
+.profile-dropdown-item {
+  border: none;
+
+  background: white;
+
+  padding: 14px;
+
+  text-align: left;
+
+  font-size: 1rem;
+
+  cursor: pointer;
+
+  transition: background-color 0.15s ease;
+}
+
+.profile-dropdown-item:hover {
+  background-color: #f3f3f3;
+}
+
 
 
 
