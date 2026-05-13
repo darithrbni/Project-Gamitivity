@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import idleImage from "../assets/placeholderIdle.png";
-import hoverImage from "../assets/placeholderHover.png";
-import clickImage from "../assets/placeholderClick.png";
+import idleImage from "../assets/PlaceholderIdle.png";
+import hoverImage from "../assets/PlaceholderHover.png";
+import clickImage from "../assets/PlaceholderClick.png";
 
 function Corkboard({ onClick }) {
   const [boardState, setBoardState] = useState("idle");
@@ -19,12 +19,10 @@ function Corkboard({ onClick }) {
       className="corkboard"
       src={getCurrentImage()}
       alt="Corkboard"
-
       onMouseEnter={() => setBoardState("hover")}
       onMouseLeave={() => setBoardState("idle")}
       onMouseDown={() => setBoardState("click")}
       onMouseUp={() => setBoardState("hover")}
-
       onClick={onClick}
     />
   );
