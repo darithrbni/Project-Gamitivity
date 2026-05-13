@@ -21,12 +21,14 @@ import StopwatchPage from "./StopwatchPage";
 import PomodoroPage from "./PomodoroPage";
 import LoginPage from "./LoginPage";
 import RegisterPage from "./RegisterPage";
+import AccountPage from "./AccountPage";
 
 function MainScene() {
   // PAGE STATE
   const [page, setPage] = useState("main");
   // PROFILE DROPDOWN
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [isProfilePageOpen, setIsProfilePageOpen] = useState(false);
   // CURRENT USER
   const [currentUser, setCurrentUser] = useState(null);
 
@@ -251,7 +253,16 @@ function MainScene() {
 
             {isProfileDropdownOpen && (
               <div className="profile-dropdown">
-                <button className="profile-dropdown-item">My Account</button>
+                <button
+                  className="profile-dropdown-item"
+                  onClick={() => {
+                    setPage("account");
+
+                    setIsProfileDropdownOpen(false);
+                  }}
+                >
+                  My Account
+                </button>
 
                 <button className="profile-dropdown-item">Tutorial</button>
 
@@ -521,6 +532,14 @@ function MainScene() {
       {page === "login" && <LoginPage setPage={setPage} />}
 
       {page === "register" && <RegisterPage setPage={setPage} />}
+
+      {page === "account" && (
+        <AccountPage
+          setPage={setPage}
+          currentUser={currentUser}
+          handleLogout={handleLogout}
+        />
+      )}
     </div>
   );
 }
