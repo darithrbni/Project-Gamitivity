@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 
+import { onAuthStateChanged } from "firebase/auth";
+import auth from "../firebase/auth";
+
 import Corkboard from "../components/Corkboard";
 import PauseIcon from "../assets/PauseIcon.png";
 import ResumeIcon from "../assets/ResumeIcon.png";
@@ -24,8 +27,8 @@ function MainScene() {
   const [page, setPage] = useState("main");
   // PROFILE DROPDOWN
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-  // LOGIN STATE
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // CURRENT USER
+  const [currentUser, setCurrentUser] = useState(null);
 
   // ACTIVE DISPLAY
   const [activeDisplay, setActiveDisplay] = useState("timer");
@@ -52,6 +55,15 @@ function MainScene() {
   const [currentPomodoroSession, setCurrentPomodoroSession] = useState(1);
   const [pomodoroPhase, setPomodoroPhase] = useState("focus");
   const [isPomodoroRunning, setIsPomodoroRunning] = useState(false);
+
+  // FIREBASE AUTH LISTENER
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   // TIMER COUNTDOWN
   useEffect(() => {
@@ -211,7 +223,7 @@ function MainScene() {
       onClick={() => setIsProfileDropdownOpen(false)}
     >
       <>
-        {isLoggedIn ? (
+        {currentUser ? (
           <div
             className="profile-menu-container"
             onClick={(event) => event.stopPropagation()}
