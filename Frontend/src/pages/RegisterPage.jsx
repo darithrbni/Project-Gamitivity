@@ -1,8 +1,11 @@
 import { useState } from "react";
 
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 import auth from "../firebase/auth";
+
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../firebase/config";
 
 import PasswordVisible from "../assets/PasswordVisible.png";
 
@@ -23,7 +26,20 @@ function RegisterPage({ setPage }) {
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+
+      await updateProfile(userCredential.user, {
+        displayName: username,
+      });
+
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        username: username,
+        motto: "Let's study with me!",
+      });
 
       alert("Register berhasil!");
 

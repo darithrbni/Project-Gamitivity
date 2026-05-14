@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import ProfilePlaceholder from "../assets/ProfilePlaceholder.png";
 
@@ -15,9 +15,89 @@ import AchievementPlaceholder from "../assets/AchievementPlaceholder.png";
 import BackButton2 from "../assets/BackButton2.png";
 import UploadIcon from "../assets/UploadIcon.png";
 
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { updateProfile } from "firebase/auth";
+import { db } from "../firebase/config";
+
 function ProfilePage({ setPage, currentUser, handleLogout }) {
   const [activeProfileTab, setActiveProfileTab] = useState("overview");
   const [hasProfileChanges, setHasProfileChanges] = useState(false);
+  const [username, setUsername] = useState("");
+  const [motto, setMotto] = useState("");
+  const [savedUsername, setSavedUsername] = useState("");
+  const [savedMotto, setSavedMotto] = useState("");
+  const [originalUsername, setOriginalUsername] = useState("");
+  const [originalMotto, setOriginalMotto] = useState("");
+
+  useEffect(() => {
+    async function loadProfileData() {
+      if (!currentUser) return;
+
+      const docRef = doc(db, "users", currentUser.uid);
+
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+
+        setUsername(data.username || "");
+        setMotto(data.motto || "Let's study with me!");
+
+        setSavedUsername(data.username || "");
+        setSavedMotto(data.motto || "Let's study with me!");
+
+        setOriginalUsername(data.username || "");
+        setOriginalMotto(data.motto || "Let's study with me!");
+      }
+    }
+
+    loadProfileData();
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (username !== originalUsername || motto !== originalMotto) {
+      setHasProfileChanges(true);
+    } else {
+      setHasProfileChanges(false);
+    }
+  }, [username, motto, originalUsername, originalMotto]);
+
+  function handleCancelEditProfile() {
+    setUsername(savedUsername);
+    setMotto(savedMotto);
+    setActiveProfileTab("overview");
+  }
+
+  async function handleSaveProfile() {
+    if (!currentUser) return;
+
+    try {
+      await updateProfile(currentUser, {
+        displayName: username,
+      });
+
+      await setDoc(
+        doc(db, "users", currentUser.uid),
+        {
+          username,
+          motto,
+        },
+        { merge: true },
+      );
+
+      setOriginalUsername(username);
+      setOriginalMotto(motto);
+
+      setSavedUsername(username);
+      setSavedMotto(motto);
+
+      alert("Profile updated!");
+      setActiveProfileTab("overview");
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
   return (
     <>
       <div className="menu-overlay" onClick={() => setPage("main")} />
@@ -42,9 +122,7 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
               className="profilepage-avatar"
             />
 
-            <h2 className="profilepage-username">
-              {currentUser?.displayName || "User"}
-            </h2>
+            <h2 className="profilepage-username">{savedUsername || "User"}</h2>
 
             <p className="profilepage-email">{currentUser?.email}</p>
 
@@ -53,13 +131,14 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
             <div className="profilepage-sidebar-menu">
               <button
                 className={
+                  activeProfileTab === "overview" ||
                   activeProfileTab === "editProfile"
                     ? "profilepage-sidebar-item active"
                     : "profilepage-sidebar-item"
                 }
-                onClick={() => setActiveProfileTab("editProfile")}
+                onClick={() => setActiveProfileTab("overview")}
               >
-                Edit Profile
+                Overview
               </button>
 
               <button className="profilepage-sidebar-item">Stats</button>
@@ -111,7 +190,7 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
 
                     <span>Username</span>
 
-                    <p>{currentUser?.displayName || "-"}</p>
+                    <p>{savedUsername || "-"}</p>
                   </div>
 
                   <div className="profilepage-info-row">
@@ -147,7 +226,7 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
 
                     <span>Motto</span>
 
-                    <p>One step at a time.</p>
+                    <p>{savedMotto}</p>
                   </div>
                 </div>
 
@@ -256,7 +335,7 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
                 <div className="editprofile-header">
                   <button
                     className="editprofile-back-button"
-                    onClick={() => setActiveProfileTab("overview")}
+                    onClick={handleCancelEditProfile}
                   >
                     <img src={BackButton2} alt="Back" />
                   </button>
@@ -275,6 +354,8 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
                         ? "editprofile-save-header-button active"
                         : "editprofile-save-header-button"
                     }
+                    onClick={handleSaveProfile}
+                    disabled={!hasProfileChanges}
                   >
                     Save Changes
                   </button>
@@ -288,10 +369,11 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
                     <p>This is your display name.</p>
 
                     <input
-                      onChange={() => setHasProfileChanges(true)}
                       type="text"
                       className="editprofile-input"
                       placeholder="Enter username"
+                      value={username}
+                      onChange={(event) => setUsername(event.target.value)}
                     />
                   </div>
 
@@ -302,9 +384,10 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
                     <p>Your profile motto.</p>
 
                     <textarea
-                      onChange={() => setHasProfileChanges(true)}
                       className="editprofile-textarea"
                       placeholder="Write your motto..."
+                      value={motto}
+                      onChange={(event) => setMotto(event.target.value)}
                     />
                   </div>
 
