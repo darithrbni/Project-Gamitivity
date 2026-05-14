@@ -52,16 +52,16 @@ function LoginPage({ setPage }) {
       </button>
 
       <div className="login-wrapper">
-        <div className="modern-login-panel">
+        <div className="login-panel">
           {/* TITLE */}
-          <h1 className="modern-login-title">LOG IN</h1>
+          <h1 className="login-title">LOG IN</h1>
 
-          <p className="modern-login-subtitle">
+          <p className="login-subtitle">
             Selamat datang! Silakan masuk untuk melanjutkan.
           </p>
 
           {/* GOOGLE LOGIN */}
-          <p className="modern-google-label">Masuk dengan</p>
+          <p className="google-label">Masuk dengan</p>
 
           <button className="google-login-button" onClick={handleGoogleLogin}>
             <span className="google-logo">G</span>
@@ -79,27 +79,27 @@ function LoginPage({ setPage }) {
           </div>
 
           {/* EMAIL */}
-          <div className="modern-input-group">
-            <p className="modern-input-label">Email</p>
+          <div className="input-group">
+            <p className="input-label">Email</p>
 
             <input
               type="text"
               placeholder="Masukkan email"
-              className="modern-login-input"
+              className="login-input"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
             />
           </div>
 
           {/* PASSWORD */}
-          <div className="modern-input-group">
-            <p className="modern-input-label">Password</p>
+          <div className="input-group">
+            <p className="input-label">Password</p>
 
             <div className="password-input-wrapper">
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Masukkan password"
-                className="modern-login-input"
+                className="login-input"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
               />
@@ -129,7 +129,7 @@ function LoginPage({ setPage }) {
           </div>
 
           {/* LOGIN BUTTON */}
-          <button className="modern-login-button" onClick={handleLogin}>
+          <button className="login-submit-button" onClick={handleLogin}>
             Masuk
           </button>
 

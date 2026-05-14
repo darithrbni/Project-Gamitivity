@@ -12,89 +12,89 @@ import StreakIcon from "../assets/StreakIcon.png";
 
 import AchievementPlaceholder from "../assets/AchievementPlaceholder.png";
 
-function AccountPage({ setPage, currentUser, handleLogout }) {
+function ProfilePage({ setPage, currentUser, handleLogout }) {
   return (
     <>
       <div className="menu-overlay" onClick={() => setPage("main")} />
 
-      <div className="accountpage-wrapper">
-        <div className="accountpage-container">
+      <div className="profilepage-wrapper">
+        <div className="profilepage-container">
           {/* CLOSE BUTTON */}
           <button
-            className="accountpage-close-button"
+            className="profilepage-close-button"
             onClick={() => setPage("main")}
           >
             ✕
           </button>
 
           {/* SIDEBAR */}
-          <div className="accountpage-sidebar">
+          <div className="profilepage-sidebar">
             <img
               src={ProfilePlaceholder}
               alt="Profile"
-              className="accountpage-avatar"
+              className="profilepage-avatar"
             />
 
-            <h2 className="accountpage-username">
+            <h2 className="profilepage-username">
               {currentUser?.displayName || "User"}
             </h2>
 
-            <p className="accountpage-email">{currentUser?.email}</p>
+            <p className="profilepage-email">{currentUser?.email}</p>
 
-            <div className="accountpage-badge">✨ Focus Explorer</div>
+            <div className="profilepage-badge">✨ Focus Explorer</div>
 
-            <div className="accountpage-sidebar-menu">
-              <button className="accountpage-sidebar-item active">
+            <div className="profilepage-sidebar-menu">
+              <button className="profilepage-sidebar-item active">
                 Overview
               </button>
 
-              <button className="accountpage-sidebar-item">Stats</button>
+              <button className="profilepage-sidebar-item">Stats</button>
 
-              <button className="accountpage-sidebar-item">Achievements</button>
+              <button className="profilepage-sidebar-item">Achievements</button>
 
-              <button className="accountpage-sidebar-item">
+              <button className="profilepage-sidebar-item">
                 Customization
               </button>
 
-              <button className="accountpage-sidebar-item">
-                Account Settings
+              <button className="profilepage-sidebar-item">
+                Profile Settings
               </button>
 
-              <button className="accountpage-sidebar-item">App Settings</button>
+              <button className="profilepage-sidebar-item">App Settings</button>
             </div>
           </div>
 
           {/* CONTENT */}
-          <div className="accountpage-content">
-            <h1 className="accountpage-title">My Profile</h1>
+          <div className="profilepage-content">
+            <h1 className="profilepage-title">My Profile</h1>
 
-            <p className="accountpage-subtitle">
+            <p className="profilepage-subtitle">
               Here's your productivity journey! ✨
             </p>
 
             {/* PROFILE INFO */}
-            <div className="accountpage-info-box">
-              <div className="accountpage-info-row">
-                <img src={UserIcon} alt="" className="accountpage-info-icon" />
+            <div className="profilepage-info-box">
+              <div className="profilepage-info-row">
+                <img src={UserIcon} alt="" className="profilepage-info-icon" />
 
                 <span>Username</span>
 
                 <p>{currentUser?.displayName || "-"}</p>
               </div>
 
-              <div className="accountpage-info-row">
-                <img src={EmailIcon} alt="" className="accountpage-info-icon" />
+              <div className="profilepage-info-row">
+                <img src={EmailIcon} alt="" className="profilepage-info-icon" />
 
                 <span>Email</span>
 
                 <p>{currentUser?.email || "-"}</p>
               </div>
 
-              <div className="accountpage-info-row">
+              <div className="profilepage-info-row">
                 <img
                   src={CalendarIcon}
                   alt=""
-                  className="accountpage-info-icon"
+                  className="profilepage-info-icon"
                 />
 
                 <span>Member Since</span>
@@ -102,8 +102,8 @@ function AccountPage({ setPage, currentUser, handleLogout }) {
                 <p>-</p>
               </div>
 
-              <div className="accountpage-info-row">
-                <img src={MottoIcon} alt="" className="accountpage-info-icon" />
+              <div className="profilepage-info-row">
+                <img src={MottoIcon} alt="" className="profilepage-info-icon" />
 
                 <span>Motto</span>
 
@@ -112,14 +112,14 @@ function AccountPage({ setPage, currentUser, handleLogout }) {
             </div>
 
             {/* STATS */}
-            <h2 className="accountpage-section-title">Productivity Stats</h2>
+            <h2 className="profilepage-section-title">Productivity Stats</h2>
 
-            <div className="accountpage-stats">
-              <div className="accountpage-stat-card">
+            <div className="profilepage-stats">
+              <div className="profilepage-stat-card">
                 <img
                   src={TotalFocusIcon}
                   alt=""
-                  className="accountpage-stat-icon"
+                  className="profilepage-stat-icon"
                 />
 
                 <h3>Focus Time</h3>
@@ -129,11 +129,11 @@ function AccountPage({ setPage, currentUser, handleLogout }) {
                 <span>Total</span>
               </div>
 
-              <div className="accountpage-stat-card">
+              <div className="profilepage-stat-card">
                 <img
                   src={TotalCoinIcon}
                   alt=""
-                  className="accountpage-stat-icon"
+                  className="profilepage-stat-icon"
                 />
 
                 <h3>Coins Earned</h3>
@@ -143,11 +143,11 @@ function AccountPage({ setPage, currentUser, handleLogout }) {
                 <span>Sessions</span>
               </div>
 
-              <div className="accountpage-stat-card">
+              <div className="profilepage-stat-card">
                 <img
                   src={TotalTaskIcon}
                   alt=""
-                  className="accountpage-stat-icon"
+                  className="profilepage-stat-icon"
                 />
 
                 <h3>Tasks Done</h3>
@@ -157,11 +157,11 @@ function AccountPage({ setPage, currentUser, handleLogout }) {
                 <span>Completed</span>
               </div>
 
-              <div className="accountpage-stat-card">
+              <div className="profilepage-stat-card">
                 <img
                   src={StreakIcon}
                   alt=""
-                  className="accountpage-stat-icon"
+                  className="profilepage-stat-icon"
                 />
 
                 <h3>Streak</h3>
@@ -173,17 +173,17 @@ function AccountPage({ setPage, currentUser, handleLogout }) {
             </div>
 
             {/* ACHIEVEMENTS */}
-            <div className="accountpage-achievement-header">
-              <h2 className="accountpage-section-title">Achievements</h2>
+            <div className="profilepage-achievement-header">
+              <h2 className="profilepage-section-title">Achievements</h2>
 
-              <button className="accountpage-viewall-button">View All</button>
+              <button className="profilepage-viewall-button">View All</button>
             </div>
 
-            <div className="accountpage-achievement-box">
+            <div className="profilepage-achievement-box">
               <img
                 src={AchievementPlaceholder}
                 alt=""
-                className="accountpage-achievement-placeholder"
+                className="profilepage-achievement-placeholder"
               />
 
               <p>No achievements yet.</p>
@@ -192,11 +192,11 @@ function AccountPage({ setPage, currentUser, handleLogout }) {
             </div>
 
             {/* BUTTONS */}
-            <div className="accountpage-bottom-buttons">
-              <button className="accountpage-edit-button">Edit Profile</button>
+            <div className="profilepage-bottom-buttons">
+              <button className="profilepage-edit-button">Edit Profile</button>
 
               <button
-                className="accountpage-logout-button"
+                className="profilepage-logout-button"
                 onClick={handleLogout}
               >
                 Log Out
@@ -209,4 +209,4 @@ function AccountPage({ setPage, currentUser, handleLogout }) {
   );
 }
 
-export default AccountPage;
+export default ProfilePage;

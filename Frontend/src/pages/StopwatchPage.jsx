@@ -8,25 +8,21 @@ function StopwatchPage({
   stopwatchHours,
   stopwatchMinutes,
   stopwatchSeconds,
-
   isStopwatchRunning,
   setIsStopwatchRunning,
-
   setStopwatchHours,
   setStopwatchMinutes,
   setStopwatchSeconds,
 
-  setHours,
-  setMinutes,
-  setSeconds,
-
+  setBasicTimerHours,
+  setBasicTimerMinutes,
+  setBasicTimerSeconds,
   setActiveDisplay,
-  setIsTimerRunning,
+  setIsBasicTimerRunning,
 
   setPomodoroHours,
   setPomodoroMinutes,
   setPomodoroSeconds,
-
   setIsPomodoroRunning,
 }) {
   return (
@@ -75,16 +71,15 @@ function StopwatchPage({
             <button
               className="set-timer-button"
               onClick={() => {
-                // STOP TIMER
-                setIsTimerRunning(false);
-                setHours(0);
-                setMinutes(0);
-                setSeconds(0);
+                // STOP BASIC TIMER
+                setIsBasicTimerRunning(false);
+                setBasicTimerHours(0);
+                setBasicTimerMinutes(0);
+                setBasicTimerSeconds(0);
                 setActiveDisplay("stopwatch");
 
                 // STOP POMODORO
                 setIsPomodoroRunning(false);
-
                 setPomodoroHours(0);
                 setPomodoroMinutes(0);
                 setPomodoroSeconds(0);
@@ -112,7 +107,6 @@ function StopwatchPage({
                 className="timer-control-button"
                 onClick={() => {
                   setIsStopwatchRunning(false);
-
                   setStopwatchHours(0);
                   setStopwatchMinutes(0);
                   setStopwatchSeconds(0);

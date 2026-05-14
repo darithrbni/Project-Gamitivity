@@ -8,27 +8,21 @@ function PomodoroPage({
   setPomodoroHours,
   setPomodoroMinutes,
   setPomodoroSeconds,
-
   setPomodoroSessionMinutes,
   setPomodoroBreakMinutes,
   setPomodoroSessionCount,
-
   setCurrentPomodoroSession,
-
   setPomodoroPhase,
-
   setIsPomodoroRunning,
 
-  setHours,
-  setMinutes,
-  setSeconds,
-
-  setIsTimerRunning,
+  setBasicTimerHours,
+  setBasicTimerMinutes,
+  setBasicTimerSeconds,
+  setIsBasicTimerRunning,
 
   setStopwatchHours,
   setStopwatchMinutes,
   setStopwatchSeconds,
-
   setIsStopwatchRunning,
 }) {
   // POMODORO SETTINGS STATE
@@ -282,16 +276,14 @@ function PomodoroPage({
               // SWITCH DISPLAY
               setActiveDisplay("pomodoro");
 
-              // STOP TIMER
-              setIsTimerRunning(false);
-
-              setHours(0);
-              setMinutes(0);
-              setSeconds(0);
+              // STOP BASIC TIMER
+              setIsBasicTimerRunning(false);
+              setBasicTimerHours(0);
+              setBasicTimerMinutes(0);
+              setBasicTimerSeconds(0);
 
               // STOP STOPWATCH
               setIsStopwatchRunning(false);
-
               setStopwatchHours(0);
               setStopwatchMinutes(0);
               setStopwatchSeconds(0);

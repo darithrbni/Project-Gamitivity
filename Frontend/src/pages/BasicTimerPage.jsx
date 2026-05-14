@@ -3,16 +3,14 @@ import { useEffect, useState } from "react";
 function BasicTimerPage({
   setPage,
 
-  setMainHours,
-  setMainMinutes,
-  setMainSeconds,
-
-  setIsTimerRunning,
+  setBasicTimerHours,
+  setBasicTimerMinutes,
+  setBasicTimerSeconds,
+  setIsBasicTimerRunning,
 
   setStopwatchHours,
   setStopwatchMinutes,
   setStopwatchSeconds,
-
   setIsStopwatchRunning,
 
   setActiveDisplay,
@@ -20,18 +18,17 @@ function BasicTimerPage({
   setPomodoroHours,
   setPomodoroMinutes,
   setPomodoroSeconds,
-
   setIsPomodoroRunning,
 }) {
-  // TIMER SELECTION STATE
+  // BASIC TIMER SELECTION STATE
   const [selectedPart, setSelectedPart] = useState(null);
 
-  // LOCAL TIMER EDITOR STATE
+  // LOCAL BASIC TIMER EDITOR STATE
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
 
-  // INCREMENT TIMER VALUE
+  // INCREMENT BASIC TIMER VALUE
   function incrementTime(part) {
     setSelectedPart(part);
     // HOURS
@@ -62,7 +59,7 @@ function BasicTimerPage({
     }
   }
 
-  // DECREMENT TIMER VALUE
+  // DECREMENT BASIC TIMER VALUE
   function decrementTime(part) {
     setSelectedPart(part);
     // HOURS
@@ -101,15 +98,12 @@ function BasicTimerPage({
         if (selectedPart === "hours") {
           setHours(0);
         }
-
         if (selectedPart === "minutes") {
           setMinutes(0);
         }
-
         if (selectedPart === "seconds") {
           setSeconds(0);
         }
-
         return;
       }
 
@@ -119,19 +113,14 @@ function BasicTimerPage({
 
       if (selectedPart === "hours") {
         const currentValue = String(hours).padStart(2, "0");
-
         const newValueString = currentValue[1] + key;
-
         setHours(Number(newValueString));
       }
 
       if (selectedPart === "minutes") {
         const currentValue = String(minutes).padStart(2, "0");
-
         const newValueString = currentValue[1] + key;
-
         let newValue = Number(newValueString);
-
         if (newValue > 59) {
           newValue = Number("0" + key);
         }
@@ -141,11 +130,8 @@ function BasicTimerPage({
 
       if (selectedPart === "seconds") {
         const currentValue = String(seconds).padStart(2, "0");
-
         const newValueString = currentValue[1] + key;
-
         let newValue = Number(newValueString);
-
         if (newValue > 59) {
           newValue = Number("0" + key);
         }
@@ -171,11 +157,11 @@ function BasicTimerPage({
         BACK
       </button>
 
-      {/* TIMER LAYOUT */}
+      {/* BASIC TIMER LAYOUT */}
       <div className="menu-wrapper">
-        {/* TIMER PANEL */}
+        {/* BASIC TIMER PANEL */}
         <div className="timer-panel">
-          {/* TIMER DISPLAY */}
+          {/* BASIC TIMER DISPLAY */}
           <div className="timer-display">
             {/* HOURS */}
             <div className="time-column">
@@ -292,16 +278,16 @@ function BasicTimerPage({
               setStopwatchHours(0);
               setStopwatchMinutes(0);
               setStopwatchSeconds(0);
-              setActiveDisplay("timer");
-              setMainHours(hours);
-              setMainMinutes(minutes);
-              setMainSeconds(seconds);
+              setActiveDisplay("basicTimer");
+              setBasicTimerHours(hours);
+              setBasicTimerMinutes(minutes);
+              setBasicTimerSeconds(seconds);
 
               // STOP POMODORO
               setIsPomodoroRunning(false);
 
-              // START TIMER
-              setIsTimerRunning(true);
+              // START BASIC TIMER
+              setIsBasicTimerRunning(true);
               setPomodoroHours(0);
               setPomodoroMinutes(0);
               setPomodoroSeconds(0);

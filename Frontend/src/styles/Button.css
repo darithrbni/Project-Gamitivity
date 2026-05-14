@@ -1,0 +1,138 @@
+/* Reuseable Buttons */
+
+.back-button {
+  position: absolute;
+
+  top: 20px;
+  left: 20px;
+
+  z-index: 30;
+
+  padding: 12px 20px;
+
+  font-size: 1rem;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+/* Profile Dropdown & Login Button */
+
+.profile-menu-container {
+  position: absolute;
+
+  top: 20px;
+  right: 20px;
+
+  z-index: 5;
+}
+
+.profile-button {
+  border: none;
+
+  background-color: transparent;
+
+  cursor: pointer;
+
+  padding: 0;
+
+  transition:
+    filter 0.15s ease,
+    transform 0.05s ease;
+}
+
+.profile-button:hover {
+  filter: brightness(0.9);
+}
+
+.profile-button:active {
+  filter: brightness(0.9);
+}
+
+.profile-image {
+  width: 70px;
+  height: 70px;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+}
+
+.profile-dropdown {
+  margin-top: 10px;
+
+  width: 180px;
+
+  background-color: white;
+
+  border-radius: 16px;
+
+  overflow: hidden;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+  display: flex;
+  flex-direction: column;
+
+  position: absolute;
+
+  top: 70px;
+  right: 0;
+}
+
+.profile-dropdown-item {
+  border: none;
+
+  background: white;
+
+  padding: 14px;
+
+  text-align: left;
+
+  font-size: 1rem;
+
+  cursor: pointer;
+
+  transition: background-color 0.15s ease;
+}
+
+.profile-dropdown-item:hover {
+  background-color: #f3f3f3;
+}
+
+.login-button {
+  position: absolute;
+
+  top: 20px;
+  right: 20px;
+
+  z-index: 5;
+
+  padding: 14px 28px;
+
+  border: none;
+  border-radius: 18px;
+
+  background-color: #f07c7c;
+
+  color: white;
+
+  font-size: 1.1rem;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition:
+    filter 0.15s ease,
+    transform 0.05s ease;
+}
+
+.login-button:hover {
+  filter: brightness(0.94);
+}
+
+.login-button:active {
+  filter: brightness(0.82);
+
+  transform: scale(0.97);
+}
