@@ -83,6 +83,14 @@
   color: #2f241d;
 
   margin-bottom: 10px;
+
+  width: 100%;
+
+  text-align: center;
+
+  line-height: 1.1;
+
+  word-break: break-word;
 }
 
 .profilepage-email {
@@ -201,15 +209,21 @@
 }
 
 .profilepage-info-row span {
-  width: 220px;
+  width: 180px;
 
   color: #5a5149;
+
+  flex-shrink: 0;
 }
 
 .profilepage-info-row p {
   font-weight: bold;
 
   color: #2f241d;
+  flex: 1;
+  margin: 0;
+
+  word-break: break-word;
 }
 
 .profilepage-section-title {
@@ -218,6 +232,8 @@
   color: #2f241d;
 
   margin-bottom: 10px;
+
+  margin-top: -8px;
 }
 
 .profilepage-stats {
@@ -604,4 +620,67 @@
   font-weight: bold;
 
   color: #2f241d;
+}
+
+.profilepage-warning-text {
+  color: #e45b5b !important;
+
+  font-size: 12px;
+
+  font-weight: 500;
+
+  margin-top: 8px;
+}
+
+/* =========================
+   PROFILE RESPONSIVE
+========================= */
+
+/* Monitor besar */
+@media (min-width: 1600px) {
+  .profilepage-container {
+    transform: scale(1.35);
+  }
+}
+
+/* Monitor sangat besar */
+@media (min-width: 2200px) {
+  .profilepage-container {
+    transform: scale(1.55);
+  }
+}
+
+/* Laptop kecil */
+@media (max-width: 1200px) {
+  .profilepage-container {
+    transform: scale(0.9);
+  }
+}
+
+/* Laptop lebih kecil */
+@media (max-width: 1000px) {
+  .profilepage-container {
+    transform: scale(0.8);
+  }
+}
+
+/* Tablet */
+@media (max-width: 850px) {
+  .profilepage-container {
+    transform: scale(0.7);
+  }
+}
+
+/* HP besar */
+@media (max-width: 650px) {
+  .profilepage-container {
+    transform: scale(0.58);
+  }
+}
+
+/* HP kecil */
+@media (max-width: 500px) {
+  .profilepage-container {
+    transform: scale(0.48);
+  }
 }

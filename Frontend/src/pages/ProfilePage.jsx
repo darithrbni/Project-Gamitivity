@@ -28,6 +28,11 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
   const [savedMotto, setSavedMotto] = useState("");
   const [originalUsername, setOriginalUsername] = useState("");
   const [originalMotto, setOriginalMotto] = useState("");
+  const isUsernameEmpty = username.trim() === "";
+  const isUsernameTooLong = username.length > 20;
+  const isMottoTooLong = motto.length > 80;
+  const isProfileInvalid =
+    isUsernameEmpty || isUsernameTooLong || isMottoTooLong;
 
   useEffect(() => {
     async function loadProfileData() {
@@ -55,12 +60,10 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
   }, [currentUser]);
 
   useEffect(() => {
-    if (username !== originalUsername || motto !== originalMotto) {
-      setHasProfileChanges(true);
-    } else {
-      setHasProfileChanges(false);
-    }
-  }, [username, motto, originalUsername, originalMotto]);
+    const hasChanges = username !== originalUsername || motto !== originalMotto;
+
+    setHasProfileChanges(hasChanges && !isProfileInvalid);
+  }, [username, motto, originalUsername, originalMotto, isProfileInvalid]);
 
   function handleCancelEditProfile() {
     setUsername(savedUsername);
@@ -226,7 +229,7 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
 
                     <span>Motto</span>
 
-                    <p>{savedMotto}</p>
+                    <p>{savedMotto.trim() ? `"${savedMotto}"` : "-"}</p>
                   </div>
                 </div>
 
@@ -375,6 +378,18 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
                       value={username}
                       onChange={(event) => setUsername(event.target.value)}
                     />
+
+                    {isUsernameEmpty && (
+                      <p className="profilepage-warning-text">
+                        * Username cannot be empty
+                      </p>
+                    )}
+
+                    {isUsernameTooLong && (
+                      <p className="profilepage-warning-text">
+                        * Username cannot exceed 20 characters
+                      </p>
+                    )}
                   </div>
 
                   {/* MOTTO */}
@@ -389,6 +404,12 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
                       value={motto}
                       onChange={(event) => setMotto(event.target.value)}
                     />
+
+                    {isMottoTooLong && (
+                      <p className="profilepage-warning-text">
+                        * Motto cannot exceed 80 characters
+                      </p>
+                    )}
                   </div>
 
                   {/* PROFILE PICTURE */}
