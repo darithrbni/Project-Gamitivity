@@ -11,11 +11,13 @@ import TotalFocusIcon from "../assets/TotalFocusIcon.png";
 import TotalCoinIcon from "../assets/TotalCoinIcon.png";
 import TotalTaskIcon from "../assets/TotalTaskIcon.png";
 import StreakIcon from "../assets/StreakIcon.png";
-
 import AchievementPlaceholder from "../assets/AchievementPlaceholder.png";
+import BackButton2 from "../assets/BackButton2.png";
+import UploadIcon from "../assets/UploadIcon.png";
 
 function ProfilePage({ setPage, currentUser, handleLogout }) {
   const [activeProfileTab, setActiveProfileTab] = useState("overview");
+  const [hasProfileChanges, setHasProfileChanges] = useState(false);
   return (
     <>
       <div className="menu-overlay" onClick={() => setPage("main")} />
@@ -23,12 +25,14 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
       <div className="profilepage-wrapper">
         <div className="profilepage-container">
           {/* CLOSE BUTTON */}
-          <button
-            className="profilepage-close-button"
-            onClick={() => setPage("main")}
-          >
-            ✕
-          </button>
+          {activeProfileTab !== "editProfile" && (
+            <button
+              className="profilepage-close-button"
+              onClick={() => setPage("main")}
+            >
+              ✕
+            </button>
+          )}
 
           {/* SIDEBAR */}
           <div className="profilepage-sidebar">
@@ -49,13 +53,13 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
             <div className="profilepage-sidebar-menu">
               <button
                 className={
-                  activeProfileTab === "overview"
+                  activeProfileTab === "editProfile"
                     ? "profilepage-sidebar-item active"
                     : "profilepage-sidebar-item"
                 }
-                onClick={() => setActiveProfileTab("overview")}
+                onClick={() => setActiveProfileTab("editProfile")}
               >
-                Overview
+                Edit Profile
               </button>
 
               <button className="profilepage-sidebar-item">Stats</button>
@@ -212,7 +216,10 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
 
                 {/* BUTTONS */}
                 <div className="profilepage-bottom-buttons">
-                  <button className="profilepage-edit-button">
+                  <button
+                    className="profilepage-edit-button"
+                    onClick={() => setActiveProfileTab("editProfile")}
+                  >
                     Edit Profile
                   </button>
 
@@ -241,6 +248,96 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
                   <p>No achievements yet.</p>
 
                   <span>Keep focusing and earn your first achievement!</span>
+                </div>
+              </>
+            )}
+            {activeProfileTab === "editProfile" && (
+              <>
+                <div className="editprofile-header">
+                  <button
+                    className="editprofile-back-button"
+                    onClick={() => setActiveProfileTab("overview")}
+                  >
+                    <img src={BackButton2} alt="Back" />
+                  </button>
+
+                  <div>
+                    <h1 className="profilepage-title">Edit Profile</h1>
+
+                    <p className="profilepage-subtitle">
+                      Update your profile information ✨
+                    </p>
+                  </div>
+
+                  <button
+                    className={
+                      hasProfileChanges
+                        ? "editprofile-save-header-button active"
+                        : "editprofile-save-header-button"
+                    }
+                  >
+                    Save Changes
+                  </button>
+                </div>
+
+                <div className="editprofile-grid">
+                  {/* USERNAME */}
+                  <div className="editprofile-card">
+                    <h2>Username</h2>
+
+                    <p>This is your display name.</p>
+
+                    <input
+                      onChange={() => setHasProfileChanges(true)}
+                      type="text"
+                      className="editprofile-input"
+                      placeholder="Enter username"
+                    />
+                  </div>
+
+                  {/* MOTTO */}
+                  <div className="editprofile-card">
+                    <h2>Motto</h2>
+
+                    <p>Your profile motto.</p>
+
+                    <textarea
+                      onChange={() => setHasProfileChanges(true)}
+                      className="editprofile-textarea"
+                      placeholder="Write your motto..."
+                    />
+                  </div>
+
+                  {/* PROFILE PICTURE */}
+                  <div className="editprofile-picture-card">
+                    <div className="editprofile-picture-header">
+                      <h2>Profile Picture</h2>
+
+                      <p>Upload and update your profile picture.</p>
+                    </div>
+
+                    <div className="editprofile-picture-content">
+                      {/* PREVIEW */}
+                      <div className="editprofile-picture-preview">
+                        <img
+                          src={ProfilePlaceholder}
+                          alt="Preview"
+                          className="editprofile-picture-preview-image"
+                        />
+                      </div>
+
+                      {/* UPLOAD */}
+                      <div className="editprofile-upload-box">
+                        <img
+                          src={UploadIcon}
+                          alt="Upload"
+                          className="editprofile-upload-icon"
+                        />
+                        <p>Click to upload image</p>
+                        <span>JPG, PNG up to 2MB</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </>
             )}
