@@ -31,7 +31,7 @@
 .profilepage-close-button {
   position: absolute;
 
-  top: 24px;
+  top: 7px;
   right: 30px;
 
   border: none;
@@ -47,11 +47,11 @@
 }
 
 .profilepage-sidebar {
-  width: 280px;
+  width: 240px;
 
   background: linear-gradient(to bottom, #f5e3cc, #efd9bb);
 
-  padding: 50px 32px;
+  padding: 32px 24px;
 
   display: flex;
   flex-direction: column;
@@ -59,8 +59,8 @@
 }
 
 .profilepage-avatar {
-  width: 120px;
-  height: 120px;
+  width: 110px;
+  height: 110px;
 
   border-radius: 50%;
 
@@ -68,11 +68,11 @@
 
   border: 5px solid white;
 
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 
 .profilepage-username {
-  font-size: 30px;
+  font-size: 20px;
 
   color: #2f241d;
 
@@ -80,7 +80,7 @@
 }
 
 .profilepage-email {
-  font-size: 16px;
+  font-size: 14px;
 
   color: rgba(0, 0, 0, 0.6);
 
@@ -90,16 +90,17 @@
 .profilepage-badge {
   background-color: #ffe5a8;
 
-  padding: 10px 22px;
+  padding: 8px 18px;
 
   border-radius: 999px;
 
-  font-size: 18px;
+  font-size: 15px;
   font-weight: bold;
 
   color: #7c5a00;
 
-  margin-bottom: 42px;
+  margin-top: -8px;
+  margin-bottom: 22px;
 }
 
 .profilepage-sidebar-menu {
@@ -108,7 +109,9 @@
   display: flex;
   flex-direction: column;
 
-  gap: 14px;
+  gap: 6px;
+
+  margin-top: -6px;
 }
 
 .profilepage-sidebar-item {
@@ -116,13 +119,13 @@
 
   background: transparent;
 
-  padding: 18px 24px;
+  padding: 10px 14px;
 
   border-radius: 18px;
 
   text-align: left;
 
-  font-size: 24px;
+  font-size: 15px;
 
   cursor: pointer;
 
@@ -140,23 +143,23 @@
 .profilepage-content {
   flex: 1;
 
-  padding: 50px;
+  padding: 24px 32px 32px 32px;
 }
 
 .profilepage-title {
-  font-size: 30px;
+  font-size: 22px;
 
   color: #2f241d;
 
-  margin-bottom: 10px;
+  margin-bottom: 4px;
 }
 
 .profilepage-subtitle {
-  font-size: 16px;
+  font-size: 13px;
 
   color: rgba(0, 0, 0, 0.65);
 
-  margin-bottom: 36px;
+  margin-bottom: 8px;
 }
 
 .profilepage-info-box {
@@ -164,20 +167,20 @@
 
   border-radius: 26px;
 
-  padding: 30px;
+  padding: 20px;
 
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 
 .profilepage-info-row {
   display: flex;
   align-items: center;
 
-  gap: 20px;
+  gap: 14px;
 
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 
-  font-size: 16px;
+  font-size: 13px;
 }
 
 .profilepage-info-row:last-child {
@@ -185,8 +188,8 @@
 }
 
 .profilepage-info-icon {
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
 
   object-fit: contain;
 }
@@ -204,19 +207,19 @@
 }
 
 .profilepage-section-title {
-  font-size: 24px;
+  font-size: 18px;
 
   color: #2f241d;
 
-  margin-bottom: 24px;
+  margin-bottom: 10px;
 }
 
 .profilepage-stats {
   display: flex;
 
-  gap: 18px;
+  gap: 12px;
 
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 
 .profilepage-stat-card {
@@ -224,16 +227,16 @@
 
   background-color: white;
 
-  border-radius: 24px;
+  border-radius: 18px;
 
-  padding: 24px;
+  padding: 16px;
 
   text-align: center;
 }
 
 .profilepage-stat-icon {
-  width: 60px;
-  height: 60px;
+  width: 42px;
+  height: 42px;
 
   object-fit: contain;
 
@@ -241,7 +244,7 @@
 }
 
 .profilepage-stat-card h3 {
-  font-size: 22px;
+  font-size: 14px;
 
   color: #4a4037;
 
@@ -249,7 +252,7 @@
 }
 
 .profilepage-stat-card p {
-  font-size: 28px;
+  font-size: 20px;
   font-weight: bold;
 
   color: #2f241d;
@@ -258,7 +261,7 @@
 }
 
 .profilepage-stat-card span {
-  font-size: 18px;
+  font-size: 12px;
 
   color: rgba(0, 0, 0, 0.5);
 }
@@ -283,7 +286,7 @@
 }
 
 .profilepage-achievement-box {
-  height: 180px;
+  height: 120px;
 
   border: 2px dashed #d7c3ae;
 
@@ -300,13 +303,13 @@
 }
 
 .profilepage-achievement-placeholder {
-  width: 64px;
+  width: 42px;
 
   margin-bottom: 16px;
 }
 
 .profilepage-achievement-box p {
-  font-size: 24px;
+  font-size: 16px;
 
   color: #2f241d;
 
@@ -314,7 +317,7 @@
 }
 
 .profilepage-achievement-box span {
-  font-size: 18px;
+  font-size: 12px;
 
   color: rgba(0, 0, 0, 0.6);
 }
@@ -323,6 +326,8 @@
   display: flex;
 
   gap: 20px;
+
+  margin-top: -8px;
 }
 
 .profilepage-edit-button,
@@ -333,9 +338,9 @@
 
   border-radius: 22px;
 
-  padding: 16px;
+  padding: 12px;
 
-  font-size: 18px;
+  font-size: 14px;
   font-weight: bold;
 
   cursor: pointer;

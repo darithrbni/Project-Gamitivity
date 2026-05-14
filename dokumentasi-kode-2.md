@@ -1804,7 +1804,10 @@ export default PomodoroPage;
 
 
 
+
 ## ProfilePage.jsx
+import { useState } from "react";
+
 import ProfilePlaceholder from "../assets/ProfilePlaceholder.png";
 
 import UserIcon from "../assets/UserIcon.png";
@@ -1820,6 +1823,7 @@ import StreakIcon from "../assets/StreakIcon.png";
 import AchievementPlaceholder from "../assets/AchievementPlaceholder.png";
 
 function ProfilePage({ setPage, currentUser, handleLogout }) {
+  const [activeProfileTab, setActiveProfileTab] = useState("overview");
   return (
     <>
       <div className="menu-overlay" onClick={() => setPage("main")} />
@@ -1851,13 +1855,29 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
             <div className="profilepage-badge">✨ Focus Explorer</div>
 
             <div className="profilepage-sidebar-menu">
-              <button className="profilepage-sidebar-item active">
+              <button
+                className={
+                  activeProfileTab === "overview"
+                    ? "profilepage-sidebar-item active"
+                    : "profilepage-sidebar-item"
+                }
+                onClick={() => setActiveProfileTab("overview")}
+              >
                 Overview
               </button>
 
               <button className="profilepage-sidebar-item">Stats</button>
 
-              <button className="profilepage-sidebar-item">Achievements</button>
+              <button
+                className={
+                  activeProfileTab === "achievements"
+                    ? "profilepage-sidebar-item active"
+                    : "profilepage-sidebar-item"
+                }
+                onClick={() => setActiveProfileTab("achievements")}
+              >
+                Achievements
+              </button>
 
               <button className="profilepage-sidebar-item">
                 Customization
@@ -1873,142 +1893,165 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
 
           {/* CONTENT */}
           <div className="profilepage-content">
-            <h1 className="profilepage-title">My Profile</h1>
+            {activeProfileTab === "overview" && (
+              <>
+                <h1 className="profilepage-title">My Profile</h1>
+                <p className="profilepage-subtitle">
+                  Here's your productivity journey! ✨
+                </p>
+              </>
+            )}
 
-            <p className="profilepage-subtitle">
-              Here's your productivity journey! ✨
-            </p>
+            {activeProfileTab === "overview" && (
+              <>
+                {/* PROFILE INFO */}
+                <div className="profilepage-info-box">
+                  <div className="profilepage-info-row">
+                    <img
+                      src={UserIcon}
+                      alt=""
+                      className="profilepage-info-icon"
+                    />
 
-            {/* PROFILE INFO */}
-            <div className="profilepage-info-box">
-              <div className="profilepage-info-row">
-                <img src={UserIcon} alt="" className="profilepage-info-icon" />
+                    <span>Username</span>
 
-                <span>Username</span>
+                    <p>{currentUser?.displayName || "-"}</p>
+                  </div>
 
-                <p>{currentUser?.displayName || "-"}</p>
-              </div>
+                  <div className="profilepage-info-row">
+                    <img
+                      src={EmailIcon}
+                      alt=""
+                      className="profilepage-info-icon"
+                    />
 
-              <div className="profilepage-info-row">
-                <img src={EmailIcon} alt="" className="profilepage-info-icon" />
+                    <span>Email</span>
 
-                <span>Email</span>
+                    <p>{currentUser?.email || "-"}</p>
+                  </div>
 
-                <p>{currentUser?.email || "-"}</p>
-              </div>
+                  <div className="profilepage-info-row">
+                    <img
+                      src={CalendarIcon}
+                      alt=""
+                      className="profilepage-info-icon"
+                    />
 
-              <div className="profilepage-info-row">
-                <img
-                  src={CalendarIcon}
-                  alt=""
-                  className="profilepage-info-icon"
-                />
+                    <span>Member Since</span>
 
-                <span>Member Since</span>
+                    <p>-</p>
+                  </div>
 
-                <p>-</p>
-              </div>
+                  <div className="profilepage-info-row">
+                    <img
+                      src={MottoIcon}
+                      alt=""
+                      className="profilepage-info-icon"
+                    />
 
-              <div className="profilepage-info-row">
-                <img src={MottoIcon} alt="" className="profilepage-info-icon" />
+                    <span>Motto</span>
 
-                <span>Motto</span>
+                    <p>One step at a time.</p>
+                  </div>
+                </div>
 
-                <p>One step at a time.</p>
-              </div>
-            </div>
+                {/* STATS */}
+                <h2 className="profilepage-section-title">
+                  Productivity Stats
+                </h2>
 
-            {/* STATS */}
-            <h2 className="profilepage-section-title">Productivity Stats</h2>
+                <div className="profilepage-stats">
+                  <div className="profilepage-stat-card">
+                    <img
+                      src={TotalFocusIcon}
+                      alt=""
+                      className="profilepage-stat-icon"
+                    />
 
-            <div className="profilepage-stats">
-              <div className="profilepage-stat-card">
-                <img
-                  src={TotalFocusIcon}
-                  alt=""
-                  className="profilepage-stat-icon"
-                />
+                    <h3>Focus Time</h3>
 
-                <h3>Focus Time</h3>
+                    <p>-</p>
 
-                <p>-</p>
+                    <span>Total</span>
+                  </div>
 
-                <span>Total</span>
-              </div>
+                  <div className="profilepage-stat-card">
+                    <img
+                      src={TotalCoinIcon}
+                      alt=""
+                      className="profilepage-stat-icon"
+                    />
 
-              <div className="profilepage-stat-card">
-                <img
-                  src={TotalCoinIcon}
-                  alt=""
-                  className="profilepage-stat-icon"
-                />
+                    <h3>Coins Earned</h3>
 
-                <h3>Coins Earned</h3>
+                    <p>-</p>
 
-                <p>-</p>
+                    <span>Sessions</span>
+                  </div>
 
-                <span>Sessions</span>
-              </div>
+                  <div className="profilepage-stat-card">
+                    <img
+                      src={TotalTaskIcon}
+                      alt=""
+                      className="profilepage-stat-icon"
+                    />
 
-              <div className="profilepage-stat-card">
-                <img
-                  src={TotalTaskIcon}
-                  alt=""
-                  className="profilepage-stat-icon"
-                />
+                    <h3>Tasks Done</h3>
 
-                <h3>Tasks Done</h3>
+                    <p>-</p>
 
-                <p>-</p>
+                    <span>Completed</span>
+                  </div>
 
-                <span>Completed</span>
-              </div>
+                  <div className="profilepage-stat-card">
+                    <img
+                      src={StreakIcon}
+                      alt=""
+                      className="profilepage-stat-icon"
+                    />
 
-              <div className="profilepage-stat-card">
-                <img
-                  src={StreakIcon}
-                  alt=""
-                  className="profilepage-stat-icon"
-                />
+                    <h3>Streak</h3>
 
-                <h3>Streak</h3>
+                    <p>-</p>
 
-                <p>-</p>
+                    <span>Days</span>
+                  </div>
+                </div>
 
-                <span>Days</span>
-              </div>
-            </div>
+                {/* BUTTONS */}
+                <div className="profilepage-bottom-buttons">
+                  <button className="profilepage-edit-button">
+                    Edit Profile
+                  </button>
 
-            {/* ACHIEVEMENTS */}
-            <div className="profilepage-achievement-header">
-              <h2 className="profilepage-section-title">Achievements</h2>
+                  <button
+                    className="profilepage-logout-button"
+                    onClick={handleLogout}
+                  >
+                    Log Out
+                  </button>
+                </div>
+              </>
+            )}
+            {activeProfileTab === "achievements" && (
+              <>
+                <div className="profilepage-achievement-header">
+                  <h1 className="profilepage-title">Achievements</h1>
+                </div>
 
-              <button className="profilepage-viewall-button">View All</button>
-            </div>
+                <div className="profilepage-achievement-box">
+                  <img
+                    src={AchievementPlaceholder}
+                    alt=""
+                    className="profilepage-achievement-placeholder"
+                  />
 
-            <div className="profilepage-achievement-box">
-              <img
-                src={AchievementPlaceholder}
-                alt=""
-                className="profilepage-achievement-placeholder"
-              />
+                  <p>No achievements yet.</p>
 
-              <p>No achievements yet.</p>
-
-              <span>Keep focusing and earn your first achievement!</span>
-            </div>
-
-            {/* BUTTONS */}
-            <div className="profilepage-bottom-buttons">
-              <button className="profilepage-edit-button">Edit Profile</button>
-
-              <button
-                className="profilepage-logout-button"
-                onClick={handleLogout}
-              >
-                Log Out
-              </button>
-            </div>
+                  <span>Keep focusing and earn your first achievement!</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -2017,6 +2060,7 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
 }
 
 export default ProfilePage;
+
 
 
 
@@ -3163,7 +3207,7 @@ export default TugasMenuPage;
 .profilepage-close-button {
   position: absolute;
 
-  top: 24px;
+  top: 7px;
   right: 30px;
 
   border: none;
@@ -3179,11 +3223,11 @@ export default TugasMenuPage;
 }
 
 .profilepage-sidebar {
-  width: 280px;
+  width: 240px;
 
   background: linear-gradient(to bottom, #f5e3cc, #efd9bb);
 
-  padding: 50px 32px;
+  padding: 32px 24px;
 
   display: flex;
   flex-direction: column;
@@ -3191,8 +3235,8 @@ export default TugasMenuPage;
 }
 
 .profilepage-avatar {
-  width: 120px;
-  height: 120px;
+  width: 95px;
+  height: 95px;
 
   border-radius: 50%;
 
@@ -3204,7 +3248,7 @@ export default TugasMenuPage;
 }
 
 .profilepage-username {
-  font-size: 30px;
+  font-size: 20px;
 
   color: #2f241d;
 
@@ -3212,7 +3256,7 @@ export default TugasMenuPage;
 }
 
 .profilepage-email {
-  font-size: 16px;
+  font-size: 14px;
 
   color: rgba(0, 0, 0, 0.6);
 
@@ -3222,16 +3266,17 @@ export default TugasMenuPage;
 .profilepage-badge {
   background-color: #ffe5a8;
 
-  padding: 10px 22px;
+  padding: 8px 18px;
 
   border-radius: 999px;
 
-  font-size: 18px;
+  font-size: 15px;
   font-weight: bold;
 
   color: #7c5a00;
 
-  margin-bottom: 42px;
+  margin-top: -5px;
+  margin-bottom: 25px;
 }
 
 .profilepage-sidebar-menu {
@@ -3240,7 +3285,9 @@ export default TugasMenuPage;
   display: flex;
   flex-direction: column;
 
-  gap: 14px;
+  gap: 6px;
+
+  margin-top: -6px;
 }
 
 .profilepage-sidebar-item {
@@ -3248,13 +3295,13 @@ export default TugasMenuPage;
 
   background: transparent;
 
-  padding: 18px 24px;
+  padding: 10px 14px;
 
   border-radius: 18px;
 
   text-align: left;
 
-  font-size: 24px;
+  font-size: 15px;
 
   cursor: pointer;
 
@@ -3272,23 +3319,23 @@ export default TugasMenuPage;
 .profilepage-content {
   flex: 1;
 
-  padding: 50px;
+  padding: 24px 32px 32px 32px;
 }
 
 .profilepage-title {
-  font-size: 30px;
+  font-size: 22px;
 
   color: #2f241d;
 
-  margin-bottom: 10px;
+  margin-bottom: 4px;
 }
 
 .profilepage-subtitle {
-  font-size: 16px;
+  font-size: 13px;
 
   color: rgba(0, 0, 0, 0.65);
 
-  margin-bottom: 36px;
+  margin-bottom: 8px;
 }
 
 .profilepage-info-box {
@@ -3296,20 +3343,20 @@ export default TugasMenuPage;
 
   border-radius: 26px;
 
-  padding: 30px;
+  padding: 20px;
 
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 
 .profilepage-info-row {
   display: flex;
   align-items: center;
 
-  gap: 20px;
+  gap: 14px;
 
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 
-  font-size: 16px;
+  font-size: 13px;
 }
 
 .profilepage-info-row:last-child {
@@ -3317,8 +3364,8 @@ export default TugasMenuPage;
 }
 
 .profilepage-info-icon {
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
 
   object-fit: contain;
 }
@@ -3336,19 +3383,19 @@ export default TugasMenuPage;
 }
 
 .profilepage-section-title {
-  font-size: 24px;
+  font-size: 18px;
 
   color: #2f241d;
 
-  margin-bottom: 24px;
+  margin-bottom: 10px;
 }
 
 .profilepage-stats {
   display: flex;
 
-  gap: 18px;
+  gap: 12px;
 
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 
 .profilepage-stat-card {
@@ -3356,16 +3403,16 @@ export default TugasMenuPage;
 
   background-color: white;
 
-  border-radius: 24px;
+  border-radius: 18px;
 
-  padding: 24px;
+  padding: 16px;
 
   text-align: center;
 }
 
 .profilepage-stat-icon {
-  width: 60px;
-  height: 60px;
+  width: 42px;
+  height: 42px;
 
   object-fit: contain;
 
@@ -3373,7 +3420,7 @@ export default TugasMenuPage;
 }
 
 .profilepage-stat-card h3 {
-  font-size: 22px;
+  font-size: 14px;
 
   color: #4a4037;
 
@@ -3381,7 +3428,7 @@ export default TugasMenuPage;
 }
 
 .profilepage-stat-card p {
-  font-size: 28px;
+  font-size: 20px;
   font-weight: bold;
 
   color: #2f241d;
@@ -3390,7 +3437,7 @@ export default TugasMenuPage;
 }
 
 .profilepage-stat-card span {
-  font-size: 18px;
+  font-size: 12px;
 
   color: rgba(0, 0, 0, 0.5);
 }
@@ -3415,7 +3462,7 @@ export default TugasMenuPage;
 }
 
 .profilepage-achievement-box {
-  height: 180px;
+  height: 120px;
 
   border: 2px dashed #d7c3ae;
 
@@ -3432,13 +3479,13 @@ export default TugasMenuPage;
 }
 
 .profilepage-achievement-placeholder {
-  width: 64px;
+  width: 42px;
 
   margin-bottom: 16px;
 }
 
 .profilepage-achievement-box p {
-  font-size: 24px;
+  font-size: 16px;
 
   color: #2f241d;
 
@@ -3446,7 +3493,7 @@ export default TugasMenuPage;
 }
 
 .profilepage-achievement-box span {
-  font-size: 18px;
+  font-size: 12px;
 
   color: rgba(0, 0, 0, 0.6);
 }
@@ -3455,6 +3502,8 @@ export default TugasMenuPage;
   display: flex;
 
   gap: 20px;
+
+  margin-top: -8px;
 }
 
 .profilepage-edit-button,
@@ -3465,9 +3514,9 @@ export default TugasMenuPage;
 
   border-radius: 22px;
 
-  padding: 16px;
+  padding: 12px;
 
-  font-size: 18px;
+  font-size: 14px;
   font-weight: bold;
 
   cursor: pointer;
@@ -3484,7 +3533,6 @@ export default TugasMenuPage;
 
   color: white;
 }
-
 
 
 

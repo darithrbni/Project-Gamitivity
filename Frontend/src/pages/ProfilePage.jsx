@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import ProfilePlaceholder from "../assets/ProfilePlaceholder.png";
 
 import UserIcon from "../assets/UserIcon.png";
@@ -13,6 +15,7 @@ import StreakIcon from "../assets/StreakIcon.png";
 import AchievementPlaceholder from "../assets/AchievementPlaceholder.png";
 
 function ProfilePage({ setPage, currentUser, handleLogout }) {
+  const [activeProfileTab, setActiveProfileTab] = useState("overview");
   return (
     <>
       <div className="menu-overlay" onClick={() => setPage("main")} />
@@ -44,13 +47,29 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
             <div className="profilepage-badge">✨ Focus Explorer</div>
 
             <div className="profilepage-sidebar-menu">
-              <button className="profilepage-sidebar-item active">
+              <button
+                className={
+                  activeProfileTab === "overview"
+                    ? "profilepage-sidebar-item active"
+                    : "profilepage-sidebar-item"
+                }
+                onClick={() => setActiveProfileTab("overview")}
+              >
                 Overview
               </button>
 
               <button className="profilepage-sidebar-item">Stats</button>
 
-              <button className="profilepage-sidebar-item">Achievements</button>
+              <button
+                className={
+                  activeProfileTab === "achievements"
+                    ? "profilepage-sidebar-item active"
+                    : "profilepage-sidebar-item"
+                }
+                onClick={() => setActiveProfileTab("achievements")}
+              >
+                Achievements
+              </button>
 
               <button className="profilepage-sidebar-item">
                 Customization
@@ -66,142 +85,165 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
 
           {/* CONTENT */}
           <div className="profilepage-content">
-            <h1 className="profilepage-title">My Profile</h1>
+            {activeProfileTab === "overview" && (
+              <>
+                <h1 className="profilepage-title">My Profile</h1>
+                <p className="profilepage-subtitle">
+                  Here's your productivity journey! ✨
+                </p>
+              </>
+            )}
 
-            <p className="profilepage-subtitle">
-              Here's your productivity journey! ✨
-            </p>
+            {activeProfileTab === "overview" && (
+              <>
+                {/* PROFILE INFO */}
+                <div className="profilepage-info-box">
+                  <div className="profilepage-info-row">
+                    <img
+                      src={UserIcon}
+                      alt=""
+                      className="profilepage-info-icon"
+                    />
 
-            {/* PROFILE INFO */}
-            <div className="profilepage-info-box">
-              <div className="profilepage-info-row">
-                <img src={UserIcon} alt="" className="profilepage-info-icon" />
+                    <span>Username</span>
 
-                <span>Username</span>
+                    <p>{currentUser?.displayName || "-"}</p>
+                  </div>
 
-                <p>{currentUser?.displayName || "-"}</p>
-              </div>
+                  <div className="profilepage-info-row">
+                    <img
+                      src={EmailIcon}
+                      alt=""
+                      className="profilepage-info-icon"
+                    />
 
-              <div className="profilepage-info-row">
-                <img src={EmailIcon} alt="" className="profilepage-info-icon" />
+                    <span>Email</span>
 
-                <span>Email</span>
+                    <p>{currentUser?.email || "-"}</p>
+                  </div>
 
-                <p>{currentUser?.email || "-"}</p>
-              </div>
+                  <div className="profilepage-info-row">
+                    <img
+                      src={CalendarIcon}
+                      alt=""
+                      className="profilepage-info-icon"
+                    />
 
-              <div className="profilepage-info-row">
-                <img
-                  src={CalendarIcon}
-                  alt=""
-                  className="profilepage-info-icon"
-                />
+                    <span>Member Since</span>
 
-                <span>Member Since</span>
+                    <p>-</p>
+                  </div>
 
-                <p>-</p>
-              </div>
+                  <div className="profilepage-info-row">
+                    <img
+                      src={MottoIcon}
+                      alt=""
+                      className="profilepage-info-icon"
+                    />
 
-              <div className="profilepage-info-row">
-                <img src={MottoIcon} alt="" className="profilepage-info-icon" />
+                    <span>Motto</span>
 
-                <span>Motto</span>
+                    <p>One step at a time.</p>
+                  </div>
+                </div>
 
-                <p>One step at a time.</p>
-              </div>
-            </div>
+                {/* STATS */}
+                <h2 className="profilepage-section-title">
+                  Productivity Stats
+                </h2>
 
-            {/* STATS */}
-            <h2 className="profilepage-section-title">Productivity Stats</h2>
+                <div className="profilepage-stats">
+                  <div className="profilepage-stat-card">
+                    <img
+                      src={TotalFocusIcon}
+                      alt=""
+                      className="profilepage-stat-icon"
+                    />
 
-            <div className="profilepage-stats">
-              <div className="profilepage-stat-card">
-                <img
-                  src={TotalFocusIcon}
-                  alt=""
-                  className="profilepage-stat-icon"
-                />
+                    <h3>Focus Time</h3>
 
-                <h3>Focus Time</h3>
+                    <p>-</p>
 
-                <p>-</p>
+                    <span>Total</span>
+                  </div>
 
-                <span>Total</span>
-              </div>
+                  <div className="profilepage-stat-card">
+                    <img
+                      src={TotalCoinIcon}
+                      alt=""
+                      className="profilepage-stat-icon"
+                    />
 
-              <div className="profilepage-stat-card">
-                <img
-                  src={TotalCoinIcon}
-                  alt=""
-                  className="profilepage-stat-icon"
-                />
+                    <h3>Coins Earned</h3>
 
-                <h3>Coins Earned</h3>
+                    <p>-</p>
 
-                <p>-</p>
+                    <span>Sessions</span>
+                  </div>
 
-                <span>Sessions</span>
-              </div>
+                  <div className="profilepage-stat-card">
+                    <img
+                      src={TotalTaskIcon}
+                      alt=""
+                      className="profilepage-stat-icon"
+                    />
 
-              <div className="profilepage-stat-card">
-                <img
-                  src={TotalTaskIcon}
-                  alt=""
-                  className="profilepage-stat-icon"
-                />
+                    <h3>Tasks Done</h3>
 
-                <h3>Tasks Done</h3>
+                    <p>-</p>
 
-                <p>-</p>
+                    <span>Completed</span>
+                  </div>
 
-                <span>Completed</span>
-              </div>
+                  <div className="profilepage-stat-card">
+                    <img
+                      src={StreakIcon}
+                      alt=""
+                      className="profilepage-stat-icon"
+                    />
 
-              <div className="profilepage-stat-card">
-                <img
-                  src={StreakIcon}
-                  alt=""
-                  className="profilepage-stat-icon"
-                />
+                    <h3>Streak</h3>
 
-                <h3>Streak</h3>
+                    <p>-</p>
 
-                <p>-</p>
+                    <span>Days</span>
+                  </div>
+                </div>
 
-                <span>Days</span>
-              </div>
-            </div>
+                {/* BUTTONS */}
+                <div className="profilepage-bottom-buttons">
+                  <button className="profilepage-edit-button">
+                    Edit Profile
+                  </button>
 
-            {/* ACHIEVEMENTS */}
-            <div className="profilepage-achievement-header">
-              <h2 className="profilepage-section-title">Achievements</h2>
+                  <button
+                    className="profilepage-logout-button"
+                    onClick={handleLogout}
+                  >
+                    Log Out
+                  </button>
+                </div>
+              </>
+            )}
+            {activeProfileTab === "achievements" && (
+              <>
+                <div className="profilepage-achievement-header">
+                  <h1 className="profilepage-title">Achievements</h1>
+                </div>
 
-              <button className="profilepage-viewall-button">View All</button>
-            </div>
+                <div className="profilepage-achievement-box">
+                  <img
+                    src={AchievementPlaceholder}
+                    alt=""
+                    className="profilepage-achievement-placeholder"
+                  />
 
-            <div className="profilepage-achievement-box">
-              <img
-                src={AchievementPlaceholder}
-                alt=""
-                className="profilepage-achievement-placeholder"
-              />
+                  <p>No achievements yet.</p>
 
-              <p>No achievements yet.</p>
-
-              <span>Keep focusing and earn your first achievement!</span>
-            </div>
-
-            {/* BUTTONS */}
-            <div className="profilepage-bottom-buttons">
-              <button className="profilepage-edit-button">Edit Profile</button>
-
-              <button
-                className="profilepage-logout-button"
-                onClick={handleLogout}
-              >
-                Log Out
-              </button>
-            </div>
+                  <span>Keep focusing and earn your first achievement!</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
