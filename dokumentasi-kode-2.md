@@ -4040,6 +4040,58 @@ export default TugasMenuPage;
   margin-top: 8px;
 }
 
+/* =========================
+   PROFILE RESPONSIVE
+========================= */
+
+/* Monitor besar */
+@media (min-width: 1600px) {
+  .profilepage-container {
+    transform: scale(1.35);
+  }
+}
+
+/* Monitor sangat besar */
+@media (min-width: 2200px) {
+  .profilepage-container {
+    transform: scale(1.55);
+  }
+}
+
+/* Laptop kecil */
+@media (max-width: 1200px) {
+  .profilepage-container {
+    transform: scale(0.9);
+  }
+}
+
+/* Laptop lebih kecil */
+@media (max-width: 1000px) {
+  .profilepage-container {
+    transform: scale(0.8);
+  }
+}
+
+/* Tablet */
+@media (max-width: 850px) {
+  .profilepage-container {
+    transform: scale(0.7);
+  }
+}
+
+/* HP besar */
+@media (max-width: 650px) {
+  .profilepage-container {
+    transform: scale(0.58);
+  }
+}
+
+/* HP kecil */
+@media (max-width: 500px) {
+  .profilepage-container {
+    transform: scale(0.48);
+  }
+}
 
 
 
