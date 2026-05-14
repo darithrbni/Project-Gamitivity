@@ -280,17 +280,6 @@
   margin-bottom: 18px;
 }
 
-.profilepage-viewall-button {
-  border: none;
-  background: none;
-
-  color: #4d8cff;
-
-  font-size: 22px;
-
-  cursor: pointer;
-}
-
 .profilepage-achievement-box {
   height: 120px;
 
@@ -439,42 +428,6 @@
   background-color: white;
 
   outline: none;
-}
-
-.editprofile-badges {
-  display: flex;
-  flex-direction: column;
-
-  gap: 10px;
-}
-
-.editprofile-badge-button {
-  border: 2px solid #e6d5c3;
-
-  background-color: white;
-
-  border-radius: 16px;
-
-  padding: 12px;
-
-  font-size: 14px;
-  font-weight: bold;
-
-  cursor: pointer;
-}
-
-.editprofile-badge-button.selected {
-  border-color: #f07c7c;
-
-  background-color: #fff1f1;
-}
-
-.editprofile-buttons {
-  display: flex;
-
-  gap: 20px;
-
-  margin-top: 20px;
 }
 
 .editprofile-header {
