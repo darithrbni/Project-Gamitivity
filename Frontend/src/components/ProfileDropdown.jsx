@@ -2,6 +2,7 @@ import ProfilePlaceholder from "../assets/ProfilePlaceholder.png";
 
 function ProfileDropdown({
   currentUser,
+  profileImage,
   setPage,
   handleLogout,
   isProfileDropdownOpen,
@@ -19,7 +20,7 @@ function ProfileDropdown({
             onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
           >
             <img
-              src={ProfilePlaceholder}
+              src={profileImage || ProfilePlaceholder}
               alt="Profile"
               className="profile-image"
             />
@@ -42,7 +43,10 @@ function ProfileDropdown({
 
               <button className="profile-dropdown-item">Settings</button>
 
-              <button className="profile-dropdown-item" onClick={handleLogout}>
+              <button
+                className="profile-dropdown-item-logout"
+                onClick={handleLogout}
+              >
                 Log Out
               </button>
             </div>

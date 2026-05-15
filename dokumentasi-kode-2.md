@@ -109,6 +109,7 @@ import ProfilePlaceholder from "../assets/ProfilePlaceholder.png";
 
 function ProfileDropdown({
   currentUser,
+  profileImage,
   setPage,
   handleLogout,
   isProfileDropdownOpen,
@@ -126,7 +127,7 @@ function ProfileDropdown({
             onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
           >
             <img
-              src={ProfilePlaceholder}
+              src={profileImage || ProfilePlaceholder}
               alt="Profile"
               className="profile-image"
             />
@@ -149,7 +150,10 @@ function ProfileDropdown({
 
               <button className="profile-dropdown-item">Settings</button>
 
-              <button className="profile-dropdown-item" onClick={handleLogout}>
+              <button
+                className="profile-dropdown-item-logout"
+                onClick={handleLogout}
+              >
                 Log Out
               </button>
             </div>
@@ -165,6 +169,7 @@ function ProfileDropdown({
 }
 
 export default ProfileDropdown;
+
 
 
 
@@ -1158,11 +1163,12 @@ export default LoginPage;
 
 
 
-## MainScene.jsx
 import { useEffect, useState } from "react";
 
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import auth from "../firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase/config";
 
 import MenuPage from "./MenuPage";
 import TimerMenuPage from "./TimerMenuPage";
@@ -1190,6 +1196,8 @@ function MainScene() {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   // CURRENT USER
   const [currentUser, setCurrentUser] = useState(null);
+  // PROFILE PICTURE
+  const [profileImage, setProfileImage] = useState("");
   // TIMER DISPLAY LOGIC
   const {
     // BASIC TIMER
@@ -1245,8 +1253,22 @@ function MainScene() {
 
   // FIREBASE AUTH LISTENER
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
+
+      if (user) {
+        const docRef = doc(db, "users", user.uid);
+
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+
+          setProfileImage(data.photoURL || "");
+        }
+      } else {
+        setProfileImage("");
+      }
     });
 
     return () => unsubscribe();
@@ -1261,6 +1283,7 @@ function MainScene() {
         <Corkboard onClick={() => setPage("menu")} />
         <ProfileDropdown
           currentUser={currentUser}
+          profileImage={profileImage}
           setPage={setPage}
           handleLogout={handleLogout}
           isProfileDropdownOpen={isProfileDropdownOpen}
@@ -1387,6 +1410,7 @@ function MainScene() {
           setPage={setPage}
           currentUser={currentUser}
           handleLogout={handleLogout}
+          setProfileImage={setProfileImage}
         />
       )}
     </div>
@@ -1394,6 +1418,8 @@ function MainScene() {
 }
 
 export default MainScene;
+
+
 
 
 
@@ -1810,7 +1836,6 @@ export default PomodoroPage;
 
 
 
-
 ## ProfilePage.jsx
 import { useEffect, useState } from "react";
 
@@ -1833,7 +1858,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { updateProfile } from "firebase/auth";
 import { db } from "../firebase/config";
 
-function ProfilePage({ setPage, currentUser, handleLogout }) {
+function ProfilePage({ setPage, currentUser, handleLogout, setProfileImage }) {
   const [activeProfileTab, setActiveProfileTab] = useState("overview");
   const [hasProfileChanges, setHasProfileChanges] = useState(false);
   const [username, setUsername] = useState("");
@@ -1847,6 +1872,9 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
   const isMottoTooLong = motto.length > 80;
   const isProfileInvalid =
     isUsernameEmpty || isUsernameTooLong || isMottoTooLong;
+  const [previewProfileImage, setPreviewProfileImage] = useState("");
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const [originalPhotoURL, setOriginalPhotoURL] = useState("");
 
   useEffect(() => {
     async function loadProfileData() {
@@ -1865,6 +1893,9 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
         setSavedUsername(data.username || "");
         setSavedMotto(data.motto || "Let's study with me!");
 
+        setPreviewProfileImage(data.photoURL || "");
+        setOriginalPhotoURL(data.photoURL || "");
+
         setOriginalUsername(data.username || "");
         setOriginalMotto(data.motto || "Let's study with me!");
       }
@@ -1874,10 +1905,21 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
   }, [currentUser]);
 
   useEffect(() => {
-    const hasChanges = username !== originalUsername || motto !== originalMotto;
+    const hasChanges =
+      username !== originalUsername ||
+      motto !== originalMotto ||
+      previewProfileImage !== originalPhotoURL;
 
     setHasProfileChanges(hasChanges && !isProfileInvalid);
-  }, [username, motto, originalUsername, originalMotto, isProfileInvalid]);
+  }, [
+    username,
+    motto,
+    previewProfileImage,
+    originalUsername,
+    originalMotto,
+    originalPhotoURL,
+    isProfileInvalid,
+  ]);
 
   function handleCancelEditProfile() {
     setUsername(savedUsername);
@@ -1889,6 +1931,27 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
     if (!currentUser) return;
 
     try {
+      let photoURL = previewProfileImage;
+
+      if (selectedImageFile) {
+        const formData = new FormData();
+
+        formData.append("file", selectedImageFile);
+
+        formData.append("upload_preset", "gamitivity_profile_pic");
+
+        const response = await fetch(
+          "https://api.cloudinary.com/v1_1/dohfdsrho/image/upload",
+          {
+            method: "POST",
+            body: formData,
+          },
+        );
+
+        const data = await response.json();
+
+        photoURL = data.secure_url;
+      }
       await updateProfile(currentUser, {
         displayName: username,
       });
@@ -1898,6 +1961,7 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
         {
           username,
           motto,
+          photoURL,
         },
         { merge: true },
       );
@@ -1907,6 +1971,9 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
 
       setSavedUsername(username);
       setSavedMotto(motto);
+      setOriginalPhotoURL(photoURL);
+      setPreviewProfileImage(photoURL);
+      setProfileImage(photoURL);
 
       alert("Profile updated!");
       setActiveProfileTab("overview");
@@ -1934,7 +2001,7 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
           {/* SIDEBAR */}
           <div className="profilepage-sidebar">
             <img
-              src={ProfilePlaceholder}
+              src={originalPhotoURL || ProfilePlaceholder}
               alt="Profile"
               className="profilepage-avatar"
             />
@@ -2238,7 +2305,7 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
                       {/* PREVIEW */}
                       <div className="editprofile-picture-preview">
                         <img
-                          src={ProfilePlaceholder}
+                          src={previewProfileImage || ProfilePlaceholder}
                           alt="Preview"
                           className="editprofile-picture-preview-image"
                         />
@@ -2246,6 +2313,20 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
 
                       {/* UPLOAD */}
                       <div className="editprofile-upload-box">
+                        <input
+                          type="file"
+                          accept="image/png, image/jpeg"
+                          className="editprofile-file-input"
+                          onChange={(event) => {
+                            const file = event.target.files[0];
+
+                            if (!file) return;
+
+                            setSelectedImageFile(file);
+
+                            setPreviewProfileImage(URL.createObjectURL(file));
+                          }}
+                        />
                         <img
                           src={UploadIcon}
                           alt="Upload"
@@ -2267,9 +2348,6 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
 }
 
 export default ProfilePage;
-
-
-
 
 
 
@@ -2751,7 +2829,7 @@ export default TugasMenuPage;
   position: absolute;
 
   top: 20px;
-  right: 20px;
+  right: 25px;
 
   z-index: 5;
 }
@@ -2779,16 +2857,20 @@ export default TugasMenuPage;
 }
 
 .profile-image {
-  width: 70px;
-  height: 70px;
+  width: 80px;
+  height: 80px;
 
   border-radius: 50%;
 
   object-fit: cover;
+
+  border: 2px solid white;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
 }
 
 .profile-dropdown {
-  margin-top: 10px;
+  margin-top: 20px;
 
   width: 180px;
 
@@ -2829,6 +2911,30 @@ export default TugasMenuPage;
   background-color: #f3f3f3;
 }
 
+.profile-dropdown-item-logout {
+  border: none;
+
+  background: white;
+
+  padding: 14px;
+
+  text-align: left;
+
+  font-size: 1rem;
+
+  cursor: pointer;
+
+  transition: background-color 0.15s ease;
+
+  color: #e45f5f;
+}
+
+.profile-dropdown-item-logout:hover {
+  background-color: #f3f3f3;
+
+  color: #e45f5f;
+}
+
 .login-button {
   position: absolute;
 
@@ -2865,6 +2971,8 @@ export default TugasMenuPage;
 
   transform: scale(0.97);
 }
+
+
 
 
 
@@ -3404,7 +3512,6 @@ export default TugasMenuPage;
 
 
 
-
 ## Profile.css
 /* Profile Page */
 
@@ -3473,14 +3580,14 @@ export default TugasMenuPage;
 }
 
 .profilepage-avatar {
-  width: 110px;
-  height: 110px;
+  width: 115px;
+  height: 115px;
 
   border-radius: 50%;
 
   object-fit: cover;
 
-  border: 5px solid white;
+  border: 3px solid white;
 
   margin-bottom: 14px;
 }
@@ -3744,14 +3851,14 @@ export default TugasMenuPage;
 .profilepage-bottom-buttons {
   display: flex;
 
-  gap: 20px;
+  gap: 16px;
 
   margin-top: -8px;
 }
 
 .profilepage-edit-button,
 .profilepage-logout-button {
-  flex: 1;
+  width: calc(50% - 8px);
 
   border: none;
 
@@ -3982,6 +4089,9 @@ export default TugasMenuPage;
 }
 
 .editprofile-upload-box {
+  position: relative;
+  overflow: hidden;
+
   flex: 1;
 
   height: 140px;
@@ -4091,6 +4201,16 @@ export default TugasMenuPage;
   .profilepage-container {
     transform: scale(0.48);
   }
+}
+
+.editprofile-file-input {
+  position: absolute;
+
+  inset: 0;
+
+  opacity: 0;
+
+  cursor: pointer;
 }
 
 

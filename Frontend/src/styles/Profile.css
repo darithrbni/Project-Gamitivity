@@ -65,14 +65,14 @@
 }
 
 .profilepage-avatar {
-  width: 110px;
-  height: 110px;
+  width: 115px;
+  height: 115px;
 
   border-radius: 50%;
 
   object-fit: cover;
 
-  border: 5px solid white;
+  border: 3px solid white;
 
   margin-bottom: 14px;
 }
@@ -574,6 +574,9 @@
 }
 
 .editprofile-upload-box {
+  position: relative;
+  overflow: hidden;
+
   flex: 1;
 
   height: 140px;

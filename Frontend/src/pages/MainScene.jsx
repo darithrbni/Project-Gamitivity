@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import auth from "../firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase/config";
 
 import MenuPage from "./MenuPage";
 import TimerMenuPage from "./TimerMenuPage";
@@ -29,6 +31,8 @@ function MainScene() {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   // CURRENT USER
   const [currentUser, setCurrentUser] = useState(null);
+  // PROFILE PICTURE
+  const [profileImage, setProfileImage] = useState("");
   // TIMER DISPLAY LOGIC
   const {
     // BASIC TIMER
@@ -84,8 +88,22 @@ function MainScene() {
 
   // FIREBASE AUTH LISTENER
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
+
+      if (user) {
+        const docRef = doc(db, "users", user.uid);
+
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+
+          setProfileImage(data.photoURL || "");
+        }
+      } else {
+        setProfileImage("");
+      }
     });
 
     return () => unsubscribe();
@@ -100,6 +118,7 @@ function MainScene() {
         <Corkboard onClick={() => setPage("menu")} />
         <ProfileDropdown
           currentUser={currentUser}
+          profileImage={profileImage}
           setPage={setPage}
           handleLogout={handleLogout}
           isProfileDropdownOpen={isProfileDropdownOpen}
@@ -226,6 +245,7 @@ function MainScene() {
           setPage={setPage}
           currentUser={currentUser}
           handleLogout={handleLogout}
+          setProfileImage={setProfileImage}
         />
       )}
     </div>

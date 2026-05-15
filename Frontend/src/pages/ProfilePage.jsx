@@ -19,7 +19,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { updateProfile } from "firebase/auth";
 import { db } from "../firebase/config";
 
-function ProfilePage({ setPage, currentUser, handleLogout }) {
+function ProfilePage({ setPage, currentUser, handleLogout, setProfileImage }) {
   const [activeProfileTab, setActiveProfileTab] = useState("overview");
   const [hasProfileChanges, setHasProfileChanges] = useState(false);
   const [username, setUsername] = useState("");
@@ -33,8 +33,9 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
   const isMottoTooLong = motto.length > 80;
   const isProfileInvalid =
     isUsernameEmpty || isUsernameTooLong || isMottoTooLong;
-  const [profileImage, setProfileImage] = useState("");
+  const [previewProfileImage, setPreviewProfileImage] = useState("");
   const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const [originalPhotoURL, setOriginalPhotoURL] = useState("");
 
   useEffect(() => {
     async function loadProfileData() {
@@ -53,7 +54,8 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
         setSavedUsername(data.username || "");
         setSavedMotto(data.motto || "Let's study with me!");
 
-        setProfileImage(data.photoURL || "");
+        setPreviewProfileImage(data.photoURL || "");
+        setOriginalPhotoURL(data.photoURL || "");
 
         setOriginalUsername(data.username || "");
         setOriginalMotto(data.motto || "Let's study with me!");
@@ -64,10 +66,21 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
   }, [currentUser]);
 
   useEffect(() => {
-    const hasChanges = username !== originalUsername || motto !== originalMotto;
+    const hasChanges =
+      username !== originalUsername ||
+      motto !== originalMotto ||
+      previewProfileImage !== originalPhotoURL;
 
     setHasProfileChanges(hasChanges && !isProfileInvalid);
-  }, [username, motto, originalUsername, originalMotto, isProfileInvalid]);
+  }, [
+    username,
+    motto,
+    previewProfileImage,
+    originalUsername,
+    originalMotto,
+    originalPhotoURL,
+    isProfileInvalid,
+  ]);
 
   function handleCancelEditProfile() {
     setUsername(savedUsername);
@@ -79,7 +92,7 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
     if (!currentUser) return;
 
     try {
-      let photoURL = profileImage;
+      let photoURL = previewProfileImage;
 
       if (selectedImageFile) {
         const formData = new FormData();
@@ -119,6 +132,8 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
 
       setSavedUsername(username);
       setSavedMotto(motto);
+      setOriginalPhotoURL(photoURL);
+      setPreviewProfileImage(photoURL);
       setProfileImage(photoURL);
 
       alert("Profile updated!");
@@ -147,7 +162,7 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
           {/* SIDEBAR */}
           <div className="profilepage-sidebar">
             <img
-              src={profileImage || ProfilePlaceholder}
+              src={originalPhotoURL || ProfilePlaceholder}
               alt="Profile"
               className="profilepage-avatar"
             />
@@ -451,7 +466,7 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
                       {/* PREVIEW */}
                       <div className="editprofile-picture-preview">
                         <img
-                          src={profileImage || ProfilePlaceholder}
+                          src={previewProfileImage || ProfilePlaceholder}
                           alt="Preview"
                           className="editprofile-picture-preview-image"
                         />
@@ -470,7 +485,7 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
 
                             setSelectedImageFile(file);
 
-                            setProfileImage(URL.createObjectURL(file));
+                            setPreviewProfileImage(URL.createObjectURL(file));
                           }}
                         />
                         <img
