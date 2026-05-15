@@ -336,14 +336,14 @@
 .profilepage-bottom-buttons {
   display: flex;
 
-  gap: 20px;
+  gap: 16px;
 
   margin-top: -8px;
 }
 
 .profilepage-edit-button,
 .profilepage-logout-button {
-  flex: 1;
+  width: calc(50% - 8px);
 
   border: none;
 
@@ -683,4 +683,14 @@
   .profilepage-container {
     transform: scale(0.48);
   }
+}
+
+.editprofile-file-input {
+  position: absolute;
+
+  inset: 0;
+
+  opacity: 0;
+
+  cursor: pointer;
 }

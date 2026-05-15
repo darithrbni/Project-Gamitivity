@@ -33,6 +33,8 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
   const isMottoTooLong = motto.length > 80;
   const isProfileInvalid =
     isUsernameEmpty || isUsernameTooLong || isMottoTooLong;
+  const [profileImage, setProfileImage] = useState("");
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
 
   useEffect(() => {
     async function loadProfileData() {
@@ -50,6 +52,8 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
 
         setSavedUsername(data.username || "");
         setSavedMotto(data.motto || "Let's study with me!");
+
+        setProfileImage(data.photoURL || "");
 
         setOriginalUsername(data.username || "");
         setOriginalMotto(data.motto || "Let's study with me!");
@@ -75,6 +79,27 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
     if (!currentUser) return;
 
     try {
+      let photoURL = profileImage;
+
+      if (selectedImageFile) {
+        const formData = new FormData();
+
+        formData.append("file", selectedImageFile);
+
+        formData.append("upload_preset", "gamitivity_profile_pic");
+
+        const response = await fetch(
+          "https://api.cloudinary.com/v1_1/dohfdsrho/image/upload",
+          {
+            method: "POST",
+            body: formData,
+          },
+        );
+
+        const data = await response.json();
+
+        photoURL = data.secure_url;
+      }
       await updateProfile(currentUser, {
         displayName: username,
       });
@@ -84,6 +109,7 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
         {
           username,
           motto,
+          photoURL,
         },
         { merge: true },
       );
@@ -93,6 +119,7 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
 
       setSavedUsername(username);
       setSavedMotto(motto);
+      setProfileImage(photoURL);
 
       alert("Profile updated!");
       setActiveProfileTab("overview");
@@ -120,7 +147,7 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
           {/* SIDEBAR */}
           <div className="profilepage-sidebar">
             <img
-              src={ProfilePlaceholder}
+              src={profileImage || ProfilePlaceholder}
               alt="Profile"
               className="profilepage-avatar"
             />
@@ -424,7 +451,7 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
                       {/* PREVIEW */}
                       <div className="editprofile-picture-preview">
                         <img
-                          src={ProfilePlaceholder}
+                          src={profileImage || ProfilePlaceholder}
                           alt="Preview"
                           className="editprofile-picture-preview-image"
                         />
@@ -432,6 +459,20 @@ function ProfilePage({ setPage, currentUser, handleLogout }) {
 
                       {/* UPLOAD */}
                       <div className="editprofile-upload-box">
+                        <input
+                          type="file"
+                          accept="image/png, image/jpeg"
+                          className="editprofile-file-input"
+                          onChange={(event) => {
+                            const file = event.target.files[0];
+
+                            if (!file) return;
+
+                            setSelectedImageFile(file);
+
+                            setProfileImage(URL.createObjectURL(file));
+                          }}
+                        />
                         <img
                           src={UploadIcon}
                           alt="Upload"
