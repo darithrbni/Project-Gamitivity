@@ -19,22 +19,33 @@
 /* Profile Dropdown & Login Button */
 
 .profile-menu-container {
-  position: absolute;
-
-  top: 20px;
-  right: 25px;
+  position: relative;
 
   z-index: 5;
 }
 
 .profile-button {
   border: none;
+  border-radius: 28px;
 
-  background-color: transparent;
+  padding: 8px 14px 8px 8px;
+
+  background: #342922;
+
+  backdrop-filter: blur(8px);
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  width: fit-content;
 
   cursor: pointer;
 
-  padding: 0;
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
   transition:
     filter 0.15s ease,
@@ -50,16 +61,40 @@
 }
 
 .profile-image {
-  width: 80px;
-  height: 80px;
+  width: 56px;
+  height: 56px;
 
   border-radius: 50%;
 
   object-fit: cover;
 
-  border: 2px solid white;
+  border: 2px solid #faebd8;
 
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+  flex-shrink: 0;
+}
+
+.profile-username {
+  color: white;
+
+  font-size: 1.1rem;
+  font-weight: 500;
+
+  white-space: nowrap;
+}
+
+.profile-arrow-icon {
+  width: 20px;
+  height: 20px;
+
+  object-fit: contain;
+
+  opacity: 0.85;
+
+  transition: transform 0.15s ease;
+}
+
+.profile-arrow-open {
+  transform: rotate(180deg);
 }
 
 .profile-dropdown {
@@ -203,4 +238,66 @@
   filter: brightness(0.82);
 
   transform: scale(0.97);
+}
+
+/* CUSTOMIZATION BUTTON */
+
+.top-right-ui {
+  position: absolute;
+
+  top: 20px;
+  right: 25px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  z-index: 5;
+}
+
+.customization-button {
+  width: 70px;
+  height: 70px;
+
+  border: 2px solid #342922;
+  border-radius: 22px;
+
+  background: #342922;
+
+  backdrop-filter: blur(8px);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.customization-button:hover {
+  transform: scale(1.06);
+
+  filter: brightness(1.1);
+}
+
+.customization-button:active {
+  transform: scale(1);
+}
+
+.customization-icon {
+  width: 40px;
+  height: 40px;
+
+  object-fit: contain;
+
+  opacity: 0.92;
 }

@@ -1,4 +1,5 @@
 import ProfilePlaceholder from "../assets/ProfilePlaceholder.png";
+import TriangleIconBrown from "../assets/TriangleIconBrown.png";
 
 function ProfileDropdown({
   currentUser,
@@ -8,6 +9,10 @@ function ProfileDropdown({
   isProfileDropdownOpen,
   setIsProfileDropdownOpen,
 }) {
+  function toggleDropdown() {
+    setIsProfileDropdownOpen(!isProfileDropdownOpen);
+  }
+
   return (
     <>
       {currentUser ? (
@@ -15,14 +20,23 @@ function ProfileDropdown({
           className="profile-menu-container"
           onClick={(event) => event.stopPropagation()}
         >
-          <button
-            className="profile-button"
-            onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-          >
+          <button className="profile-button" onClick={toggleDropdown}>
             <img
               src={profileImage || ProfilePlaceholder}
               alt="Profile"
               className="profile-image"
+            />
+
+            <span className="profile-username">
+              {currentUser?.displayName || "User"}
+            </span>
+
+            <img
+              src={TriangleIconBrown}
+              alt="Dropdown"
+              className={`profile-arrow-icon ${
+                isProfileDropdownOpen ? "profile-arrow-open" : ""
+              }`}
             />
           </button>
 

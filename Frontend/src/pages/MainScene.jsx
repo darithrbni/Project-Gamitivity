@@ -18,11 +18,13 @@ import PomodoroPage from "./PomodoroPage";
 import LoginPage from "./LoginPage";
 import RegisterPage from "./RegisterPage";
 import ProfilePage from "./ProfilePage";
+import CustomizationPage from "./CustomizationPage";
 
 import Corkboard from "../components/Corkboard";
 import ProfileDropdown from "../components/ProfileDropdown";
 import TimerDisplay from "../components/TimerDisplay";
 import TimerDisplayLogic from "../components/TimerDisplayLogic";
+import CustomizationButton from "../components/CustomizationButton";
 
 function MainScene() {
   // PAGE STATE
@@ -119,14 +121,20 @@ function MainScene() {
     >
       <>
         <Corkboard onClick={() => setPage("menu")} />
-        <ProfileDropdown
-          currentUser={currentUser}
-          profileImage={profileImage}
-          setPage={setPage}
-          handleLogout={handleLogout}
-          isProfileDropdownOpen={isProfileDropdownOpen}
-          setIsProfileDropdownOpen={setIsProfileDropdownOpen}
-        />
+
+        <div className="top-right-ui">
+          <CustomizationButton setPage={setPage} />
+
+          <ProfileDropdown
+            currentUser={currentUser}
+            profileImage={profileImage}
+            setPage={setPage}
+            handleLogout={handleLogout}
+            isProfileDropdownOpen={isProfileDropdownOpen}
+            setIsProfileDropdownOpen={setIsProfileDropdownOpen}
+          />
+        </div>
+
         <TimerDisplay
           activeDisplay={activeDisplay}
           basicTimerHours={basicTimerHours}
@@ -251,6 +259,8 @@ function MainScene() {
           setProfileImage={setProfileImage}
         />
       )}
+
+      {page === "customization" && <CustomizationPage setPage={setPage} />}
     </div>
   );
 }

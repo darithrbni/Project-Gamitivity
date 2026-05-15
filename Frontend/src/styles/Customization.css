@@ -1,0 +1,144 @@
+/* CUSTOMIZATION PAGE */
+
+.customization-wrapper {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 20;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+
+  pointer-events: none;
+}
+
+.customization-sidebar {
+  pointer-events: auto;
+
+  width: calc(100% - 36px);
+  height: 280px;
+
+  margin-bottom: 18px;
+
+  border-radius: 34px;
+
+  background: rgba(28, 18, 14, 0.92);
+
+  backdrop-filter: blur(16px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  padding: 18px 26px 26px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 20px;
+}
+
+/* CATEGORY ROW */
+
+.customization-categories {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  overflow-x: auto;
+
+  scrollbar-width: none;
+
+  padding-bottom: 4px;
+}
+
+.customization-categories::-webkit-scrollbar {
+  display: none;
+}
+
+/* CATEGORY BUTTON */
+
+.customization-category-button {
+  flex-shrink: 0;
+
+  border: none;
+
+  background: transparent;
+
+  width: 110px;
+
+  padding: 10px 8px;
+
+  border-radius: 18px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 8px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.customization-category-button:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+
+  transform: translateY(-2px);
+}
+
+/* ACTIVE CATEGORY */
+
+.customization-category-button:first-child {
+  background-color: rgba(255, 140, 120, 0.08);
+}
+
+/* CATEGORY ICON */
+
+.customization-category-icon {
+  width: 34px;
+  height: 34px;
+
+  object-fit: contain;
+
+  opacity: 0.92;
+}
+
+/* CATEGORY TEXT */
+
+.customization-category-text {
+  color: white;
+
+  font-size: 0.95rem;
+  font-weight: 500;
+
+  white-space: nowrap;
+}
+
+/* EMPTY ITEMS AREA */
+
+.customization-items-empty {
+  flex: 1;
+
+  border-radius: 24px;
+
+  border: 2px dashed rgba(255, 255, 255, 0.08);
+
+  background: rgba(255, 255, 255, 0.02);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: rgba(255, 255, 255, 0.5);
+
+  font-size: 1rem;
+}
