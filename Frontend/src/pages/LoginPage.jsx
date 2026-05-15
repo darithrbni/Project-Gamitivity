@@ -59,6 +59,9 @@ function LoginPage({ setPage }) {
 
       setPage("main");
     } catch (error) {
+      if (error.code === "auth/popup-closed-by-user") {
+        return;
+      }
       alert(error.message);
     }
   }

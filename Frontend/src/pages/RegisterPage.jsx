@@ -20,6 +20,18 @@ function RegisterPage({ setPage }) {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   async function handleRegister() {
+    const trimmedUsername = username.trim();
+
+    if (trimmedUsername === "") {
+      alert("Username tidak boleh kosong");
+      return;
+    }
+
+    if (trimmedUsername.length > 20) {
+      alert("Username tidak boleh lebih dari 20 karakter");
+      return;
+    }
+
     if (password !== confirmPassword) {
       alert("Password tidak sama");
       return;
@@ -33,11 +45,11 @@ function RegisterPage({ setPage }) {
       );
 
       await updateProfile(userCredential.user, {
-        displayName: username,
+        displayName: trimmedUsername,
       });
 
       await setDoc(doc(db, "users", userCredential.user.uid), {
-        username,
+        username: trimmedUsername,
         motto: "Let's study with me!",
         photoURL: "",
         createdAt: serverTimestamp(),
