@@ -1022,6 +1022,8 @@ import PasswordVisible from "../assets/PasswordVisible.png";
 
 import PasswordInvisible from "../assets/PasswordInvisible.png";
 
+import GoogleIcon from "../assets/GoogleIcon.png";
+
 function LoginPage({ setPage }) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -1091,7 +1093,7 @@ function LoginPage({ setPage }) {
           <p className="google-label">Masuk dengan</p>
 
           <button className="google-login-button" onClick={handleGoogleLogin}>
-            <span className="google-logo">G</span>
+            <img className="google-logo" src={GoogleIcon} alt="Google" />
 
             <span>Lanjutkan dengan Google</span>
           </button>
@@ -2474,7 +2476,7 @@ function RegisterPage({ setPage }) {
           <h1 className="register-title">REGISTER</h1>
 
           <p className="register-subtitle">
-            Buat akun baru untuk memulai perjalananmu.
+            Buat akun baru untuk memulai perjalananmu!
           </p>
 
           {/* USERNAME */}
@@ -3132,7 +3134,7 @@ export default TugasMenuPage;
 /* LOGIN PAGE */
 
 .login-panel {
-  width: 400px;
+  width: 380px;
 
   display: flex;
   flex-direction: column;
@@ -3140,7 +3142,7 @@ export default TugasMenuPage;
 }
 
 .login-title {
-  font-size: 3.2rem;
+  font-size: 2.8rem;
 
   color: #d17b00;
 
@@ -3198,9 +3200,10 @@ export default TugasMenuPage;
 }
 
 .google-logo {
-  font-weight: bold;
+  width: 22px;
+  height: 22px;
 
-  color: #4285f4;
+  object-fit: contain;
 }
 
 .login-divider {
@@ -3244,7 +3247,7 @@ export default TugasMenuPage;
 
   box-sizing: border-box;
 
-  padding: 14px 22px;
+  padding: 12px 20px;
   font-size: 1rem;
 
   border-radius: 999px;
@@ -3307,6 +3310,8 @@ export default TugasMenuPage;
 }
 
 .login-submit-button {
+  align-self: center;
+
   border: none;
   border-radius: 20px;
 
@@ -3335,7 +3340,7 @@ export default TugasMenuPage;
 /* Register Page */
 
 .register-panel {
-  width: 400px;
+  width: 360px;
 
   display: flex;
   flex-direction: column;
@@ -3381,7 +3386,7 @@ export default TugasMenuPage;
 .register-submit-button {
   align-self: center;
 
-  margin-top: 10px;
+  margin-top: 6px;
 
   font-size: 1.2rem;
   padding: 12px 42px;
@@ -3477,7 +3482,7 @@ export default TugasMenuPage;
 @media (min-width: 1600px) {
   .login-panel,
   .register-panel {
-    transform: scale(1.1);
+    transform: scale(1.3);
   }
 }
 
@@ -3512,8 +3517,6 @@ export default TugasMenuPage;
     transform: scale(0.75);
   }
 }
-
-
 
 
 

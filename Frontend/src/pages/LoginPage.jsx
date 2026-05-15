@@ -18,6 +18,8 @@ import PasswordVisible from "../assets/PasswordVisible.png";
 
 import PasswordInvisible from "../assets/PasswordInvisible.png";
 
+import GoogleIcon from "../assets/GoogleIcon.png";
+
 function LoginPage({ setPage }) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -87,7 +89,7 @@ function LoginPage({ setPage }) {
           <p className="google-label">Masuk dengan</p>
 
           <button className="google-login-button" onClick={handleGoogleLogin}>
-            <span className="google-logo">G</span>
+            <img className="google-logo" src={GoogleIcon} alt="Google" />
 
             <span>Lanjutkan dengan Google</span>
           </button>

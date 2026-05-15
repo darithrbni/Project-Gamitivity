@@ -76,7 +76,7 @@ function RegisterPage({ setPage }) {
           <h1 className="register-title">REGISTER</h1>
 
           <p className="register-subtitle">
-            Buat akun baru untuk memulai perjalananmu.
+            Buat akun baru untuk memulai perjalananmu!
           </p>
 
           {/* USERNAME */}
