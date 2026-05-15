@@ -1012,6 +1012,10 @@ import {
 
 import auth from "../firebase/auth";
 
+import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+
+import { db } from "../firebase/config";
+
 const provider = new GoogleAuthProvider();
 
 import PasswordVisible from "../assets/PasswordVisible.png";
@@ -1037,7 +1041,23 @@ function LoginPage({ setPage }) {
 
   async function handleGoogleLogin() {
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+
+      const user = result.user;
+
+      const userRef = doc(db, "users", user.uid);
+
+      const userSnap = await getDoc(userRef);
+
+      // USER BARU
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          username: user.displayName || "User",
+          motto: "Let's study with me!",
+          photoURL: "",
+          createdAt: serverTimestamp(),
+        });
+      }
 
       alert("Login Google berhasil!");
 
@@ -1156,6 +1176,11 @@ function LoginPage({ setPage }) {
 }
 
 export default LoginPage;
+
+
+
+
+
 
 
 
@@ -1875,6 +1900,7 @@ function ProfilePage({ setPage, currentUser, handleLogout, setProfileImage }) {
   const [previewProfileImage, setPreviewProfileImage] = useState("");
   const [selectedImageFile, setSelectedImageFile] = useState(null);
   const [originalPhotoURL, setOriginalPhotoURL] = useState("");
+  const [memberSince, setMemberSince] = useState("-");
 
   useEffect(() => {
     async function loadProfileData() {
@@ -1895,6 +1921,18 @@ function ProfilePage({ setPage, currentUser, handleLogout, setProfileImage }) {
 
         setPreviewProfileImage(data.photoURL || "");
         setOriginalPhotoURL(data.photoURL || "");
+
+        if (data.createdAt) {
+          const formattedDate = data.createdAt
+            .toDate()
+            .toLocaleDateString("en-US", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            });
+
+          setMemberSince(formattedDate);
+        }
 
         setOriginalUsername(data.username || "");
         setOriginalMotto(data.motto || "Let's study with me!");
@@ -2098,7 +2136,7 @@ function ProfilePage({ setPage, currentUser, handleLogout, setProfileImage }) {
 
                     <span>Member Since</span>
 
-                    <p>-</p>
+                    <p>{memberSince}</p>
                   </div>
 
                   <div className="profilepage-info-row">
@@ -2354,6 +2392,8 @@ export default ProfilePage;
 
 
 
+
+
 ## RegisterPage.jsx
 import { useState } from "react";
 
@@ -2361,7 +2401,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 import auth from "../firebase/auth";
 
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase/config";
 
 import PasswordVisible from "../assets/PasswordVisible.png";
@@ -2394,8 +2434,10 @@ function RegisterPage({ setPage }) {
       });
 
       await setDoc(doc(db, "users", userCredential.user.uid), {
-        username: username,
+        username,
         motto: "Let's study with me!",
+        photoURL: "",
+        createdAt: serverTimestamp(),
       });
 
       alert("Register berhasil!");
@@ -2524,9 +2566,6 @@ function RegisterPage({ setPage }) {
 }
 
 export default RegisterPage;
-
-
-
 
 
 

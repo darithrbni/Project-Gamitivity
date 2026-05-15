@@ -8,6 +8,10 @@ import {
 
 import auth from "../firebase/auth";
 
+import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+
+import { db } from "../firebase/config";
+
 const provider = new GoogleAuthProvider();
 
 import PasswordVisible from "../assets/PasswordVisible.png";
@@ -33,7 +37,23 @@ function LoginPage({ setPage }) {
 
   async function handleGoogleLogin() {
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+
+      const user = result.user;
+
+      const userRef = doc(db, "users", user.uid);
+
+      const userSnap = await getDoc(userRef);
+
+      // USER BARU
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          username: user.displayName || "User",
+          motto: "Let's study with me!",
+          photoURL: "",
+          createdAt: serverTimestamp(),
+        });
+      }
 
       alert("Login Google berhasil!");
 

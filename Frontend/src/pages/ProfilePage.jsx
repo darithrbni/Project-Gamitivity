@@ -36,6 +36,7 @@ function ProfilePage({ setPage, currentUser, handleLogout, setProfileImage }) {
   const [previewProfileImage, setPreviewProfileImage] = useState("");
   const [selectedImageFile, setSelectedImageFile] = useState(null);
   const [originalPhotoURL, setOriginalPhotoURL] = useState("");
+  const [memberSince, setMemberSince] = useState("-");
 
   useEffect(() => {
     async function loadProfileData() {
@@ -56,6 +57,18 @@ function ProfilePage({ setPage, currentUser, handleLogout, setProfileImage }) {
 
         setPreviewProfileImage(data.photoURL || "");
         setOriginalPhotoURL(data.photoURL || "");
+
+        if (data.createdAt) {
+          const formattedDate = data.createdAt
+            .toDate()
+            .toLocaleDateString("en-US", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            });
+
+          setMemberSince(formattedDate);
+        }
 
         setOriginalUsername(data.username || "");
         setOriginalMotto(data.motto || "Let's study with me!");
@@ -259,7 +272,7 @@ function ProfilePage({ setPage, currentUser, handleLogout, setProfileImage }) {
 
                     <span>Member Since</span>
 
-                    <p>-</p>
+                    <p>{memberSince}</p>
                   </div>
 
                   <div className="profilepage-info-row">

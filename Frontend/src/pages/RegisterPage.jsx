@@ -4,7 +4,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 import auth from "../firebase/auth";
 
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase/config";
 
 import PasswordVisible from "../assets/PasswordVisible.png";
@@ -37,8 +37,10 @@ function RegisterPage({ setPage }) {
       });
 
       await setDoc(doc(db, "users", userCredential.user.uid), {
-        username: username,
+        username,
         motto: "Let's study with me!",
+        photoURL: "",
+        createdAt: serverTimestamp(),
       });
 
       alert("Register berhasil!");
