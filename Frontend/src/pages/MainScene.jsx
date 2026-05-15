@@ -80,6 +80,9 @@ function MainScene() {
   async function handleLogout() {
     try {
       await signOut(auth);
+
+      setPage("main");
+
       setIsProfileDropdownOpen(false);
     } catch (error) {
       alert(error.message);

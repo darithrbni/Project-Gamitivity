@@ -18,11 +18,30 @@
 
   position: absolute;
   top: 150px;
-  left: 80px;
+  left: 120px;
 
   cursor: pointer;
 
   user-select: none;
+
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease,
+    box-shadow 0.25s ease;
+
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.2));
+}
+
+.corkboard:hover {
+  transform: scale(1.05);
+
+  filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.28));
+}
+
+.corkboard:active {
+  transform: scale(1);
+
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
 }
 
 .modal-open .corkboard {

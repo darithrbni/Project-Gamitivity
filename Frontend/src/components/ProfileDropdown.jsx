@@ -53,9 +53,18 @@ function ProfileDropdown({
           )}
         </div>
       ) : (
-        <button className="login-button" onClick={() => setPage("login")}>
-          LOGIN
-        </button>
+        <div className="auth-buttons">
+          <button
+            className="register-button"
+            onClick={() => setPage("register")}
+          >
+            REGISTER
+          </button>
+
+          <button className="login-button" onClick={() => setPage("login")}>
+            LOGIN
+          </button>
+        </div>
       )}
     </>
   );

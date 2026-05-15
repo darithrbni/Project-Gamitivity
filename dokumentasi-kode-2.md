@@ -45,37 +45,24 @@ src/
 
 # Components
 ## Corkboard.jsx
-import { useState } from "react";
-
-import idleImage from "../assets/PlaceholderIdle.png";
-import hoverImage from "../assets/PlaceholderHover.png";
-import clickImage from "../assets/PlaceholderClick.png";
+import corkboardImage from "../assets/Corkboard.png";
 
 function Corkboard({ onClick }) {
-  const [boardState, setBoardState] = useState("idle");
-
-  function getCurrentImage() {
-    if (boardState === "hover") return hoverImage;
-    if (boardState === "click") return clickImage;
-
-    return idleImage;
-  }
-
   return (
     <img
       className="corkboard"
-      src={getCurrentImage()}
+      src={corkboardImage}
       alt="Corkboard"
-      onMouseEnter={() => setBoardState("hover")}
-      onMouseLeave={() => setBoardState("idle")}
-      onMouseDown={() => setBoardState("click")}
-      onMouseUp={() => setBoardState("hover")}
       onClick={onClick}
+      draggable={false}
     />
   );
 }
 
 export default Corkboard;
+
+
+
 
 
 
@@ -160,15 +147,26 @@ function ProfileDropdown({
           )}
         </div>
       ) : (
-        <button className="login-button" onClick={() => setPage("login")}>
-          LOGIN
-        </button>
+        <div className="auth-buttons">
+          <button
+            className="register-button"
+            onClick={() => setPage("register")}
+          >
+            REGISTER
+          </button>
+
+          <button className="login-button" onClick={() => setPage("login")}>
+            LOGIN
+          </button>
+        </div>
       )}
     </>
   );
 }
 
 export default ProfileDropdown;
+
+
 
 
 
@@ -1162,7 +1160,7 @@ export default LoginPage;
 
 
 
-
+## MainScene.jsx
 import { useEffect, useState } from "react";
 
 import { onAuthStateChanged, signOut } from "firebase/auth";
@@ -1245,6 +1243,9 @@ function MainScene() {
   async function handleLogout() {
     try {
       await signOut(auth);
+
+      setPage("main");
+
       setIsProfileDropdownOpen(false);
     } catch (error) {
       alert(error.message);
@@ -1418,7 +1419,6 @@ function MainScene() {
 }
 
 export default MainScene;
-
 
 
 
@@ -2778,11 +2778,30 @@ export default TugasMenuPage;
 
   position: absolute;
   top: 150px;
-  left: 80px;
+  left: 120px;
 
   cursor: pointer;
 
   user-select: none;
+
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease,
+    box-shadow 0.25s ease;
+
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.2));
+}
+
+.corkboard:hover {
+  transform: scale(1.05);
+
+  filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.28));
+}
+
+.corkboard:active {
+  transform: scale(1);
+
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
 }
 
 .modal-open .corkboard {
@@ -2800,6 +2819,11 @@ export default TugasMenuPage;
 .modal-open .profile-menu-container {
   pointer-events: none;
 }
+
+
+
+
+
 
 
 
@@ -2936,14 +2960,9 @@ export default TugasMenuPage;
 }
 
 .login-button {
-  position: absolute;
-
-  top: 20px;
-  right: 20px;
-
-  z-index: 5;
-
   padding: 14px 28px;
+
+  min-width: 140px;
 
   border: none;
   border-radius: 18px;
@@ -2972,6 +2991,50 @@ export default TugasMenuPage;
   transform: scale(0.97);
 }
 
+.auth-buttons {
+  position: absolute;
+
+  top: 20px;
+  right: 20px;
+
+  display: flex;
+
+  gap: 14px;
+
+  z-index: 5;
+}
+
+.register-button {
+  padding: 14px 28px;
+
+  min-width: 140px;
+
+  border: none;
+  border-radius: 18px;
+
+  background-color: #f07c7c;
+
+  color: white;
+
+  font-size: 1.1rem;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition:
+    filter 0.15s ease,
+    transform 0.05s ease;
+}
+
+.register-button:hover {
+  filter: brightness(0.94);
+}
+
+.register-button:active {
+  filter: brightness(0.82);
+
+  transform: scale(0.97);
+}
 
 
 
@@ -3304,7 +3367,7 @@ export default TugasMenuPage;
 }
 
 .register-login-link {
-  color: #ff7f7f;
+  color: #4ea3ff;
 
   cursor: pointer;
 }
@@ -3395,6 +3458,9 @@ export default TugasMenuPage;
     transform: scale(0.75);
   }
 }
+
+
+
 
 
 
