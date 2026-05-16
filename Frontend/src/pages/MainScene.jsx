@@ -79,6 +79,8 @@ function MainScene() {
   } = TimerDisplayLogic();
   const [activeDisplay, setActiveDisplay] = useState("basicTimer");
 
+  const [isClosingCustomization, setIsClosingCustomization] = useState(false);
+
   async function handleLogout() {
     try {
       await signOut(auth);
@@ -116,7 +118,23 @@ function MainScene() {
 
   return (
     <div
-      className={page === "main" ? "scene" : "scene modal-open"}
+      className={
+        page === "login" ||
+        page === "register" ||
+        page === "profile" ||
+        page === "menu" ||
+        page === "timerMenu" ||
+        page === "basicTimer" ||
+        page === "stopwatch" ||
+        page === "pomodoro" ||
+        page === "grafikMenu" ||
+        page === "tugasMenu" ||
+        page === "memoMenu" ||
+        page === "jadwalMenu" ||
+        page === "tokoMenu"
+          ? "scene modal-open"
+          : "scene"
+      }
       onClick={() => setIsProfileDropdownOpen(false)}
     >
       <>
@@ -260,7 +278,13 @@ function MainScene() {
         />
       )}
 
-      {page === "customization" && <CustomizationPage setPage={setPage} />}
+      {page === "customization" && (
+        <CustomizationPage
+          setPage={setPage}
+          isClosingCustomization={isClosingCustomization}
+          setIsClosingCustomization={setIsClosingCustomization}
+        />
+      )}
     </div>
   );
 }

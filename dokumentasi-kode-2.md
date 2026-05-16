@@ -93,6 +93,7 @@ export default MenuCard;
 
 ## ProfileDropdown.jsx
 import ProfilePlaceholder from "../assets/ProfilePlaceholder.png";
+import TriangleIconBrown from "../assets/TriangleIconBrown.png";
 
 function ProfileDropdown({
   currentUser,
@@ -102,6 +103,10 @@ function ProfileDropdown({
   isProfileDropdownOpen,
   setIsProfileDropdownOpen,
 }) {
+  function toggleDropdown() {
+    setIsProfileDropdownOpen(!isProfileDropdownOpen);
+  }
+
   return (
     <>
       {currentUser ? (
@@ -109,14 +114,23 @@ function ProfileDropdown({
           className="profile-menu-container"
           onClick={(event) => event.stopPropagation()}
         >
-          <button
-            className="profile-button"
-            onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-          >
+          <button className="profile-button" onClick={toggleDropdown}>
             <img
               src={profileImage || ProfilePlaceholder}
               alt="Profile"
               className="profile-image"
+            />
+
+            <span className="profile-username">
+              {currentUser?.displayName || "User"}
+            </span>
+
+            <img
+              src={TriangleIconBrown}
+              alt="Dropdown"
+              className={`profile-arrow-icon ${
+                isProfileDropdownOpen ? "profile-arrow-open" : ""
+              }`}
             />
           </button>
 
@@ -165,9 +179,6 @@ function ProfileDropdown({
 }
 
 export default ProfileDropdown;
-
-
-
 
 
 
@@ -604,6 +615,31 @@ function TimerDisplayLogic() {
 }
 
 export default TimerDisplayLogic;
+
+
+
+
+
+## CustomizationButton.jsx
+import HangerIcon from "../assets/HangerIcon.png";
+
+function CustomizationButton({ setPage }) {
+  return (
+    <button
+      className="customization-button"
+      onClick={() => setPage("customization")}
+    >
+      <img
+        src={HangerIcon}
+        alt="Customization"
+        className="customization-icon"
+      />
+    </button>
+  );
+}
+
+export default CustomizationButton;
+
 
 
 
@@ -1209,11 +1245,13 @@ import PomodoroPage from "./PomodoroPage";
 import LoginPage from "./LoginPage";
 import RegisterPage from "./RegisterPage";
 import ProfilePage from "./ProfilePage";
+import CustomizationPage from "./CustomizationPage";
 
 import Corkboard from "../components/Corkboard";
 import ProfileDropdown from "../components/ProfileDropdown";
 import TimerDisplay from "../components/TimerDisplay";
 import TimerDisplayLogic from "../components/TimerDisplayLogic";
+import CustomizationButton from "../components/CustomizationButton";
 
 function MainScene() {
   // PAGE STATE
@@ -1268,6 +1306,8 @@ function MainScene() {
   } = TimerDisplayLogic();
   const [activeDisplay, setActiveDisplay] = useState("basicTimer");
 
+  const [isClosingCustomization, setIsClosingCustomization] = useState(false);
+
   async function handleLogout() {
     try {
       await signOut(auth);
@@ -1305,19 +1345,41 @@ function MainScene() {
 
   return (
     <div
-      className={page === "main" ? "scene" : "scene modal-open"}
+      className={
+        page === "login" ||
+        page === "register" ||
+        page === "profile" ||
+        page === "menu" ||
+        page === "timerMenu" ||
+        page === "basicTimer" ||
+        page === "stopwatch" ||
+        page === "pomodoro" ||
+        page === "grafikMenu" ||
+        page === "tugasMenu" ||
+        page === "memoMenu" ||
+        page === "jadwalMenu" ||
+        page === "tokoMenu"
+          ? "scene modal-open"
+          : "scene"
+      }
       onClick={() => setIsProfileDropdownOpen(false)}
     >
       <>
         <Corkboard onClick={() => setPage("menu")} />
-        <ProfileDropdown
-          currentUser={currentUser}
-          profileImage={profileImage}
-          setPage={setPage}
-          handleLogout={handleLogout}
-          isProfileDropdownOpen={isProfileDropdownOpen}
-          setIsProfileDropdownOpen={setIsProfileDropdownOpen}
-        />
+
+        <div className="top-right-ui">
+          <CustomizationButton setPage={setPage} />
+
+          <ProfileDropdown
+            currentUser={currentUser}
+            profileImage={profileImage}
+            setPage={setPage}
+            handleLogout={handleLogout}
+            isProfileDropdownOpen={isProfileDropdownOpen}
+            setIsProfileDropdownOpen={setIsProfileDropdownOpen}
+          />
+        </div>
+
         <TimerDisplay
           activeDisplay={activeDisplay}
           basicTimerHours={basicTimerHours}
@@ -1440,6 +1502,14 @@ function MainScene() {
           currentUser={currentUser}
           handleLogout={handleLogout}
           setProfileImage={setProfileImage}
+        />
+      )}
+
+      {page === "customization" && (
+        <CustomizationPage
+          setPage={setPage}
+          isClosingCustomization={isClosingCustomization}
+          setIsClosingCustomization={setIsClosingCustomization}
         />
       )}
     </div>
@@ -2811,6 +2881,116 @@ export default TugasMenuPage;
 
 
 
+## CustomizationPage.jsx
+import { useState } from "react";
+
+import HairIcon from "../assets/HairIcon.svg";
+import ClothesIcon from "../assets/ClothesIcon.svg";
+import WallpaperIcon from "../assets/WallpaperIcon.svg";
+import WindowViewIcon from "../assets/WindowView.svg";
+import DeskSetIcon from "../assets/DeskSet.svg";
+
+import ArrowDownIcon from "../assets/ArrowDownIcon.png";
+
+function CustomizationPage({
+  setPage,
+  isClosingCustomization,
+  setIsClosingCustomization,
+}) {
+  const [selectedCategory, setSelectedCategory] = useState("Rambut");
+  const categories = [
+    {
+      name: "Rambut",
+      icon: HairIcon,
+    },
+    {
+      name: "Baju",
+      icon: ClothesIcon,
+    },
+    {
+      name: "Dinding",
+      icon: WallpaperIcon,
+    },
+    {
+      name: "View",
+      icon: WindowViewIcon,
+    },
+    {
+      name: "Meja",
+      icon: DeskSetIcon,
+    },
+  ];
+  return (
+    <>
+      {/* CUSTOMIZATION SIDEBAR */}
+      <div className="customization-wrapper">
+        <div
+          className={`customization-sidebar ${
+            isClosingCustomization
+              ? "customization-sidebar-close"
+              : "customization-sidebar-open"
+          }`}
+        >
+          <button
+            className="customization-close-button"
+            onClick={() => {
+              setIsClosingCustomization(true);
+
+              setTimeout(() => {
+                setPage("main");
+
+                setIsClosingCustomization(false);
+              }, 300);
+            }}
+          >
+            <img
+              src={ArrowDownIcon}
+              alt="Close"
+              className="customization-close-icon"
+            />
+          </button>
+          <div className="customization-categories">
+            {categories.map((category) => (
+              <button
+                key={category.name}
+                className={`customization-category-button ${
+                  selectedCategory === category.name
+                    ? "customization-category-button-active"
+                    : ""
+                }`}
+                onClick={() => setSelectedCategory(category.name)}
+              >
+                <img
+                  src={category.icon}
+                  alt={category.name}
+                  className="customization-category-icon"
+                />
+
+                <span className="customization-category-text">
+                  {category.name}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <div className="customization-divider" />
+
+          <div className="customization-items-empty">
+            Item customization akan muncul di sini
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default CustomizationPage;
+
+
+
+
+
+
 
 # Styles
 ## App.css
@@ -2906,22 +3086,33 @@ export default TugasMenuPage;
 /* Profile Dropdown & Login Button */
 
 .profile-menu-container {
-  position: absolute;
-
-  top: 20px;
-  right: 25px;
+  position: relative;
 
   z-index: 5;
 }
 
 .profile-button {
   border: none;
+  border-radius: 28px;
 
-  background-color: transparent;
+  padding: 8px 14px 8px 8px;
+
+  background: #342922;
+
+  backdrop-filter: blur(8px);
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  width: fit-content;
 
   cursor: pointer;
 
-  padding: 0;
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
   transition:
     filter 0.15s ease,
@@ -2937,16 +3128,40 @@ export default TugasMenuPage;
 }
 
 .profile-image {
-  width: 80px;
-  height: 80px;
+  width: 56px;
+  height: 56px;
 
   border-radius: 50%;
 
   object-fit: cover;
 
-  border: 2px solid white;
+  border: 2px solid #faebd8;
 
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+  flex-shrink: 0;
+}
+
+.profile-username {
+  color: white;
+
+  font-size: 1.1rem;
+  font-weight: 500;
+
+  white-space: nowrap;
+}
+
+.profile-arrow-icon {
+  width: 20px;
+  height: 20px;
+
+  object-fit: contain;
+
+  opacity: 0.85;
+
+  transition: transform 0.15s ease;
+}
+
+.profile-arrow-open {
+  transform: rotate(180deg);
 }
 
 .profile-dropdown {
@@ -3091,6 +3306,70 @@ export default TugasMenuPage;
 
   transform: scale(0.97);
 }
+
+/* CUSTOMIZATION BUTTON */
+
+.top-right-ui {
+  position: absolute;
+
+  top: 20px;
+  right: 25px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  z-index: 5;
+}
+
+.customization-button {
+  width: 70px;
+  height: 70px;
+
+  border: 2px solid #342922;
+  border-radius: 22px;
+
+  background: #342922;
+
+  backdrop-filter: blur(8px);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.customization-button:hover {
+  transform: scale(1.06);
+
+  filter: brightness(1.1);
+}
+
+.customization-button:active {
+  transform: scale(1);
+}
+
+.customization-icon {
+  width: 40px;
+  height: 40px;
+
+  object-fit: contain;
+
+  opacity: 0.92;
+}
+
+
 
 
 
@@ -4662,6 +4941,308 @@ export default TugasMenuPage;
 
 
 
+## Customization.css
+/* CUSTOMIZATION PAGE */
+
+.customization-wrapper {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 8;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+
+  pointer-events: none;
+}
+
+.customization-sidebar {
+  position: relative;
+
+  pointer-events: auto;
+
+  width: calc(100% - 36px);
+  height: 210px;
+
+  margin-bottom: 18px;
+
+  border-radius: 26px;
+
+  background: rgba(28, 18, 14, 0.92);
+
+  backdrop-filter: blur(16px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  padding: 0 26px 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 20px;
+
+  transform: translateY(0);
+
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+/* CATEGORY ROW */
+
+.customization-categories {
+  display: flex;
+  align-items: center;
+
+  gap: 0;
+
+  overflow-x: auto;
+
+  scrollbar-width: none;
+
+  padding-bottom: 4px;
+}
+
+.customization-categories::-webkit-scrollbar {
+  display: none;
+}
+
+/* CATEGORY BUTTON */
+
+.customization-category-button {
+  flex-shrink: 0;
+
+  border: none;
+
+  background: transparent;
+
+  width: 96px;
+  height: 74px;
+
+  padding: 0;
+
+  border-radius: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  gap: 5px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease;
+
+  position: relative;
+}
+
+.customization-category-button:last-child {
+  margin-right: 0;
+}
+
+.customization-category-button:hover {
+  background-color: rgba(36, 22, 18, 0.75);
+}
+
+/* CATEGORY ICON */
+
+.customization-category-icon {
+  width: 22px;
+  height: 22px;
+
+  object-fit: contain;
+
+  opacity: 0.9;
+
+  filter: brightness(0) invert(1);
+
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+.customization-category-button:hover .customization-category-icon {
+  opacity: 1;
+
+  transform: scale(1.06);
+}
+
+/* CATEGORY TEXT */
+
+.customization-category-text {
+  color: white;
+
+  font-size: 0.74rem;
+  font-weight: 500;
+
+  white-space: nowrap;
+}
+
+/* EMPTY ITEMS AREA */
+
+.customization-items-empty {
+  flex: 1;
+
+  border-radius: 18px;
+
+  border: 2px dashed rgba(255, 255, 255, 0.08);
+
+  background: rgba(255, 255, 255, 0.02);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: rgba(255, 255, 255, 0.5);
+
+  font-size: 1rem;
+}
+
+/* OPEN/CLOSE ANIMATION */
+
+.customization-sidebar-open {
+  animation: customizationSlideUp 0.3s ease;
+}
+
+.customization-sidebar-close {
+  transform: translateY(120%);
+
+  opacity: 0;
+}
+
+/* KEYFRAMES */
+
+@keyframes customizationSlideUp {
+  from {
+    transform: translateY(120%);
+
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+
+    opacity: 1;
+  }
+}
+
+/* CLOSE BUTTON */
+
+.customization-close-button {
+  position: absolute;
+
+  top: -22px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: 52px;
+  height: 52px;
+
+  border: none;
+  border-radius: 18px;
+
+  background: rgba(28, 18, 14, 0.96);
+
+  backdrop-filter: blur(12px);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease;
+
+  z-index: 50;
+}
+
+.customization-close-button:hover {
+  transform: translateX(-50%) scale(1.06);
+
+  filter: brightness(1.08);
+}
+
+.customization-close-button:active {
+  transform: translateX(-50%) scale(0.94);
+}
+
+.customization-close-icon {
+  width: 22px;
+  height: 22px;
+
+  object-fit: contain;
+
+  filter: brightness(0) invert(1);
+
+  opacity: 0.9;
+}
+
+/* ACTIVE CATEGORY */
+
+.customization-category-button-active {
+  position: relative;
+
+  background-color: rgba(24, 14, 12, 0.96);
+}
+
+.customization-category-button-active .customization-category-text {
+  color: #ff8c7a;
+}
+
+.customization-category-button-active .customization-category-icon {
+  filter: brightness(0) saturate(100%) invert(67%) sepia(32%) saturate(714%)
+    hue-rotate(320deg) brightness(101%) contrast(101%);
+
+  opacity: 1;
+}
+
+.customization-category-button-active::after {
+  content: "";
+
+  position: absolute;
+
+  bottom: 2px;
+  left: 0;
+
+  width: 100%;
+  height: 3px;
+
+  background-color: #ff8c7a;
+}
+
+/* DIVIDER */
+
+.customization-divider {
+  width: calc(100% + 52px);
+
+  height: 1px;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  margin-left: -26px;
+
+  margin-top: -28px;
+}
+
+
+
+
 ## index.css
 * {
   margin: 0;
@@ -4684,12 +5265,14 @@ import "./styles/Button.css";
 import "./styles/Profile.css";
 import "./styles/Timer.css";
 import "./styles/LoginRegister.css";
+import "./styles/Customization.css";
 
 function App() {
   return <MainScene />;
 }
 
 export default App;
+
 
 
 
