@@ -141,7 +141,7 @@ function MainScene() {
         <Corkboard onClick={() => setPage("menu")} />
 
         <div className="top-right-ui">
-          <CustomizationButton setPage={setPage} />
+          {currentUser && <CustomizationButton setPage={setPage} />}
 
           <ProfileDropdown
             currentUser={currentUser}

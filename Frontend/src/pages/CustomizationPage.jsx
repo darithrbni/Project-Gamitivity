@@ -40,29 +40,108 @@ function CustomizationPage({
 
   const [selectedItemId, setSelectedItemId] = useState(1);
 
-  const dummyItems = [
-    {
-      id: 1,
-      name: "Rambut Default",
-      image: "https://placehold.co/120x120",
-      owned: true,
-      equipped: true,
-    },
-    {
-      id: 2,
-      name: "Rambut Silver",
-      image: "https://placehold.co/120x120",
-      owned: true,
-      equipped: false,
-    },
-    {
-      id: 3,
-      name: "Rambut Biru",
-      image: "https://placehold.co/120x120",
-      owned: false,
-      equipped: false,
-    },
-  ];
+  const customizationItems = {
+    Rambut: [
+      {
+        id: 1,
+        name: "Rambut Default",
+        image: "https://placehold.co/120x120",
+        owned: true,
+        equipped: true,
+      },
+      {
+        id: 2,
+        name: "Rambut Silver",
+        image: "https://placehold.co/120x120",
+        owned: true,
+        equipped: false,
+      },
+      {
+        id: 3,
+        name: "Rambut Biru",
+        image: "https://placehold.co/120x120",
+        owned: false,
+        equipped: false,
+      },
+    ],
+
+    Baju: [
+      {
+        id: 4,
+        name: "Baju Default",
+        image: "https://placehold.co/120x120",
+        owned: true,
+        equipped: true,
+      },
+      {
+        id: 5,
+        name: "Hoodie Merah",
+        image: "https://placehold.co/120x120",
+        owned: true,
+        equipped: false,
+      },
+      {
+        id: 6,
+        name: "Jaket Hitam",
+        image: "https://placehold.co/120x120",
+        owned: false,
+        equipped: false,
+      },
+    ],
+
+    Dinding: [
+      {
+        id: 7,
+        name: "Dinding Bata",
+        image: "https://placehold.co/120x120",
+        owned: true,
+        equipped: true,
+      },
+      {
+        id: 8,
+        name: "Wallpaper Pink",
+        image: "https://placehold.co/120x120",
+        owned: false,
+        equipped: false,
+      },
+    ],
+
+    View: [
+      {
+        id: 9,
+        name: "View Hutan",
+        image: "https://placehold.co/120x120",
+        owned: true,
+        equipped: true,
+      },
+      {
+        id: 10,
+        name: "View Kota",
+        image: "https://placehold.co/120x120",
+        owned: false,
+        equipped: false,
+      },
+    ],
+
+    Meja: [
+      {
+        id: 11,
+        name: "Meja Kayu",
+        image: "https://placehold.co/120x120",
+        owned: true,
+        equipped: true,
+      },
+      {
+        id: 12,
+        name: "Meja Gaming",
+        image: "https://placehold.co/120x120",
+        owned: false,
+        equipped: false,
+      },
+    ],
+  };
+
+  const currentItems = customizationItems[selectedCategory];
 
   return (
     <>
@@ -120,7 +199,7 @@ function CustomizationPage({
           <div className="customization-divider" />
 
           <div className="customization-items-row">
-            {dummyItems.map((item) => (
+            {currentItems.map((item) => (
               <ItemCard
                 key={item.id}
                 image={item.image}

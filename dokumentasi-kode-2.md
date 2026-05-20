@@ -1401,7 +1401,7 @@ function MainScene() {
         <Corkboard onClick={() => setPage("menu")} />
 
         <div className="top-right-ui">
-          <CustomizationButton setPage={setPage} />
+          {currentUser && <CustomizationButton setPage={setPage} />}
 
           <ProfileDropdown
             currentUser={currentUser}
@@ -1550,6 +1550,8 @@ function MainScene() {
 }
 
 export default MainScene;
+
+
 
 
 
@@ -2957,29 +2959,108 @@ function CustomizationPage({
 
   const [selectedItemId, setSelectedItemId] = useState(1);
 
-  const dummyItems = [
-    {
-      id: 1,
-      name: "Rambut Default",
-      image: "https://placehold.co/120x120",
-      owned: true,
-      equipped: true,
-    },
-    {
-      id: 2,
-      name: "Rambut Silver",
-      image: "https://placehold.co/120x120",
-      owned: true,
-      equipped: false,
-    },
-    {
-      id: 3,
-      name: "Rambut Biru",
-      image: "https://placehold.co/120x120",
-      owned: false,
-      equipped: false,
-    },
-  ];
+  const customizationItems = {
+    Rambut: [
+      {
+        id: 1,
+        name: "Rambut Default",
+        image: "https://placehold.co/120x120",
+        owned: true,
+        equipped: true,
+      },
+      {
+        id: 2,
+        name: "Rambut Silver",
+        image: "https://placehold.co/120x120",
+        owned: true,
+        equipped: false,
+      },
+      {
+        id: 3,
+        name: "Rambut Biru",
+        image: "https://placehold.co/120x120",
+        owned: false,
+        equipped: false,
+      },
+    ],
+
+    Baju: [
+      {
+        id: 4,
+        name: "Baju Default",
+        image: "https://placehold.co/120x120",
+        owned: true,
+        equipped: true,
+      },
+      {
+        id: 5,
+        name: "Hoodie Merah",
+        image: "https://placehold.co/120x120",
+        owned: true,
+        equipped: false,
+      },
+      {
+        id: 6,
+        name: "Jaket Hitam",
+        image: "https://placehold.co/120x120",
+        owned: false,
+        equipped: false,
+      },
+    ],
+
+    Dinding: [
+      {
+        id: 7,
+        name: "Dinding Bata",
+        image: "https://placehold.co/120x120",
+        owned: true,
+        equipped: true,
+      },
+      {
+        id: 8,
+        name: "Wallpaper Pink",
+        image: "https://placehold.co/120x120",
+        owned: false,
+        equipped: false,
+      },
+    ],
+
+    View: [
+      {
+        id: 9,
+        name: "View Hutan",
+        image: "https://placehold.co/120x120",
+        owned: true,
+        equipped: true,
+      },
+      {
+        id: 10,
+        name: "View Kota",
+        image: "https://placehold.co/120x120",
+        owned: false,
+        equipped: false,
+      },
+    ],
+
+    Meja: [
+      {
+        id: 11,
+        name: "Meja Kayu",
+        image: "https://placehold.co/120x120",
+        owned: true,
+        equipped: true,
+      },
+      {
+        id: 12,
+        name: "Meja Gaming",
+        image: "https://placehold.co/120x120",
+        owned: false,
+        equipped: false,
+      },
+    ],
+  };
+
+  const currentItems = customizationItems[selectedCategory];
 
   return (
     <>
@@ -3037,7 +3118,7 @@ function CustomizationPage({
           <div className="customization-divider" />
 
           <div className="customization-items-row">
-            {dummyItems.map((item) => (
+            {currentItems.map((item) => (
               <ItemCard
                 key={item.id}
                 image={item.image}
@@ -3056,6 +3137,8 @@ function CustomizationPage({
 }
 
 export default CustomizationPage;
+
+
 
 
 
@@ -3189,11 +3272,7 @@ export default CustomizationPage;
 }
 
 .profile-button:hover {
-  filter: brightness(0.9);
-}
-
-.profile-button:active {
-  filter: brightness(0.9);
+  filter: brightness(1.1);
 }
 
 .profile-image {
@@ -3437,7 +3516,6 @@ export default CustomizationPage;
 
   opacity: 0.92;
 }
-
 
 
 
@@ -5352,16 +5430,10 @@ export default CustomizationPage;
   flex-shrink: 0;
 }
 
-.item-card:hover {
-  background: rgba(255, 255, 255, 0.1);
-
-  transform: translateY(-2px);
-}
-
 /* SELECTED */
 
 .item-card-selected {
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.18);
 }
 
 /* IMAGE */
@@ -5434,9 +5506,6 @@ export default CustomizationPage;
 
   font-size: 0.8rem;
 }
-
-
-
 
 
 
