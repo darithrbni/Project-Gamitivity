@@ -677,6 +677,260 @@ export default ItemCard;
 
 
 
+## SceneRenderer.jsx
+import AnimatedLayer from "./AnimatedLayer";
+
+import Body from "../assets/Customization/body.png";
+
+import HairDefault from "../assets/Customization/hair_1.png";
+import HairSilver from "../assets/Customization/hair_2.png";
+import HairBlue from "../assets/Customization/hair_3.png";
+
+import ClothesDefault from "../assets/Customization/clothes_1.png";
+import ClothesBlue from "../assets/Customization/clothes_2.png";
+import ClothesDark from "../assets/Customization/clothes_3.png";
+
+// TREE
+import Tree1 from "../assets/Customization/Animation/tree_1.png";
+import Tree2 from "../assets/Customization/Animation/tree_2.png";
+import Tree3 from "../assets/Customization/Animation/tree_3.png";
+import Tree4 from "../assets/Customization/Animation/tree_4.png";
+import Tree5 from "../assets/Customization/Animation/tree_5.png";
+import Tree6 from "../assets/Customization/Animation/tree_6.png";
+import Tree7 from "../assets/Customization/Animation/tree_7.png";
+
+// GALAXY
+import Galaxy1 from "../assets/Customization/Animation/galaxy_1.png";
+import Galaxy2 from "../assets/Customization/Animation/galaxy_2.png";
+import Galaxy3 from "../assets/Customization/Animation/galaxy_3.png";
+import Galaxy4 from "../assets/Customization/Animation/galaxy_4.png";
+import Galaxy5 from "../assets/Customization/Animation/galaxy_5.png";
+import Galaxy6 from "../assets/Customization/Animation/galaxy_6.png";
+import Galaxy7 from "../assets/Customization/Animation/galaxy_7.png";
+import Galaxy8 from "../assets/Customization/Animation/galaxy_8.png";
+
+// SNOW
+import Snow1 from "../assets/Customization/Animation/snow_1.png";
+import Snow2 from "../assets/Customization/Animation/snow_2.png";
+import Snow3 from "../assets/Customization/Animation/snow_3.png";
+import Snow4 from "../assets/Customization/Animation/snow_4.png";
+
+// SUNSET
+import Sunset1 from "../assets/Customization/Animation/sunset_1.png";
+import Sunset2 from "../assets/Customization/Animation/sunset_2.png";
+import Sunset3 from "../assets/Customization/Animation/sunset_3.png";
+import Sunset4 from "../assets/Customization/Animation/sunset_4.png";
+
+// ARM FRAMES
+import Arm1 from "../assets/Customization/Animation/arm_1.png";
+import Arm2 from "../assets/Customization/Animation/arm_2.png";
+import Arm3 from "../assets/Customization/Animation/arm_3.png";
+
+// DEFAULT SLEEVE
+import SleeveDefault1 from "../assets/Customization/Animation/sleeve_1.png";
+import SleeveDefault2 from "../assets/Customization/Animation/sleeve_1.png";
+import SleeveDefault3 from "../assets/Customization/Animation/sleeve_1.png";
+
+// BLUE SLEEVE
+import SleeveBlue1 from "../assets/Customization/Animation/sleeve_2.png";
+import SleeveBlue2 from "../assets/Customization/Animation/sleeve_2.png";
+import SleeveBlue3 from "../assets/Customization/Animation/sleeve_2.png";
+
+// DARK SLEEVE
+import SleeveDark1 from "../assets/Customization/Animation/sleeve_3.png";
+import SleeveDark2 from "../assets/Customization/Animation/sleeve_3.png";
+import SleeveDark3 from "../assets/Customization/Animation/sleeve_3.png";
+
+// WALLPAPER
+import WallpaperDefault from "../assets/Customization/wallpaper_1.png";
+import WallpaperPink from "../assets/Customization/wallpaper_2.png";
+
+// WINDOW FRAME
+import WindowFrame from "../assets/Customization/window.png";
+
+// DESK
+import DeskDefault from "../assets/Customization/desk_1.png";
+import DeskGaming from "../assets/Customization/desk_2.png";
+
+// CHAIR
+import ChairDefault from "../assets/Customization/chair_1.png";
+import ChairGaming from "../assets/Customization/chair_2.png";
+
+function SceneRenderer({
+  equippedHair,
+  equippedClothes,
+
+  equippedWallpaper,
+  equippedDesk,
+  equippedChair,
+  equippedWindowView,
+}) {
+  // HAIR MAP
+  const hairMap = {
+    default: HairDefault,
+    silver: HairSilver,
+    blue: HairBlue,
+  };
+
+  // CLOTHES MAP
+  const clothesMap = {
+    default: ClothesDefault,
+    blue: ClothesBlue,
+    dark: ClothesDark,
+  };
+
+  // WALLPAPER MAP
+  const wallpaperMap = {
+    default: WallpaperDefault,
+    pink: WallpaperPink,
+  };
+
+  // WINDOW MAP
+  const windowMap = {
+    default: WindowFrame,
+  };
+
+  // DESK MAP
+  const deskMap = {
+    default: DeskDefault,
+    gaming: DeskGaming,
+  };
+
+  // CHAIR MAP
+  const chairMap = {
+    default: ChairDefault,
+    gaming: ChairGaming,
+  };
+
+  // TREE
+  const treeFrames = [Tree1, Tree2, Tree3, Tree4, Tree5, Tree6, Tree7];
+
+  // GALAXY
+  const galaxyFrames = [
+    Galaxy1,
+    Galaxy2,
+    Galaxy3,
+    Galaxy4,
+    Galaxy5,
+    Galaxy6,
+    Galaxy7,
+    Galaxy8,
+  ];
+
+  // SNOW
+  const snowFrames = [Snow1, Snow2, Snow3, Snow4];
+
+  // SUNSET
+  const sunsetFrames = [Sunset1, Sunset2, Sunset3, Sunset4];
+
+  // VIEW ANIMATION MAP
+  const animatedViewMap = {
+    default: treeFrames,
+    galaxy: galaxyFrames,
+    snow: snowFrames,
+    sunset: sunsetFrames,
+  };
+
+  // ARM ANIMATION
+  const armFrames = [Arm1, Arm2, Arm3];
+
+  // SLEEVE MAP
+  const sleeveMap = {
+    default: [SleeveDefault1, SleeveDefault2, SleeveDefault3],
+
+    blue: [SleeveBlue1, SleeveBlue2, SleeveBlue3],
+
+    dark: [SleeveDark1, SleeveDark2, SleeveDark3],
+  };
+
+  return (
+    <div className="scene-renderer">
+      {/* WALLPAPER */}
+      <img
+        src={wallpaperMap[equippedWallpaper]}
+        alt=""
+        className="scene-layer"
+      />
+
+      {/* ANIMATED VIEW */}
+      <AnimatedLayer
+        frames={animatedViewMap[equippedWindowView]}
+        frameDuration={220}
+        className="scene-layer"
+      />
+
+      {/* WINDOW */}
+      <img src={windowMap[equippedWindowView]} alt="" className="scene-layer" />
+
+      {/* DESK */}
+      <img src={deskMap[equippedDesk]} alt="" className="scene-layer" />
+
+      {/* CHAIR */}
+      <img src={chairMap[equippedChair]} alt="" className="scene-layer" />
+
+      {/* BODY */}
+      <img src={Body} alt="" className="scene-layer" />
+
+      {/* CLOTHES */}
+      <img src={clothesMap[equippedClothes]} alt="" className="scene-layer" />
+
+      {/* ARM ANIMATION */}
+      <AnimatedLayer
+        frames={armFrames}
+        frameDuration={220}
+        className="scene-layer"
+      />
+
+      {/* SLEEVE ANIMATION */}
+      <AnimatedLayer
+        frames={sleeveMap[equippedClothes]}
+        frameDuration={220}
+        className="scene-layer"
+      />
+
+      {/* HAIR */}
+      <img src={hairMap[equippedHair]} alt="" className="scene-layer" />
+    </div>
+  );
+}
+
+export default SceneRenderer;
+
+
+
+
+## AnimatedLayer.jsx
+import { useEffect, useState } from "react";
+
+function AnimatedLayer({ frames, frameDuration = 200, className = "" }) {
+  const [currentFrame, setCurrentFrame] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentFrame((previousFrame) => {
+        return (previousFrame + 1) % frames.length;
+      });
+    }, frameDuration);
+
+    return () => clearInterval(interval);
+  }, [frames, frameDuration]);
+
+  return (
+    <img
+      src={frames[currentFrame]}
+      alt=""
+      className={className}
+      draggable={false}
+    />
+  );
+}
+
+export default AnimatedLayer;
+
+
+
+
+
 
 # firebase
 ## auth.js
@@ -1126,6 +1380,15 @@ function LoginPage({ setPage }) {
           username: user.displayName || "User",
           motto: "Let's study with me!",
           photoURL: "",
+
+          equippedHair: "default",
+          equippedClothes: "default",
+
+          equippedWallpaper: "default",
+          equippedDesk: "default",
+          equippedChair: "default",
+          equippedWindowView: "default",
+
           createdAt: serverTimestamp(),
         });
       }
@@ -1256,13 +1519,12 @@ export default LoginPage;
 
 
 
-
 ## MainScene.jsx
 import { useEffect, useState } from "react";
 
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import auth from "../firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
 
 import MenuPage from "./MenuPage";
@@ -1280,11 +1542,13 @@ import RegisterPage from "./RegisterPage";
 import ProfilePage from "./ProfilePage";
 import CustomizationPage from "./CustomizationPage";
 
-import Corkboard from "../components/Corkboard";
 import ProfileDropdown from "../components/ProfileDropdown";
 import TimerDisplay from "../components/TimerDisplay";
 import TimerDisplayLogic from "../components/TimerDisplayLogic";
 import CustomizationButton from "../components/CustomizationButton";
+import SceneRenderer from "../components/SceneRenderer";
+
+import Corkboard from "../components/Corkboard";
 
 function MainScene() {
   // PAGE STATE
@@ -1341,6 +1605,19 @@ function MainScene() {
 
   const [isClosingCustomization, setIsClosingCustomization] = useState(false);
 
+  // EQUIPPED CUSTOMIZATION
+  const [equippedHair, setEquippedHair] = useState("default");
+
+  const [equippedClothes, setEquippedClothes] = useState("default");
+
+  const [equippedWallpaper, setEquippedWallpaper] = useState("default");
+
+  const [equippedDesk, setEquippedDesk] = useState("default");
+
+  const [equippedChair, setEquippedChair] = useState("default");
+
+  const [equippedWindowView, setEquippedWindowView] = useState("default");
+
   async function handleLogout() {
     try {
       await signOut(auth);
@@ -1367,6 +1644,19 @@ function MainScene() {
           const data = docSnap.data();
 
           setProfileImage(data.photoURL || "");
+
+          // LOAD CUSTOMIZATION
+          setEquippedHair(data.equippedHair || "default");
+
+          setEquippedClothes(data.equippedClothes || "default");
+
+          setEquippedWallpaper(data.equippedWallpaper || "default");
+
+          setEquippedDesk(data.equippedDesk || "default");
+
+          setEquippedChair(data.equippedChair || "default");
+
+          setEquippedWindowView(data.equippedWindowView || "default");
         }
       } else {
         setProfileImage("");
@@ -1375,6 +1665,40 @@ function MainScene() {
 
     return () => unsubscribe();
   }, []);
+
+  // AUTO SAVE CUSTOMIZATION
+  useEffect(() => {
+    async function saveCustomization() {
+      if (!currentUser) {
+        return;
+      }
+
+      try {
+        await updateDoc(doc(db, "users", currentUser.uid), {
+          equippedHair,
+          equippedClothes,
+          equippedWallpaper,
+          equippedDesk,
+          equippedChair,
+          equippedWindowView,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    saveCustomization();
+  }, [
+    currentUser,
+
+    equippedHair,
+    equippedClothes,
+
+    equippedWallpaper,
+    equippedDesk,
+    equippedChair,
+    equippedWindowView,
+  ]);
 
   return (
     <div
@@ -1398,6 +1722,15 @@ function MainScene() {
       onClick={() => setIsProfileDropdownOpen(false)}
     >
       <>
+        <SceneRenderer
+          equippedHair={equippedHair}
+          equippedClothes={equippedClothes}
+          equippedWallpaper={equippedWallpaper}
+          equippedDesk={equippedDesk}
+          equippedChair={equippedChair}
+          equippedWindowView={equippedWindowView}
+        />
+
         <Corkboard onClick={() => setPage("menu")} />
 
         <div className="top-right-ui">
@@ -1543,6 +1876,18 @@ function MainScene() {
           setPage={setPage}
           isClosingCustomization={isClosingCustomization}
           setIsClosingCustomization={setIsClosingCustomization}
+          equippedHair={equippedHair}
+          setEquippedHair={setEquippedHair}
+          equippedClothes={equippedClothes}
+          setEquippedClothes={setEquippedClothes}
+          equippedWallpaper={equippedWallpaper}
+          setEquippedWallpaper={setEquippedWallpaper}
+          equippedDesk={equippedDesk}
+          setEquippedDesk={setEquippedDesk}
+          equippedChair={equippedChair}
+          setEquippedChair={setEquippedChair}
+          equippedWindowView={equippedWindowView}
+          setEquippedWindowView={setEquippedWindowView}
         />
       )}
     </div>
@@ -1550,6 +1895,7 @@ function MainScene() {
 }
 
 export default MainScene;
+
 
 
 
@@ -2557,6 +2903,15 @@ function RegisterPage({ setPage }) {
         username: trimmedUsername,
         motto: "Let's study with me!",
         photoURL: "",
+
+        equippedHair: "default",
+        equippedClothes: "default",
+
+        equippedWallpaper: "default",
+        equippedDesk: "default",
+        equippedChair: "default",
+        equippedWindowView: "default",
+
         createdAt: serverTimestamp(),
       });
 
@@ -2686,7 +3041,6 @@ function RegisterPage({ setPage }) {
 }
 
 export default RegisterPage;
-
 
 
 
@@ -2932,6 +3286,12 @@ function CustomizationPage({
   setPage,
   isClosingCustomization,
   setIsClosingCustomization,
+
+  equippedHair,
+  setEquippedHair,
+
+  equippedClothes,
+  setEquippedClothes,
 }) {
   const [selectedCategory, setSelectedCategory] = useState("Rambut");
   const categories = [
@@ -2963,54 +3323,59 @@ function CustomizationPage({
     Rambut: [
       {
         id: 1,
+        key: "default",
         name: "Rambut Default",
         image: "https://placehold.co/120x120",
         owned: true,
-        equipped: true,
       },
+
       {
         id: 2,
+        key: "silver",
         name: "Rambut Silver",
         image: "https://placehold.co/120x120",
         owned: true,
-        equipped: false,
       },
+
       {
         id: 3,
+        key: "blue",
         name: "Rambut Biru",
         image: "https://placehold.co/120x120",
-        owned: false,
-        equipped: false,
+        owned: true,
       },
     ],
 
     Baju: [
       {
         id: 4,
+        key: "default",
         name: "Baju Default",
         image: "https://placehold.co/120x120",
         owned: true,
-        equipped: true,
       },
+
       {
         id: 5,
-        name: "Hoodie Merah",
+        key: "blue",
+        name: "Hoodie Biru",
         image: "https://placehold.co/120x120",
         owned: true,
-        equipped: false,
       },
+
       {
         id: 6,
+        key: "dark",
         name: "Jaket Hitam",
         image: "https://placehold.co/120x120",
-        owned: false,
-        equipped: false,
+        owned: true,
       },
     ],
 
     Dinding: [
       {
         id: 7,
+        key: "default",
         name: "Dinding Bata",
         image: "https://placehold.co/120x120",
         owned: true,
@@ -3018,6 +3383,7 @@ function CustomizationPage({
       },
       {
         id: 8,
+        key: "pink",
         name: "Wallpaper Pink",
         image: "https://placehold.co/120x120",
         owned: false,
@@ -3028,30 +3394,45 @@ function CustomizationPage({
     View: [
       {
         id: 9,
-        name: "View Hutan",
-        image: "https://placehold.co/120x120",
+        key: "default",
+        name: "Forest",
         owned: true,
-        equipped: true,
       },
+
       {
         id: 10,
-        name: "View Kota",
-        image: "https://placehold.co/120x120",
-        owned: false,
-        equipped: false,
+        key: "galaxy",
+        name: "Galaxy",
+        owned: true,
+      },
+
+      {
+        id: 11,
+        key: "snow",
+        name: "Snow",
+        owned: true,
+      },
+
+      {
+        id: 12,
+        key: "sunset",
+        name: "Sunset",
+        owned: true,
       },
     ],
 
     Meja: [
       {
-        id: 11,
+        id: 13,
+        key: "default",
         name: "Meja Kayu",
         image: "https://placehold.co/120x120",
         owned: true,
         equipped: true,
       },
       {
-        id: 12,
+        id: 14,
+        key: "gaming",
         name: "Meja Gaming",
         image: "https://placehold.co/120x120",
         owned: false,
@@ -3061,6 +3442,30 @@ function CustomizationPage({
   };
 
   const currentItems = customizationItems[selectedCategory];
+
+  function isItemEquipped(item) {
+    if (selectedCategory === "Rambut") {
+      return equippedHair === item.key;
+    }
+
+    if (selectedCategory === "Baju") {
+      return equippedClothes === item.key;
+    }
+
+    if (selectedCategory === "Dinding") {
+      return equippedWallpaper === item.key;
+    }
+
+    if (selectedCategory === "View") {
+      return equippedWindowView === item.key;
+    }
+
+    if (selectedCategory === "Meja") {
+      return equippedDesk === item.key;
+    }
+
+    return false;
+  }
 
   return (
     <>
@@ -3124,9 +3529,40 @@ function CustomizationPage({
                 image={item.image}
                 name={item.name}
                 owned={item.owned}
-                equipped={item.equipped}
+                equipped={isItemEquipped(item)}
                 selected={selectedItemId === item.id}
-                onClick={() => setSelectedItemId(item.id)}
+                onClick={() => {
+                  setSelectedItemId(item.id);
+
+                  if (!item.owned) {
+                    return;
+                  }
+
+                  // HAIR
+                  if (selectedCategory === "Rambut") {
+                    setEquippedHair(item.key);
+                  }
+
+                  // CLOTHES
+                  if (selectedCategory === "Baju") {
+                    setEquippedClothes(item.key);
+                  }
+
+                  // WALLPAPER
+                  if (selectedCategory === "Dinding") {
+                    setEquippedWallpaper(item.key);
+                  }
+
+                  // WINDOW VIEW
+                  if (selectedCategory === "View") {
+                    setEquippedWindowView(item.key);
+                  }
+
+                  // DESK
+                  if (selectedCategory === "Meja") {
+                    setEquippedDesk(item.key);
+                  }
+                }}
               />
             ))}
           </div>
@@ -3153,12 +3589,6 @@ export default CustomizationPage;
   height: 100vh;
 
   position: relative;
-
-  background-image: url("../assets/Background.png");
-
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 }
 
 .corkboard {
@@ -3206,6 +3636,34 @@ export default CustomizationPage;
 
 .modal-open .profile-menu-container {
   pointer-events: none;
+}
+
+/* SCENE RENDERER */
+
+.scene-renderer {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+}
+
+.scene-layer {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  pointer-events: none;
+
+  user-select: none;
 }
 
 

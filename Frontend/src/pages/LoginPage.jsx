@@ -53,6 +53,15 @@ function LoginPage({ setPage }) {
           username: user.displayName || "User",
           motto: "Let's study with me!",
           photoURL: "",
+
+          equippedHair: "default",
+          equippedClothes: "default",
+
+          equippedWallpaper: "default",
+          equippedDesk: "default",
+          equippedChair: "default",
+          equippedWindowView: "default",
+
           createdAt: serverTimestamp(),
         });
       }

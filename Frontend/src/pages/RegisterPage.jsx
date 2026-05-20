@@ -52,6 +52,15 @@ function RegisterPage({ setPage }) {
         username: trimmedUsername,
         motto: "Let's study with me!",
         photoURL: "",
+
+        equippedHair: "default",
+        equippedClothes: "default",
+
+        equippedWallpaper: "default",
+        equippedDesk: "default",
+        equippedChair: "default",
+        equippedWindowView: "default",
+
         createdAt: serverTimestamp(),
       });
 

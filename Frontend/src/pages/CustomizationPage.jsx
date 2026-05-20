@@ -13,6 +13,12 @@ function CustomizationPage({
   setPage,
   isClosingCustomization,
   setIsClosingCustomization,
+
+  equippedHair,
+  setEquippedHair,
+
+  equippedClothes,
+  setEquippedClothes,
 }) {
   const [selectedCategory, setSelectedCategory] = useState("Rambut");
   const categories = [
@@ -44,54 +50,59 @@ function CustomizationPage({
     Rambut: [
       {
         id: 1,
+        key: "default",
         name: "Rambut Default",
         image: "https://placehold.co/120x120",
         owned: true,
-        equipped: true,
       },
+
       {
         id: 2,
+        key: "silver",
         name: "Rambut Silver",
         image: "https://placehold.co/120x120",
         owned: true,
-        equipped: false,
       },
+
       {
         id: 3,
+        key: "blue",
         name: "Rambut Biru",
         image: "https://placehold.co/120x120",
-        owned: false,
-        equipped: false,
+        owned: true,
       },
     ],
 
     Baju: [
       {
         id: 4,
+        key: "default",
         name: "Baju Default",
         image: "https://placehold.co/120x120",
         owned: true,
-        equipped: true,
       },
+
       {
         id: 5,
-        name: "Hoodie Merah",
+        key: "blue",
+        name: "Hoodie Biru",
         image: "https://placehold.co/120x120",
         owned: true,
-        equipped: false,
       },
+
       {
         id: 6,
+        key: "dark",
         name: "Jaket Hitam",
         image: "https://placehold.co/120x120",
-        owned: false,
-        equipped: false,
+        owned: true,
       },
     ],
 
     Dinding: [
       {
         id: 7,
+        key: "default",
         name: "Dinding Bata",
         image: "https://placehold.co/120x120",
         owned: true,
@@ -99,6 +110,7 @@ function CustomizationPage({
       },
       {
         id: 8,
+        key: "pink",
         name: "Wallpaper Pink",
         image: "https://placehold.co/120x120",
         owned: false,
@@ -109,30 +121,45 @@ function CustomizationPage({
     View: [
       {
         id: 9,
-        name: "View Hutan",
-        image: "https://placehold.co/120x120",
+        key: "default",
+        name: "Forest",
         owned: true,
-        equipped: true,
       },
+
       {
         id: 10,
-        name: "View Kota",
-        image: "https://placehold.co/120x120",
-        owned: false,
-        equipped: false,
+        key: "galaxy",
+        name: "Galaxy",
+        owned: true,
+      },
+
+      {
+        id: 11,
+        key: "snow",
+        name: "Snow",
+        owned: true,
+      },
+
+      {
+        id: 12,
+        key: "sunset",
+        name: "Sunset",
+        owned: true,
       },
     ],
 
     Meja: [
       {
-        id: 11,
+        id: 13,
+        key: "default",
         name: "Meja Kayu",
         image: "https://placehold.co/120x120",
         owned: true,
         equipped: true,
       },
       {
-        id: 12,
+        id: 14,
+        key: "gaming",
         name: "Meja Gaming",
         image: "https://placehold.co/120x120",
         owned: false,
@@ -142,6 +169,30 @@ function CustomizationPage({
   };
 
   const currentItems = customizationItems[selectedCategory];
+
+  function isItemEquipped(item) {
+    if (selectedCategory === "Rambut") {
+      return equippedHair === item.key;
+    }
+
+    if (selectedCategory === "Baju") {
+      return equippedClothes === item.key;
+    }
+
+    if (selectedCategory === "Dinding") {
+      return equippedWallpaper === item.key;
+    }
+
+    if (selectedCategory === "View") {
+      return equippedWindowView === item.key;
+    }
+
+    if (selectedCategory === "Meja") {
+      return equippedDesk === item.key;
+    }
+
+    return false;
+  }
 
   return (
     <>
@@ -205,9 +256,40 @@ function CustomizationPage({
                 image={item.image}
                 name={item.name}
                 owned={item.owned}
-                equipped={item.equipped}
+                equipped={isItemEquipped(item)}
                 selected={selectedItemId === item.id}
-                onClick={() => setSelectedItemId(item.id)}
+                onClick={() => {
+                  setSelectedItemId(item.id);
+
+                  if (!item.owned) {
+                    return;
+                  }
+
+                  // HAIR
+                  if (selectedCategory === "Rambut") {
+                    setEquippedHair(item.key);
+                  }
+
+                  // CLOTHES
+                  if (selectedCategory === "Baju") {
+                    setEquippedClothes(item.key);
+                  }
+
+                  // WALLPAPER
+                  if (selectedCategory === "Dinding") {
+                    setEquippedWallpaper(item.key);
+                  }
+
+                  // WINDOW VIEW
+                  if (selectedCategory === "View") {
+                    setEquippedWindowView(item.key);
+                  }
+
+                  // DESK
+                  if (selectedCategory === "Meja") {
+                    setEquippedDesk(item.key);
+                  }
+                }}
               />
             ))}
           </div>

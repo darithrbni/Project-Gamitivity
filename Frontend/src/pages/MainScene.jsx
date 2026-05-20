@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import auth from "../firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
 
 import MenuPage from "./MenuPage";
@@ -20,11 +20,13 @@ import RegisterPage from "./RegisterPage";
 import ProfilePage from "./ProfilePage";
 import CustomizationPage from "./CustomizationPage";
 
-import Corkboard from "../components/Corkboard";
 import ProfileDropdown from "../components/ProfileDropdown";
 import TimerDisplay from "../components/TimerDisplay";
 import TimerDisplayLogic from "../components/TimerDisplayLogic";
 import CustomizationButton from "../components/CustomizationButton";
+import SceneRenderer from "../components/SceneRenderer";
+
+import Corkboard from "../components/Corkboard";
 
 function MainScene() {
   // PAGE STATE
@@ -81,6 +83,19 @@ function MainScene() {
 
   const [isClosingCustomization, setIsClosingCustomization] = useState(false);
 
+  // EQUIPPED CUSTOMIZATION
+  const [equippedHair, setEquippedHair] = useState("default");
+
+  const [equippedClothes, setEquippedClothes] = useState("default");
+
+  const [equippedWallpaper, setEquippedWallpaper] = useState("default");
+
+  const [equippedDesk, setEquippedDesk] = useState("default");
+
+  const [equippedChair, setEquippedChair] = useState("default");
+
+  const [equippedWindowView, setEquippedWindowView] = useState("default");
+
   async function handleLogout() {
     try {
       await signOut(auth);
@@ -107,6 +122,19 @@ function MainScene() {
           const data = docSnap.data();
 
           setProfileImage(data.photoURL || "");
+
+          // LOAD CUSTOMIZATION
+          setEquippedHair(data.equippedHair || "default");
+
+          setEquippedClothes(data.equippedClothes || "default");
+
+          setEquippedWallpaper(data.equippedWallpaper || "default");
+
+          setEquippedDesk(data.equippedDesk || "default");
+
+          setEquippedChair(data.equippedChair || "default");
+
+          setEquippedWindowView(data.equippedWindowView || "default");
         }
       } else {
         setProfileImage("");
@@ -115,6 +143,40 @@ function MainScene() {
 
     return () => unsubscribe();
   }, []);
+
+  // AUTO SAVE CUSTOMIZATION
+  useEffect(() => {
+    async function saveCustomization() {
+      if (!currentUser) {
+        return;
+      }
+
+      try {
+        await updateDoc(doc(db, "users", currentUser.uid), {
+          equippedHair,
+          equippedClothes,
+          equippedWallpaper,
+          equippedDesk,
+          equippedChair,
+          equippedWindowView,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    saveCustomization();
+  }, [
+    currentUser,
+
+    equippedHair,
+    equippedClothes,
+
+    equippedWallpaper,
+    equippedDesk,
+    equippedChair,
+    equippedWindowView,
+  ]);
 
   return (
     <div
@@ -138,6 +200,15 @@ function MainScene() {
       onClick={() => setIsProfileDropdownOpen(false)}
     >
       <>
+        <SceneRenderer
+          equippedHair={equippedHair}
+          equippedClothes={equippedClothes}
+          equippedWallpaper={equippedWallpaper}
+          equippedDesk={equippedDesk}
+          equippedChair={equippedChair}
+          equippedWindowView={equippedWindowView}
+        />
+
         <Corkboard onClick={() => setPage("menu")} />
 
         <div className="top-right-ui">
@@ -283,6 +354,18 @@ function MainScene() {
           setPage={setPage}
           isClosingCustomization={isClosingCustomization}
           setIsClosingCustomization={setIsClosingCustomization}
+          equippedHair={equippedHair}
+          setEquippedHair={setEquippedHair}
+          equippedClothes={equippedClothes}
+          setEquippedClothes={setEquippedClothes}
+          equippedWallpaper={equippedWallpaper}
+          setEquippedWallpaper={setEquippedWallpaper}
+          equippedDesk={equippedDesk}
+          setEquippedDesk={setEquippedDesk}
+          equippedChair={equippedChair}
+          setEquippedChair={setEquippedChair}
+          equippedWindowView={equippedWindowView}
+          setEquippedWindowView={setEquippedWindowView}
         />
       )}
     </div>
