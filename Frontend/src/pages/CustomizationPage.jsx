@@ -5,6 +5,7 @@ import ClothesIcon from "../assets/ClothesIcon.svg";
 import WallpaperIcon from "../assets/WallpaperIcon.svg";
 import WindowViewIcon from "../assets/WindowView.svg";
 import DeskSetIcon from "../assets/DeskSet.svg";
+import ItemCard from "../components/ItemCard";
 
 import ArrowDownIcon from "../assets/ArrowDownIcon.png";
 
@@ -36,6 +37,33 @@ function CustomizationPage({
       icon: DeskSetIcon,
     },
   ];
+
+  const [selectedItemId, setSelectedItemId] = useState(1);
+
+  const dummyItems = [
+    {
+      id: 1,
+      name: "Rambut Default",
+      image: "https://placehold.co/120x120",
+      owned: true,
+      equipped: true,
+    },
+    {
+      id: 2,
+      name: "Rambut Silver",
+      image: "https://placehold.co/120x120",
+      owned: true,
+      equipped: false,
+    },
+    {
+      id: 3,
+      name: "Rambut Biru",
+      image: "https://placehold.co/120x120",
+      owned: false,
+      equipped: false,
+    },
+  ];
+
   return (
     <>
       {/* CUSTOMIZATION SIDEBAR */}
@@ -91,8 +119,18 @@ function CustomizationPage({
 
           <div className="customization-divider" />
 
-          <div className="customization-items-empty">
-            Item customization akan muncul di sini
+          <div className="customization-items-row">
+            {dummyItems.map((item) => (
+              <ItemCard
+                key={item.id}
+                image={item.image}
+                name={item.name}
+                owned={item.owned}
+                equipped={item.equipped}
+                selected={selectedItemId === item.id}
+                onClick={() => setSelectedItemId(item.id)}
+              />
+            ))}
           </div>
         </div>
       </div>

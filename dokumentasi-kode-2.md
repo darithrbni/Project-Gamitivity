@@ -642,6 +642,39 @@ export default CustomizationButton;
 
 
 
+## ItemCard.jsx
+function ItemCard({ image, name, owned, equipped, selected, onClick }) {
+  return (
+    <button
+      className={`item-card ${selected ? "item-card-selected" : ""}`}
+      onClick={onClick}
+    >
+      {/* IMAGE */}
+      <div className="item-card-image-wrapper">
+        <img src={image} alt={name} className="item-card-image" />
+      </div>
+
+      {/* NAME */}
+      <p className="item-card-name">{name}</p>
+
+      {/* STATUS */}
+      <div className="item-card-status">
+        {equipped ? (
+          <div className="item-card-equipped">Dipakai</div>
+        ) : owned ? (
+          <div className="item-card-owned">Dimiliki</div>
+        ) : (
+          <div className="item-card-locked">Belum dimiliki</div>
+        )}
+      </div>
+    </button>
+  );
+}
+
+export default ItemCard;
+
+
+
 
 
 
@@ -2889,6 +2922,7 @@ import ClothesIcon from "../assets/ClothesIcon.svg";
 import WallpaperIcon from "../assets/WallpaperIcon.svg";
 import WindowViewIcon from "../assets/WindowView.svg";
 import DeskSetIcon from "../assets/DeskSet.svg";
+import ItemCard from "../components/ItemCard";
 
 import ArrowDownIcon from "../assets/ArrowDownIcon.png";
 
@@ -2920,6 +2954,33 @@ function CustomizationPage({
       icon: DeskSetIcon,
     },
   ];
+
+  const [selectedItemId, setSelectedItemId] = useState(1);
+
+  const dummyItems = [
+    {
+      id: 1,
+      name: "Rambut Default",
+      image: "https://placehold.co/120x120",
+      owned: true,
+      equipped: true,
+    },
+    {
+      id: 2,
+      name: "Rambut Silver",
+      image: "https://placehold.co/120x120",
+      owned: true,
+      equipped: false,
+    },
+    {
+      id: 3,
+      name: "Rambut Biru",
+      image: "https://placehold.co/120x120",
+      owned: false,
+      equipped: false,
+    },
+  ];
+
   return (
     <>
       {/* CUSTOMIZATION SIDEBAR */}
@@ -2975,8 +3036,18 @@ function CustomizationPage({
 
           <div className="customization-divider" />
 
-          <div className="customization-items-empty">
-            Item customization akan muncul di sini
+          <div className="customization-items-row">
+            {dummyItems.map((item) => (
+              <ItemCard
+                key={item.id}
+                image={item.image}
+                name={item.name}
+                owned={item.owned}
+                equipped={item.equipped}
+                selected={selectedItemId === item.id}
+                onClick={() => setSelectedItemId(item.id)}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -2985,8 +3056,6 @@ function CustomizationPage({
 }
 
 export default CustomizationPage;
-
-
 
 
 
@@ -4964,7 +5033,7 @@ export default CustomizationPage;
   pointer-events: auto;
 
   width: calc(100% - 36px);
-  height: 210px;
+  height: 300px;
 
   margin-bottom: 18px;
 
@@ -5107,6 +5176,22 @@ export default CustomizationPage;
   font-size: 1rem;
 }
 
+.customization-items-row {
+  display: flex;
+
+  gap: 16px;
+
+  overflow-x: auto;
+
+  scrollbar-width: none;
+
+  padding-bottom: 4px;
+}
+
+.customization-items-row::-webkit-scrollbar {
+  display: none;
+}
+
 /* OPEN/CLOSE ANIMATION */
 
 .customization-sidebar-open {
@@ -5239,6 +5324,120 @@ export default CustomizationPage;
 
   margin-top: -28px;
 }
+
+/* ITEM CARD */
+
+.item-card {
+  width: 150px;
+  min-height: 160px;
+
+  border: none;
+  border-radius: 22px;
+
+  background: rgba(255, 255, 255, 0.06);
+
+  padding: 14px 12px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease,
+    border-color 0.15s ease;
+
+  flex-shrink: 0;
+}
+
+.item-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+
+  transform: translateY(-2px);
+}
+
+/* SELECTED */
+
+.item-card-selected {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* IMAGE */
+
+.item-card-image-wrapper {
+  width: 100%;
+  height: 90px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-bottom: 14px;
+}
+
+.item-card-image {
+  max-width: 100%;
+  max-height: 100%;
+
+  object-fit: contain;
+}
+
+/* NAME */
+
+.item-card-name {
+  color: white;
+
+  font-size: 0.95rem;
+  font-weight: 500;
+
+  text-align: center;
+
+  margin-bottom: 12px;
+}
+
+/* STATUS */
+
+.item-card-status {
+  margin-top: auto;
+}
+
+/* EQUIPPED */
+
+.item-card-equipped {
+  background: #6cc46c;
+
+  color: white;
+
+  font-size: 0.82rem;
+  font-weight: 600;
+
+  padding: 6px 12px;
+
+  border-radius: 999px;
+}
+
+/* OWNED */
+
+.item-card-owned {
+  color: #ffd27a;
+
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* LOCKED */
+
+.item-card-locked {
+  color: rgba(255, 255, 255, 0.55);
+
+  font-size: 0.8rem;
+}
+
+
+
+
 
 
 
