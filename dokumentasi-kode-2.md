@@ -744,6 +744,7 @@ import SleeveDark3 from "../assets/Customization/Animation/sleeve_3.png";
 // WALLPAPER
 import WallpaperDefault from "../assets/Customization/wallpaper_1.png";
 import WallpaperPink from "../assets/Customization/wallpaper_2.png";
+import WallpaperBlue from "../assets/Customization/wallpaper_3.png";
 
 // WINDOW FRAME
 import WindowFrame from "../assets/Customization/window.png";
@@ -751,6 +752,9 @@ import WindowFrame from "../assets/Customization/window.png";
 // DESK
 import DeskDefault from "../assets/Customization/desk_1.png";
 import DeskGaming from "../assets/Customization/desk_2.png";
+
+// DRAWER
+import Drawer from "../assets/Customization/laci.png";
 
 // CHAIR
 import ChairDefault from "../assets/Customization/chair_1.png";
@@ -783,11 +787,7 @@ function SceneRenderer({
   const wallpaperMap = {
     default: WallpaperDefault,
     pink: WallpaperPink,
-  };
-
-  // WINDOW MAP
-  const windowMap = {
-    default: WindowFrame,
+    blue: WallpaperBlue,
   };
 
   // DESK MAP
@@ -854,16 +854,16 @@ function SceneRenderer({
 
       {/* ANIMATED VIEW */}
       <AnimatedLayer
-        frames={animatedViewMap[equippedWindowView]}
+        frames={animatedViewMap[equippedWindowView] || treeFrames}
         frameDuration={220}
         className="scene-layer"
       />
 
       {/* WINDOW */}
-      <img src={windowMap[equippedWindowView]} alt="" className="scene-layer" />
+      <img src={WindowFrame} alt="" className="scene-layer" />
 
-      {/* DESK */}
-      <img src={deskMap[equippedDesk]} alt="" className="scene-layer" />
+      {/* DRAWER */}
+      <img src={Drawer} alt="" className="scene-layer" />
 
       {/* CHAIR */}
       <img src={chairMap[equippedChair]} alt="" className="scene-layer" />
@@ -873,6 +873,9 @@ function SceneRenderer({
 
       {/* CLOTHES */}
       <img src={clothesMap[equippedClothes]} alt="" className="scene-layer" />
+
+      {/* DESK */}
+      <img src={deskMap[equippedDesk]} alt="" className="scene-layer" />
 
       {/* ARM ANIMATION */}
       <AnimatedLayer
@@ -1557,6 +1560,8 @@ function MainScene() {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   // CURRENT USER
   const [currentUser, setCurrentUser] = useState(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   // PROFILE PICTURE
   const [profileImage, setProfileImage] = useState("");
   // TIMER DISPLAY LOGIC
@@ -1620,6 +1625,21 @@ function MainScene() {
 
   async function handleLogout() {
     try {
+      setIsLoggingOut(true);
+
+      // RESET LOCAL STATE ONLY
+      setEquippedHair("default");
+
+      setEquippedClothes("default");
+
+      setEquippedWallpaper("default");
+
+      setEquippedDesk("default");
+
+      setEquippedChair("default");
+
+      setEquippedWindowView("default");
+
       await signOut(auth);
 
       setPage("main");
@@ -1634,6 +1654,7 @@ function MainScene() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
+      setIsAuthLoading(true);
 
       if (user) {
         const docRef = doc(db, "users", user.uid);
@@ -1657,9 +1678,13 @@ function MainScene() {
           setEquippedChair(data.equippedChair || "default");
 
           setEquippedWindowView(data.equippedWindowView || "default");
+
+          setIsAuthLoading(false);
         }
       } else {
         setProfileImage("");
+
+        setIsAuthLoading(false);
       }
     });
 
@@ -1669,7 +1694,7 @@ function MainScene() {
   // AUTO SAVE CUSTOMIZATION
   useEffect(() => {
     async function saveCustomization() {
-      if (!currentUser) {
+      if (!currentUser || isLoggingOut) {
         return;
       }
 
@@ -1690,6 +1715,7 @@ function MainScene() {
     saveCustomization();
   }, [
     currentUser,
+    isLoggingOut,
 
     equippedHair,
     equippedClothes,
@@ -1699,6 +1725,10 @@ function MainScene() {
     equippedChair,
     equippedWindowView,
   ]);
+
+  if (isAuthLoading) {
+    return null;
+  }
 
   return (
     <div
@@ -3282,6 +3312,33 @@ import ItemCard from "../components/ItemCard";
 
 import ArrowDownIcon from "../assets/ArrowDownIcon.png";
 
+// HAIR ICONS
+import IconHair1 from "../assets/Customization/Icons/icon_hair_1.png";
+import IconHair2 from "../assets/Customization/Icons/icon_hair_2.png";
+import IconHair3 from "../assets/Customization/Icons/icon_hair_3.png";
+
+// CLOTHES ICONS
+import IconClothes1 from "../assets/Customization/Icons/icon_clothes_1.png";
+import IconClothes2 from "../assets/Customization/Icons/icon_clothes_2.png";
+import IconClothes3 from "../assets/Customization/Icons/icon_clothes_3.png";
+
+// DESK ICONS
+import IconDeskset1 from "../assets/Customization/Icons/icon_deskset_1.png";
+import IconDeskset2 from "../assets/Customization/Icons/icon_deskset_2.png";
+
+// VIEW ICONS
+import IconTree from "../assets/Customization/Icons/icon_tree_1.png";
+import IconGalaxy from "../assets/Customization/Icons/icon_galaxy.png";
+import IconSnow from "../assets/Customization/Icons/icon_snow.png";
+import IconSunset from "../assets/Customization/Icons/icon_sunset_1.png";
+
+// WALLPAPER ICONS
+import IconWallpaper1 from "../assets/Customization/Icons/icon_wallpaper_1.png";
+import IconWallpaper2 from "../assets/Customization/Icons/icon_wallpaper_2.png";
+import IconWallpaper3 from "../assets/Customization/Icons/icon_wallpaper_3.png";
+import IconWallpaper4 from "../assets/Customization/Icons/icon_wallpaper_4.png";
+import IconWallpaper5 from "../assets/Customization/Icons/icon_wallpaper_5.png";
+
 function CustomizationPage({
   setPage,
   isClosingCustomization,
@@ -3292,6 +3349,18 @@ function CustomizationPage({
 
   equippedClothes,
   setEquippedClothes,
+
+  equippedWallpaper,
+  setEquippedWallpaper,
+
+  equippedDesk,
+  setEquippedDesk,
+
+  equippedChair,
+  setEquippedChair,
+
+  equippedWindowView,
+  setEquippedWindowView,
 }) {
   const [selectedCategory, setSelectedCategory] = useState("Rambut");
   const categories = [
@@ -3324,24 +3393,24 @@ function CustomizationPage({
       {
         id: 1,
         key: "default",
-        name: "Rambut Default",
-        image: "https://placehold.co/120x120",
+        name: "Rambut Pirang",
+        image: IconHair1,
         owned: true,
       },
 
       {
         id: 2,
         key: "silver",
-        name: "Rambut Silver",
-        image: "https://placehold.co/120x120",
+        name: "Rambut Krem",
+        image: IconHair2,
         owned: true,
       },
 
       {
         id: 3,
         key: "blue",
-        name: "Rambut Biru",
-        image: "https://placehold.co/120x120",
+        name: "Rambut Cokelat",
+        image: IconHair3,
         owned: true,
       },
     ],
@@ -3351,7 +3420,7 @@ function CustomizationPage({
         id: 4,
         key: "default",
         name: "Baju Default",
-        image: "https://placehold.co/120x120",
+        image: IconClothes1,
         owned: true,
       },
 
@@ -3359,7 +3428,7 @@ function CustomizationPage({
         id: 5,
         key: "blue",
         name: "Hoodie Biru",
-        image: "https://placehold.co/120x120",
+        image: IconClothes2,
         owned: true,
       },
 
@@ -3367,7 +3436,7 @@ function CustomizationPage({
         id: 6,
         key: "dark",
         name: "Jaket Hitam",
-        image: "https://placehold.co/120x120",
+        image: IconClothes3,
         owned: true,
       },
     ],
@@ -3376,72 +3445,79 @@ function CustomizationPage({
       {
         id: 7,
         key: "default",
-        name: "Dinding Bata",
-        image: "https://placehold.co/120x120",
+        name: "Wallpaper Krem",
+        image: IconWallpaper1,
         owned: true,
-        equipped: true,
       },
       {
         id: 8,
         key: "pink",
-        name: "Wallpaper Pink",
-        image: "https://placehold.co/120x120",
-        owned: false,
-        equipped: false,
+        name: "Wallpaper Biru",
+        image: IconWallpaper2,
+        owned: true,
+      },
+      {
+        id: 9,
+        key: "blue",
+        name: "Wallpaper Putih",
+        image: IconWallpaper3,
+        owned: true,
       },
     ],
 
     View: [
       {
-        id: 9,
-        key: "default",
-        name: "Forest",
-        owned: true,
-      },
-
-      {
         id: 10,
-        key: "galaxy",
-        name: "Galaxy",
+        key: "default",
+        name: "Hutan",
+        image: IconTree,
         owned: true,
       },
 
       {
         id: 11,
-        key: "snow",
-        name: "Snow",
+        key: "galaxy",
+        name: "Langit Malam",
+        image: IconGalaxy,
         owned: true,
       },
 
       {
         id: 12,
+        key: "snow",
+        name: "Musim Salju",
+        image: IconSnow,
+        owned: true,
+      },
+
+      {
+        id: 13,
         key: "sunset",
-        name: "Sunset",
+        name: "Pantai",
+        image: IconSunset,
         owned: true,
       },
     ],
 
     Meja: [
       {
-        id: 13,
+        id: 14,
         key: "default",
         name: "Meja Kayu",
-        image: "https://placehold.co/120x120",
+        image: IconDeskset1,
         owned: true,
-        equipped: true,
       },
       {
-        id: 14,
+        id: 15,
         key: "gaming",
         name: "Meja Gaming",
-        image: "https://placehold.co/120x120",
-        owned: false,
-        equipped: false,
+        image: IconDeskset2,
+        owned: true,
       },
     ],
   };
 
-  const currentItems = customizationItems[selectedCategory];
+  const currentItems = customizationItems[selectedCategory] || [];
 
   function isItemEquipped(item) {
     if (selectedCategory === "Rambut") {
@@ -3573,8 +3649,6 @@ function CustomizationPage({
 }
 
 export default CustomizationPage;
-
-
 
 
 

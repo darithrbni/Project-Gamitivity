@@ -64,6 +64,7 @@ import SleeveDark3 from "../assets/Customization/Animation/sleeve_3.png";
 // WALLPAPER
 import WallpaperDefault from "../assets/Customization/wallpaper_1.png";
 import WallpaperPink from "../assets/Customization/wallpaper_2.png";
+import WallpaperBlue from "../assets/Customization/wallpaper_3.png";
 
 // WINDOW FRAME
 import WindowFrame from "../assets/Customization/window.png";
@@ -71,6 +72,9 @@ import WindowFrame from "../assets/Customization/window.png";
 // DESK
 import DeskDefault from "../assets/Customization/desk_1.png";
 import DeskGaming from "../assets/Customization/desk_2.png";
+
+// DRAWER
+import Drawer from "../assets/Customization/laci.png";
 
 // CHAIR
 import ChairDefault from "../assets/Customization/chair_1.png";
@@ -103,11 +107,7 @@ function SceneRenderer({
   const wallpaperMap = {
     default: WallpaperDefault,
     pink: WallpaperPink,
-  };
-
-  // WINDOW MAP
-  const windowMap = {
-    default: WindowFrame,
+    blue: WallpaperBlue,
   };
 
   // DESK MAP
@@ -174,16 +174,16 @@ function SceneRenderer({
 
       {/* ANIMATED VIEW */}
       <AnimatedLayer
-        frames={animatedViewMap[equippedWindowView]}
+        frames={animatedViewMap[equippedWindowView] || treeFrames}
         frameDuration={220}
         className="scene-layer"
       />
 
       {/* WINDOW */}
-      <img src={windowMap[equippedWindowView]} alt="" className="scene-layer" />
+      <img src={WindowFrame} alt="" className="scene-layer" />
 
-      {/* DESK */}
-      <img src={deskMap[equippedDesk]} alt="" className="scene-layer" />
+      {/* DRAWER */}
+      <img src={Drawer} alt="" className="scene-layer" />
 
       {/* CHAIR */}
       <img src={chairMap[equippedChair]} alt="" className="scene-layer" />
@@ -193,6 +193,9 @@ function SceneRenderer({
 
       {/* CLOTHES */}
       <img src={clothesMap[equippedClothes]} alt="" className="scene-layer" />
+
+      {/* DESK */}
+      <img src={deskMap[equippedDesk]} alt="" className="scene-layer" />
 
       {/* ARM ANIMATION */}
       <AnimatedLayer

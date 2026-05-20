@@ -35,6 +35,8 @@ function MainScene() {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   // CURRENT USER
   const [currentUser, setCurrentUser] = useState(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   // PROFILE PICTURE
   const [profileImage, setProfileImage] = useState("");
   // TIMER DISPLAY LOGIC
@@ -98,6 +100,21 @@ function MainScene() {
 
   async function handleLogout() {
     try {
+      setIsLoggingOut(true);
+
+      // RESET LOCAL STATE ONLY
+      setEquippedHair("default");
+
+      setEquippedClothes("default");
+
+      setEquippedWallpaper("default");
+
+      setEquippedDesk("default");
+
+      setEquippedChair("default");
+
+      setEquippedWindowView("default");
+
       await signOut(auth);
 
       setPage("main");
@@ -112,6 +129,7 @@ function MainScene() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
+      setIsAuthLoading(true);
 
       if (user) {
         const docRef = doc(db, "users", user.uid);
@@ -135,9 +153,13 @@ function MainScene() {
           setEquippedChair(data.equippedChair || "default");
 
           setEquippedWindowView(data.equippedWindowView || "default");
+
+          setIsAuthLoading(false);
         }
       } else {
         setProfileImage("");
+
+        setIsAuthLoading(false);
       }
     });
 
@@ -147,7 +169,7 @@ function MainScene() {
   // AUTO SAVE CUSTOMIZATION
   useEffect(() => {
     async function saveCustomization() {
-      if (!currentUser) {
+      if (!currentUser || isLoggingOut) {
         return;
       }
 
@@ -168,6 +190,7 @@ function MainScene() {
     saveCustomization();
   }, [
     currentUser,
+    isLoggingOut,
 
     equippedHair,
     equippedClothes,
@@ -177,6 +200,10 @@ function MainScene() {
     equippedChair,
     equippedWindowView,
   ]);
+
+  if (isAuthLoading) {
+    return null;
+  }
 
   return (
     <div
