@@ -1527,7 +1527,7 @@ import { useEffect, useState } from "react";
 
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import auth from "../firebase/auth";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
 
 import MenuPage from "./MenuPage";
@@ -1562,6 +1562,7 @@ function MainScene() {
   const [currentUser, setCurrentUser] = useState(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isCustomizationLoaded, setIsCustomizationLoaded] = useState(false);
   // PROFILE PICTURE
   const [profileImage, setProfileImage] = useState("");
   // TIMER DISPLAY LOGIC
@@ -1627,19 +1628,6 @@ function MainScene() {
     try {
       setIsLoggingOut(true);
 
-      // RESET LOCAL STATE ONLY
-      setEquippedHair("default");
-
-      setEquippedClothes("default");
-
-      setEquippedWallpaper("default");
-
-      setEquippedDesk("default");
-
-      setEquippedChair("default");
-
-      setEquippedWindowView("default");
-
       await signOut(auth);
 
       setPage("main");
@@ -1647,9 +1635,10 @@ function MainScene() {
       setIsProfileDropdownOpen(false);
     } catch (error) {
       alert(error.message);
+    } finally {
+      setIsLoggingOut(false);
     }
   }
-
   // FIREBASE AUTH LISTENER
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -1657,69 +1646,111 @@ function MainScene() {
       setIsAuthLoading(true);
 
       if (user) {
-        const docRef = doc(db, "users", user.uid);
+        setIsCustomizationLoaded(false);
 
-        const docSnap = await getDoc(docRef);
+        try {
+          const docRef = doc(db, "users", user.uid);
 
-        if (docSnap.exists()) {
-          const data = docSnap.data();
+          const docSnap = await getDoc(docRef);
 
-          setProfileImage(data.photoURL || "");
+          if (docSnap.exists()) {
+            const data = docSnap.data();
 
-          // LOAD CUSTOMIZATION
-          setEquippedHair(data.equippedHair || "default");
+            setProfileImage(data.photoURL || "");
 
-          setEquippedClothes(data.equippedClothes || "default");
+            setEquippedHair(data.equippedHair || "default");
 
-          setEquippedWallpaper(data.equippedWallpaper || "default");
+            setEquippedClothes(data.equippedClothes || "default");
 
-          setEquippedDesk(data.equippedDesk || "default");
+            setEquippedWallpaper(data.equippedWallpaper || "default");
 
-          setEquippedChair(data.equippedChair || "default");
+            setEquippedDesk(data.equippedDesk || "default");
 
-          setEquippedWindowView(data.equippedWindowView || "default");
+            setEquippedChair(data.equippedChair || "default");
 
-          setIsAuthLoading(false);
+            setEquippedWindowView(data.equippedWindowView || "default");
+
+            setIsCustomizationLoaded(true);
+          } else {
+            // USER DOC DOESN'T EXIST
+            setProfileImage("");
+
+            setEquippedHair("default");
+
+            setEquippedClothes("default");
+
+            setEquippedWallpaper("default");
+
+            setEquippedDesk("default");
+
+            setEquippedChair("default");
+
+            setEquippedWindowView("default");
+          }
+        } catch (error) {
+          console.error("FAILED LOAD CUSTOMIZATION:", error);
         }
       } else {
+        // LOGOUT RESET
         setProfileImage("");
 
-        setIsAuthLoading(false);
-      }
-    });
+        setEquippedHair("default");
 
+        setEquippedClothes("default");
+
+        setEquippedWallpaper("default");
+
+        setEquippedDesk("default");
+
+        setEquippedChair("default");
+
+        setEquippedWindowView("default");
+
+        setIsCustomizationLoaded(false);
+      }
+
+      setIsAuthLoading(false);
+    });
     return () => unsubscribe();
   }, []);
 
   // AUTO SAVE CUSTOMIZATION
   useEffect(() => {
     async function saveCustomization() {
-      if (!currentUser || isLoggingOut) {
+      if (!currentUser || isLoggingOut || !isCustomizationLoaded) {
         return;
       }
 
       try {
-        await updateDoc(doc(db, "users", currentUser.uid), {
-          equippedHair,
-          equippedClothes,
-          equippedWallpaper,
-          equippedDesk,
-          equippedChair,
-          equippedWindowView,
-        });
+        await setDoc(
+          doc(db, "users", currentUser.uid),
+          {
+            equippedHair,
+            equippedClothes,
+            equippedWallpaper,
+            equippedDesk,
+            equippedChair,
+            equippedWindowView,
+          },
+          { merge: true },
+        );
       } catch (error) {
-        console.error(error);
+        console.error("FAILED SAVE CUSTOMIZATION:", error);
       }
     }
 
-    saveCustomization();
+    const timeout = setTimeout(() => {
+      saveCustomization();
+    }, 500);
+
+    return () => clearTimeout(timeout);
   }, [
     currentUser,
     isLoggingOut,
+    isCustomizationLoaded,
 
     equippedHair,
     equippedClothes,
-
     equippedWallpaper,
     equippedDesk,
     equippedChair,
@@ -1925,11 +1956,6 @@ function MainScene() {
 }
 
 export default MainScene;
-
-
-
-
-
 
 
 
