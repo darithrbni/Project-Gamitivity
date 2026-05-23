@@ -1686,6 +1686,8 @@ function MainScene() {
             setEquippedChair("default");
 
             setEquippedWindowView("default");
+
+            setIsCustomizationLoaded(true);
           }
         } catch (error) {
           console.error("FAILED LOAD CUSTOMIZATION:", error);
@@ -1956,6 +1958,8 @@ function MainScene() {
 }
 
 export default MainScene;
+
+
 
 
 
