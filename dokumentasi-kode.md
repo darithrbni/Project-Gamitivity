@@ -352,15 +352,7 @@ import Drawer from "../assets/Customization/laci.png";
 import ChairDefault from "../assets/Customization/chair_1.png";
 import ChairGaming from "../assets/Customization/chair_2.png";
 
-function SceneRenderer({
-  equippedHair,
-  equippedClothes,
-
-  equippedWallpaper,
-  equippedDesk,
-  equippedChair,
-  equippedWindowView,
-}) {
+function SceneRenderer({ equippedItems }) {
   // HAIR MAP
   const hairMap = {
     default: HairDefault,
@@ -439,14 +431,14 @@ function SceneRenderer({
     <div className="scene-renderer">
       {/* WALLPAPER */}
       <img
-        src={wallpaperMap[equippedWallpaper]}
+        src={wallpaperMap[equippedItems.wallpaper]}
         alt=""
         className="scene-layer"
       />
 
       {/* ANIMATED VIEW */}
       <AnimationLayer
-        frames={animationViewMap[equippedWindowView] || treeFrames}
+        frames={animationViewMap[equippedItems.windowView] || treeFrames}
         frameDuration={220}
         className="scene-layer"
       />
@@ -458,16 +450,20 @@ function SceneRenderer({
       <img src={Drawer} alt="" className="scene-layer" />
 
       {/* CHAIR */}
-      <img src={chairMap[equippedChair]} alt="" className="scene-layer" />
+      <img src={chairMap[equippedItems.chair]} alt="" className="scene-layer" />
 
       {/* BODY */}
       <img src={Body} alt="" className="scene-layer" />
 
       {/* CLOTHES */}
-      <img src={clothesMap[equippedClothes]} alt="" className="scene-layer" />
+      <img
+        src={clothesMap[equippedItems.clothes]}
+        alt=""
+        className="scene-layer"
+      />
 
       {/* DESK */}
-      <img src={deskMap[equippedDesk]} alt="" className="scene-layer" />
+      <img src={deskMap[equippedItems.desk]} alt="" className="scene-layer" />
 
       {/* ARM ANIMATION */}
       <AnimationLayer
@@ -478,19 +474,18 @@ function SceneRenderer({
 
       {/* SLEEVE ANIMATION */}
       <AnimationLayer
-        frames={sleeveMap[equippedClothes]}
+        frames={sleeveMap[equippedItems.clothes]}
         frameDuration={220}
         className="scene-layer"
       />
 
       {/* HAIR */}
-      <img src={hairMap[equippedHair]} alt="" className="scene-layer" />
+      <img src={hairMap[equippedItems.hair]} alt="" className="scene-layer" />
     </div>
   );
 }
 
 export default SceneRenderer;
-
 
 
 
@@ -1328,45 +1323,39 @@ function CustomizationPage({
   isClosingCustomization,
   setIsClosingCustomization,
 
-  equippedHair,
-  setEquippedHair,
-
-  equippedClothes,
-  setEquippedClothes,
-
-  equippedWallpaper,
-  setEquippedWallpaper,
-
-  equippedDesk,
-  setEquippedDesk,
-
-  equippedChair,
-  setEquippedChair,
-
-  equippedWindowView,
-  setEquippedWindowView,
+  equippedItems,
+  setEquippedItems,
 }) {
   const [selectedCategory, setSelectedCategory] = useState("Rambut");
   const categories = [
     {
       name: "Rambut",
       icon: HairIcon,
+      stateKey: "hair",
     },
+
     {
       name: "Baju",
       icon: ClothesIcon,
+      stateKey: "clothes",
     },
+
     {
       name: "Dinding",
       icon: WallpaperIcon,
+      stateKey: "wallpaper",
     },
+
     {
       name: "View",
       icon: WindowViewIcon,
+      stateKey: "windowView",
     },
+
     {
       name: "Meja",
       icon: DeskSetIcon,
+      stateKey: "desk",
     },
   ];
 
@@ -1501,30 +1490,13 @@ function CustomizationPage({
     ],
   };
 
+  const selectedCategoryData = categories.find(
+    (category) => category.name === selectedCategory,
+  );
   const currentItems = customizationItems[selectedCategory] || [];
 
   function isItemEquipped(item) {
-    if (selectedCategory === "Rambut") {
-      return equippedHair === item.key;
-    }
-
-    if (selectedCategory === "Baju") {
-      return equippedClothes === item.key;
-    }
-
-    if (selectedCategory === "Dinding") {
-      return equippedWallpaper === item.key;
-    }
-
-    if (selectedCategory === "View") {
-      return equippedWindowView === item.key;
-    }
-
-    if (selectedCategory === "Meja") {
-      return equippedDesk === item.key;
-    }
-
-    return false;
+    return equippedItems[selectedCategoryData.stateKey] === item.key;
   }
 
   return (
@@ -1565,7 +1537,15 @@ function CustomizationPage({
                     ? "customization-category-button-active"
                     : ""
                 }`}
-                onClick={() => setSelectedCategory(category.name)}
+                onClick={() => {
+                  setSelectedCategory(category.name);
+
+                  const firstItem = customizationItems[category.name]?.[0];
+
+                  if (firstItem) {
+                    setSelectedItemId(firstItem.id);
+                  }
+                }}
               >
                 <img
                   src={category.icon}
@@ -1598,30 +1578,10 @@ function CustomizationPage({
                     return;
                   }
 
-                  // HAIR
-                  if (selectedCategory === "Rambut") {
-                    setEquippedHair(item.key);
-                  }
-
-                  // CLOTHES
-                  if (selectedCategory === "Baju") {
-                    setEquippedClothes(item.key);
-                  }
-
-                  // WALLPAPER
-                  if (selectedCategory === "Dinding") {
-                    setEquippedWallpaper(item.key);
-                  }
-
-                  // WINDOW VIEW
-                  if (selectedCategory === "View") {
-                    setEquippedWindowView(item.key);
-                  }
-
-                  // DESK
-                  if (selectedCategory === "Meja") {
-                    setEquippedDesk(item.key);
-                  }
+                  setEquippedItems((prev) => ({
+                    ...prev,
+                    [selectedCategoryData.stateKey]: item.key,
+                  }));
                 }}
               />
             ))}
@@ -1633,7 +1593,6 @@ function CustomizationPage({
 }
 
 export default CustomizationPage;
-
 
 
 
@@ -1730,13 +1689,13 @@ function LoginPage({ setPage }) {
           motto: "Let's study with me!",
           photoURL: "",
 
-          equippedHair: "default",
-          equippedClothes: "default",
-
-          equippedWallpaper: "default",
-          equippedDesk: "default",
-          equippedChair: "default",
-          equippedWindowView: "default",
+          equippedItems: {
+            hair: "default",
+            clothes: "default",
+            wallpaper: "default",
+            desk: "default",
+            windowView: "default",
+          },
 
           createdAt: serverTimestamp(),
         });
@@ -1955,17 +1914,13 @@ function MainScene() {
   const [isClosingCustomization, setIsClosingCustomization] = useState(false);
 
   // EQUIPPED CUSTOMIZATION
-  const [equippedHair, setEquippedHair] = useState("default");
-
-  const [equippedClothes, setEquippedClothes] = useState("default");
-
-  const [equippedWallpaper, setEquippedWallpaper] = useState("default");
-
-  const [equippedDesk, setEquippedDesk] = useState("default");
-
-  const [equippedChair, setEquippedChair] = useState("default");
-
-  const [equippedWindowView, setEquippedWindowView] = useState("default");
+  const [equippedItems, setEquippedItems] = useState({
+    hair: "default",
+    clothes: "default",
+    wallpaper: "default",
+    windowView: "default",
+    desk: "default",
+  });
 
   async function handleLogout() {
     try {
@@ -2001,34 +1956,28 @@ function MainScene() {
 
             setProfileImage(data.photoURL || "");
 
-            setEquippedHair(data.equippedHair || "default");
-
-            setEquippedClothes(data.equippedClothes || "default");
-
-            setEquippedWallpaper(data.equippedWallpaper || "default");
-
-            setEquippedDesk(data.equippedDesk || "default");
-
-            setEquippedChair(data.equippedChair || "default");
-
-            setEquippedWindowView(data.equippedWindowView || "default");
+            setEquippedItems(
+              data.equippedItems || {
+                hair: "default",
+                clothes: "default",
+                wallpaper: "default",
+                windowView: "default",
+                desk: "default",
+              },
+            );
 
             setIsCustomizationLoaded(true);
           } else {
             // USER DOC DOESN'T EXIST
             setProfileImage("");
 
-            setEquippedHair("default");
-
-            setEquippedClothes("default");
-
-            setEquippedWallpaper("default");
-
-            setEquippedDesk("default");
-
-            setEquippedChair("default");
-
-            setEquippedWindowView("default");
+            setEquippedItems({
+              hair: "default",
+              clothes: "default",
+              wallpaper: "default",
+              windowView: "default",
+              desk: "default",
+            });
 
             setIsCustomizationLoaded(true);
           }
@@ -2039,17 +1988,13 @@ function MainScene() {
         // LOGOUT RESET
         setProfileImage("");
 
-        setEquippedHair("default");
-
-        setEquippedClothes("default");
-
-        setEquippedWallpaper("default");
-
-        setEquippedDesk("default");
-
-        setEquippedChair("default");
-
-        setEquippedWindowView("default");
+        setEquippedItems({
+          hair: "default",
+          clothes: "default",
+          wallpaper: "default",
+          windowView: "default",
+          desk: "default",
+        });
 
         setIsCustomizationLoaded(false);
       }
@@ -2070,12 +2015,7 @@ function MainScene() {
         await setDoc(
           doc(db, "users", currentUser.uid),
           {
-            equippedHair,
-            equippedClothes,
-            equippedWallpaper,
-            equippedDesk,
-            equippedChair,
-            equippedWindowView,
+            equippedItems,
           },
           { merge: true },
         );
@@ -2089,18 +2029,7 @@ function MainScene() {
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [
-    currentUser,
-    isLoggingOut,
-    isCustomizationLoaded,
-
-    equippedHair,
-    equippedClothes,
-    equippedWallpaper,
-    equippedDesk,
-    equippedChair,
-    equippedWindowView,
-  ]);
+  }, [currentUser, isLoggingOut, isCustomizationLoaded, equippedItems]);
 
   if (isAuthLoading) {
     return null;
@@ -2128,14 +2057,7 @@ function MainScene() {
       onClick={() => setIsProfileDropdownOpen(false)}
     >
       <>
-        <SceneRenderer
-          equippedHair={equippedHair}
-          equippedClothes={equippedClothes}
-          equippedWallpaper={equippedWallpaper}
-          equippedDesk={equippedDesk}
-          equippedChair={equippedChair}
-          equippedWindowView={equippedWindowView}
-        />
+        <SceneRenderer equippedItems={equippedItems} />
 
         <Corkboard onClick={() => setPage("menu")} />
 
@@ -2282,18 +2204,8 @@ function MainScene() {
           setPage={setPage}
           isClosingCustomization={isClosingCustomization}
           setIsClosingCustomization={setIsClosingCustomization}
-          equippedHair={equippedHair}
-          setEquippedHair={setEquippedHair}
-          equippedClothes={equippedClothes}
-          setEquippedClothes={setEquippedClothes}
-          equippedWallpaper={equippedWallpaper}
-          setEquippedWallpaper={setEquippedWallpaper}
-          equippedDesk={equippedDesk}
-          setEquippedDesk={setEquippedDesk}
-          equippedChair={equippedChair}
-          setEquippedChair={setEquippedChair}
-          equippedWindowView={equippedWindowView}
-          setEquippedWindowView={setEquippedWindowView}
+          equippedItems={equippedItems}
+          setEquippedItems={setEquippedItems}
         />
       )}
     </div>
@@ -3293,13 +3205,13 @@ function RegisterPage({ setPage }) {
         motto: "Let's study with me!",
         photoURL: "",
 
-        equippedHair: "default",
-        equippedClothes: "default",
-
-        equippedWallpaper: "default",
-        equippedDesk: "default",
-        equippedChair: "default",
-        equippedWindowView: "default",
+        equippedItems: {
+          hair: "default",
+          clothes: "default",
+          wallpaper: "default",
+          desk: "default",
+          windowView: "default",
+        },
 
         createdAt: serverTimestamp(),
       });
