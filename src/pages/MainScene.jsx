@@ -87,17 +87,13 @@ function MainScene() {
   const [isClosingCustomization, setIsClosingCustomization] = useState(false);
 
   // EQUIPPED CUSTOMIZATION
-  const [equippedHair, setEquippedHair] = useState("default");
-
-  const [equippedClothes, setEquippedClothes] = useState("default");
-
-  const [equippedWallpaper, setEquippedWallpaper] = useState("default");
-
-  const [equippedDesk, setEquippedDesk] = useState("default");
-
-  const [equippedChair, setEquippedChair] = useState("default");
-
-  const [equippedWindowView, setEquippedWindowView] = useState("default");
+  const [equippedItems, setEquippedItems] = useState({
+    hair: "default",
+    clothes: "default",
+    wallpaper: "default",
+    windowView: "default",
+    desk: "default",
+  });
 
   async function handleLogout() {
     try {
@@ -133,34 +129,28 @@ function MainScene() {
 
             setProfileImage(data.photoURL || "");
 
-            setEquippedHair(data.equippedHair || "default");
-
-            setEquippedClothes(data.equippedClothes || "default");
-
-            setEquippedWallpaper(data.equippedWallpaper || "default");
-
-            setEquippedDesk(data.equippedDesk || "default");
-
-            setEquippedChair(data.equippedChair || "default");
-
-            setEquippedWindowView(data.equippedWindowView || "default");
+            setEquippedItems(
+              data.equippedItems || {
+                hair: "default",
+                clothes: "default",
+                wallpaper: "default",
+                windowView: "default",
+                desk: "default",
+              },
+            );
 
             setIsCustomizationLoaded(true);
           } else {
             // USER DOC DOESN'T EXIST
             setProfileImage("");
 
-            setEquippedHair("default");
-
-            setEquippedClothes("default");
-
-            setEquippedWallpaper("default");
-
-            setEquippedDesk("default");
-
-            setEquippedChair("default");
-
-            setEquippedWindowView("default");
+            setEquippedItems({
+              hair: "default",
+              clothes: "default",
+              wallpaper: "default",
+              windowView: "default",
+              desk: "default",
+            });
 
             setIsCustomizationLoaded(true);
           }
@@ -171,17 +161,13 @@ function MainScene() {
         // LOGOUT RESET
         setProfileImage("");
 
-        setEquippedHair("default");
-
-        setEquippedClothes("default");
-
-        setEquippedWallpaper("default");
-
-        setEquippedDesk("default");
-
-        setEquippedChair("default");
-
-        setEquippedWindowView("default");
+        setEquippedItems({
+          hair: "default",
+          clothes: "default",
+          wallpaper: "default",
+          windowView: "default",
+          desk: "default",
+        });
 
         setIsCustomizationLoaded(false);
       }
@@ -202,12 +188,7 @@ function MainScene() {
         await setDoc(
           doc(db, "users", currentUser.uid),
           {
-            equippedHair,
-            equippedClothes,
-            equippedWallpaper,
-            equippedDesk,
-            equippedChair,
-            equippedWindowView,
+            equippedItems,
           },
           { merge: true },
         );
@@ -221,18 +202,7 @@ function MainScene() {
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [
-    currentUser,
-    isLoggingOut,
-    isCustomizationLoaded,
-
-    equippedHair,
-    equippedClothes,
-    equippedWallpaper,
-    equippedDesk,
-    equippedChair,
-    equippedWindowView,
-  ]);
+  }, [currentUser, isLoggingOut, isCustomizationLoaded, equippedItems]);
 
   if (isAuthLoading) {
     return null;
@@ -260,14 +230,7 @@ function MainScene() {
       onClick={() => setIsProfileDropdownOpen(false)}
     >
       <>
-        <SceneRenderer
-          equippedHair={equippedHair}
-          equippedClothes={equippedClothes}
-          equippedWallpaper={equippedWallpaper}
-          equippedDesk={equippedDesk}
-          equippedChair={equippedChair}
-          equippedWindowView={equippedWindowView}
-        />
+        <SceneRenderer equippedItems={equippedItems} />
 
         <Corkboard onClick={() => setPage("menu")} />
 
@@ -414,18 +377,8 @@ function MainScene() {
           setPage={setPage}
           isClosingCustomization={isClosingCustomization}
           setIsClosingCustomization={setIsClosingCustomization}
-          equippedHair={equippedHair}
-          setEquippedHair={setEquippedHair}
-          equippedClothes={equippedClothes}
-          setEquippedClothes={setEquippedClothes}
-          equippedWallpaper={equippedWallpaper}
-          setEquippedWallpaper={setEquippedWallpaper}
-          equippedDesk={equippedDesk}
-          setEquippedDesk={setEquippedDesk}
-          equippedChair={equippedChair}
-          setEquippedChair={setEquippedChair}
-          equippedWindowView={equippedWindowView}
-          setEquippedWindowView={setEquippedWindowView}
+          equippedItems={equippedItems}
+          setEquippedItems={setEquippedItems}
         />
       )}
     </div>

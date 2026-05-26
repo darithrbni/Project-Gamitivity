@@ -41,45 +41,39 @@ function CustomizationPage({
   isClosingCustomization,
   setIsClosingCustomization,
 
-  equippedHair,
-  setEquippedHair,
-
-  equippedClothes,
-  setEquippedClothes,
-
-  equippedWallpaper,
-  setEquippedWallpaper,
-
-  equippedDesk,
-  setEquippedDesk,
-
-  equippedChair,
-  setEquippedChair,
-
-  equippedWindowView,
-  setEquippedWindowView,
+  equippedItems,
+  setEquippedItems,
 }) {
   const [selectedCategory, setSelectedCategory] = useState("Rambut");
   const categories = [
     {
       name: "Rambut",
       icon: HairIcon,
+      stateKey: "hair",
     },
+
     {
       name: "Baju",
       icon: ClothesIcon,
+      stateKey: "clothes",
     },
+
     {
       name: "Dinding",
       icon: WallpaperIcon,
+      stateKey: "wallpaper",
     },
+
     {
       name: "View",
       icon: WindowViewIcon,
+      stateKey: "windowView",
     },
+
     {
       name: "Meja",
       icon: DeskSetIcon,
+      stateKey: "desk",
     },
   ];
 
@@ -214,30 +208,13 @@ function CustomizationPage({
     ],
   };
 
+  const selectedCategoryData = categories.find(
+    (category) => category.name === selectedCategory,
+  );
   const currentItems = customizationItems[selectedCategory] || [];
 
   function isItemEquipped(item) {
-    if (selectedCategory === "Rambut") {
-      return equippedHair === item.key;
-    }
-
-    if (selectedCategory === "Baju") {
-      return equippedClothes === item.key;
-    }
-
-    if (selectedCategory === "Dinding") {
-      return equippedWallpaper === item.key;
-    }
-
-    if (selectedCategory === "View") {
-      return equippedWindowView === item.key;
-    }
-
-    if (selectedCategory === "Meja") {
-      return equippedDesk === item.key;
-    }
-
-    return false;
+    return equippedItems[selectedCategoryData.stateKey] === item.key;
   }
 
   return (
@@ -278,7 +255,15 @@ function CustomizationPage({
                     ? "customization-category-button-active"
                     : ""
                 }`}
-                onClick={() => setSelectedCategory(category.name)}
+                onClick={() => {
+                  setSelectedCategory(category.name);
+
+                  const firstItem = customizationItems[category.name]?.[0];
+
+                  if (firstItem) {
+                    setSelectedItemId(firstItem.id);
+                  }
+                }}
               >
                 <img
                   src={category.icon}
@@ -311,30 +296,10 @@ function CustomizationPage({
                     return;
                   }
 
-                  // HAIR
-                  if (selectedCategory === "Rambut") {
-                    setEquippedHair(item.key);
-                  }
-
-                  // CLOTHES
-                  if (selectedCategory === "Baju") {
-                    setEquippedClothes(item.key);
-                  }
-
-                  // WALLPAPER
-                  if (selectedCategory === "Dinding") {
-                    setEquippedWallpaper(item.key);
-                  }
-
-                  // WINDOW VIEW
-                  if (selectedCategory === "View") {
-                    setEquippedWindowView(item.key);
-                  }
-
-                  // DESK
-                  if (selectedCategory === "Meja") {
-                    setEquippedDesk(item.key);
-                  }
+                  setEquippedItems((prev) => ({
+                    ...prev,
+                    [selectedCategoryData.stateKey]: item.key,
+                  }));
                 }}
               />
             ))}

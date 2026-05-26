@@ -53,13 +53,13 @@ function RegisterPage({ setPage }) {
         motto: "Let's study with me!",
         photoURL: "",
 
-        equippedHair: "default",
-        equippedClothes: "default",
-
-        equippedWallpaper: "default",
-        equippedDesk: "default",
-        equippedChair: "default",
-        equippedWindowView: "default",
+        equippedItems: {
+          hair: "default",
+          clothes: "default",
+          wallpaper: "default",
+          desk: "default",
+          windowView: "default",
+        },
 
         createdAt: serverTimestamp(),
       });

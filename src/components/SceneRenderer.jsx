@@ -80,15 +80,7 @@ import Drawer from "../assets/Customization/laci.png";
 import ChairDefault from "../assets/Customization/chair_1.png";
 import ChairGaming from "../assets/Customization/chair_2.png";
 
-function SceneRenderer({
-  equippedHair,
-  equippedClothes,
-
-  equippedWallpaper,
-  equippedDesk,
-  equippedChair,
-  equippedWindowView,
-}) {
+function SceneRenderer({ equippedItems }) {
   // HAIR MAP
   const hairMap = {
     default: HairDefault,
@@ -167,14 +159,14 @@ function SceneRenderer({
     <div className="scene-renderer">
       {/* WALLPAPER */}
       <img
-        src={wallpaperMap[equippedWallpaper]}
+        src={wallpaperMap[equippedItems.wallpaper]}
         alt=""
         className="scene-layer"
       />
 
       {/* ANIMATED VIEW */}
       <AnimationLayer
-        frames={animationViewMap[equippedWindowView] || treeFrames}
+        frames={animationViewMap[equippedItems.windowView] || treeFrames}
         frameDuration={220}
         className="scene-layer"
       />
@@ -186,16 +178,20 @@ function SceneRenderer({
       <img src={Drawer} alt="" className="scene-layer" />
 
       {/* CHAIR */}
-      <img src={chairMap[equippedChair]} alt="" className="scene-layer" />
+      <img src={chairMap[equippedItems.chair]} alt="" className="scene-layer" />
 
       {/* BODY */}
       <img src={Body} alt="" className="scene-layer" />
 
       {/* CLOTHES */}
-      <img src={clothesMap[equippedClothes]} alt="" className="scene-layer" />
+      <img
+        src={clothesMap[equippedItems.clothes]}
+        alt=""
+        className="scene-layer"
+      />
 
       {/* DESK */}
-      <img src={deskMap[equippedDesk]} alt="" className="scene-layer" />
+      <img src={deskMap[equippedItems.desk]} alt="" className="scene-layer" />
 
       {/* ARM ANIMATION */}
       <AnimationLayer
@@ -206,13 +202,13 @@ function SceneRenderer({
 
       {/* SLEEVE ANIMATION */}
       <AnimationLayer
-        frames={sleeveMap[equippedClothes]}
+        frames={sleeveMap[equippedItems.clothes]}
         frameDuration={220}
         className="scene-layer"
       />
 
       {/* HAIR */}
-      <img src={hairMap[equippedHair]} alt="" className="scene-layer" />
+      <img src={hairMap[equippedItems.hair]} alt="" className="scene-layer" />
     </div>
   );
 }
