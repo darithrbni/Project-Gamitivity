@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-function AnimatedLayer({ frames, frameDuration = 200, className = "" }) {
+function AnimationLayer({ frames, frameDuration = 200, className = "" }) {
   const [currentFrame, setCurrentFrame] = useState(0);
 
   useEffect(() => {
@@ -23,4 +23,4 @@ function AnimatedLayer({ frames, frameDuration = 200, className = "" }) {
   );
 }
 
-export default AnimatedLayer;
+export default AnimationLayer;

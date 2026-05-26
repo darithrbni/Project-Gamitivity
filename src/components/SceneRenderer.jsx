@@ -1,4 +1,4 @@
-import AnimatedLayer from "./AnimatedLayer";
+import AnimationLayer from "./AnimationLayer";
 
 import Body from "../assets/Customization/body.png";
 
@@ -144,7 +144,7 @@ function SceneRenderer({
   const sunsetFrames = [Sunset1, Sunset2, Sunset3, Sunset4];
 
   // VIEW ANIMATION MAP
-  const animatedViewMap = {
+  const animationViewMap = {
     default: treeFrames,
     galaxy: galaxyFrames,
     snow: snowFrames,
@@ -173,8 +173,8 @@ function SceneRenderer({
       />
 
       {/* ANIMATED VIEW */}
-      <AnimatedLayer
-        frames={animatedViewMap[equippedWindowView] || treeFrames}
+      <AnimationLayer
+        frames={animationViewMap[equippedWindowView] || treeFrames}
         frameDuration={220}
         className="scene-layer"
       />
@@ -198,14 +198,14 @@ function SceneRenderer({
       <img src={deskMap[equippedDesk]} alt="" className="scene-layer" />
 
       {/* ARM ANIMATION */}
-      <AnimatedLayer
+      <AnimationLayer
         frames={armFrames}
         frameDuration={220}
         className="scene-layer"
       />
 
       {/* SLEEVE ANIMATION */}
-      <AnimatedLayer
+      <AnimationLayer
         frames={sleeveMap[equippedClothes]}
         frameDuration={220}
         className="scene-layer"

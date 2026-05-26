@@ -3,31 +3,45 @@ src/
 ├── assets/
 │
 ├── components/
+│   ├── AnimatedLayer.jsx
 │   ├── Corkboard.jsx
-│   └── MenuCard.jsx
+│   ├── CustomizationButton.jsx
+│   ├── ItemCard.jsx
+│   ├── MenuCard.jsx
+│   ├── ProfileDropdown.jsx
+│   ├── SceneRenderer.jsx
+│   ├── TimerDisplay.jsx
+│   └── TimerDisplayLogic.jsx
 │
 ├── firebase/
 │   ├── auth.js
 │   └── config.js
 │
 ├── pages/
-│   ├── MainScene.jsx
-│   ├── MenuPage.jsx
-│   ├── TimerMenuPage.jsx
-│   ├── GrafikMenuPage.jsx
-│   ├── TugasMenuPage.jsx
-│   ├── MemoMenuPage.jsx
-│   ├── JadwalMenuPage.jsx
-│   ├── TokoMenuPage.jsx
 │   ├── BasicTimerPage.jsx
-│   ├── StopwatchPage.jsx
-│   ├── PomodoroPage.jsx
+│   ├── CustomizationPage.jsx
+│   ├── GrafikMenuPage.jsx
+│   ├── JadwalMenuPage.jsx
 │   ├── LoginPage.jsx
+│   ├── MainScene.jsx
+│   ├── MemoMenuPage.jsx
+│   ├── MenuPage.jsx
+│   ├── PomodoroPage.jsx
+│   ├── ProfilePage.jsx
 │   ├── RegisterPage.jsx
-│   └── AccountPage.jsx
+│   ├── StopwatchPage.jsx
+│   ├── TimerMenuPage.jsx
+│   ├── TokoMenuPage.jsx
+│   └── TugasMenuPage.jsx
 │
 ├── styles/
 │   ├── App.css
+│   ├── Button.css
+│   ├── Customization.css
+│   ├── LoginRegister.css
+│   ├── Menu.css
+│   ├── Profile.css
+│   ├── Timer.css
 │   └── index.css
 │
 ├── App.jsx
@@ -35,37 +49,48 @@ src/
 
 
 
+# Components
+## AnimationLayer.jsx
+import { useEffect, useState } from "react";
 
+function AnimationLayer({ frames, frameDuration = 200, className = "" }) {
+  const [currentFrame, setCurrentFrame] = useState(0);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentFrame((previousFrame) => {
+        return (previousFrame + 1) % frames.length;
+      });
+    }, frameDuration);
 
-# components
-## Corkboard.jsx
-import { useState } from "react";
-
-import idleImage from "../assets/PlaceholderIdle.png";
-import hoverImage from "../assets/PlaceholderHover.png";
-import clickImage from "../assets/PlaceholderClick.png";
-
-function Corkboard({ onClick }) {
-  const [boardState, setBoardState] = useState("idle");
-
-  function getCurrentImage() {
-    if (boardState === "hover") return hoverImage;
-    if (boardState === "click") return clickImage;
-
-    return idleImage;
-  }
+    return () => clearInterval(interval);
+  }, [frames, frameDuration]);
 
   return (
     <img
+      src={frames[currentFrame]}
+      alt=""
+      className={className}
+      draggable={false}
+    />
+  );
+}
+
+export default AnimationLayer;
+
+
+
+## Corkboard.jsx
+import corkboardImage from "../assets/Corkboard.png";
+
+function Corkboard({ onClick }) {
+  return (
+    <img
       className="corkboard"
-      src={getCurrentImage()}
+      src={corkboardImage}
       alt="Corkboard"
-      onMouseEnter={() => setBoardState("hover")}
-      onMouseLeave={() => setBoardState("idle")}
-      onMouseDown={() => setBoardState("click")}
-      onMouseUp={() => setBoardState("hover")}
       onClick={onClick}
+      draggable={false}
     />
   );
 }
@@ -74,8 +99,58 @@ export default Corkboard;
 
 
 
+## CustomizationButton.jsx
+import HangerIcon from "../assets/HangerIcon.png";
+
+function CustomizationButton({ setPage }) {
+  return (
+    <button
+      className="customization-button"
+      onClick={() => setPage("customization")}
+    >
+      <img
+        src={HangerIcon}
+        alt="Customization"
+        className="customization-icon"
+      />
+    </button>
+  );
+}
+
+export default CustomizationButton;
 
 
+
+## ItemCard.jsx
+function ItemCard({ image, name, owned, equipped, selected, onClick }) {
+  return (
+    <button
+      className={`item-card ${selected ? "item-card-selected" : ""}`}
+      onClick={onClick}
+    >
+      {/* IMAGE */}
+      <div className="item-card-image-wrapper">
+        <img src={image} alt={name} className="item-card-image" />
+      </div>
+
+      {/* NAME */}
+      <p className="item-card-name">{name}</p>
+
+      {/* STATUS */}
+      <div className="item-card-status">
+        {equipped ? (
+          <div className="item-card-equipped">Dipakai</div>
+        ) : owned ? (
+          <div className="item-card-owned">Dimiliki</div>
+        ) : (
+          <div className="item-card-locked">Belum dimiliki</div>
+        )}
+      </div>
+    </button>
+  );
+}
+
+export default ItemCard;
 
 
 
@@ -104,86 +179,532 @@ export default MenuCard;
 
 
 
+## ProfileDropdown.jsx
+import ProfilePlaceholder from "../assets/ProfilePlaceholder.png";
+import TriangleIconBrown from "../assets/TriangleIconBrown.png";
+
+function ProfileDropdown({
+  currentUser,
+  profileImage,
+  setPage,
+  handleLogout,
+  isProfileDropdownOpen,
+  setIsProfileDropdownOpen,
+}) {
+  function toggleDropdown() {
+    setIsProfileDropdownOpen(!isProfileDropdownOpen);
+  }
+
+  return (
+    <>
+      {currentUser ? (
+        <div
+          className="profile-menu-container"
+          onClick={(event) => event.stopPropagation()}
+        >
+          <button className="profile-button" onClick={toggleDropdown}>
+            <img
+              src={profileImage || ProfilePlaceholder}
+              alt="Profile"
+              className="profile-image"
+            />
+
+            <span className="profile-username">
+              {currentUser?.displayName || "User"}
+            </span>
+
+            <img
+              src={TriangleIconBrown}
+              alt="Dropdown"
+              className={`profile-arrow-icon ${
+                isProfileDropdownOpen ? "profile-arrow-open" : ""
+              }`}
+            />
+          </button>
+
+          {isProfileDropdownOpen && (
+            <div className="profile-dropdown">
+              <button
+                className="profile-dropdown-item"
+                onClick={() => {
+                  setPage("profile");
+
+                  setIsProfileDropdownOpen(false);
+                }}
+              >
+                My Account
+              </button>
+
+              <button className="profile-dropdown-item">Tutorial</button>
+
+              <button className="profile-dropdown-item">Settings</button>
+
+              <button
+                className="profile-dropdown-item-logout"
+                onClick={handleLogout}
+              >
+                Log Out
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="auth-buttons">
+          <button
+            className="register-button"
+            onClick={() => setPage("register")}
+          >
+            REGISTER
+          </button>
+
+          <button className="login-button" onClick={() => setPage("login")}>
+            LOGIN
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
+
+export default ProfileDropdown;
 
 
-# firebase
-## auth.js
-import { getAuth } from "firebase/auth";
+## SceneRenderer.jsx
+import AnimationLayer from "./AnimationLayer";
 
-import app from "./config";
+import Body from "../assets/Customization/body.png";
 
-const auth = getAuth(app);
+import HairDefault from "../assets/Customization/hair_1.png";
+import HairSilver from "../assets/Customization/hair_2.png";
+import HairBlue from "../assets/Customization/hair_3.png";
 
-export default auth;
+import ClothesDefault from "../assets/Customization/clothes_1.png";
+import ClothesBlue from "../assets/Customization/clothes_2.png";
+import ClothesDark from "../assets/Customization/clothes_3.png";
+
+// TREE
+import Tree1 from "../assets/Customization/Animation/tree_1.png";
+import Tree2 from "../assets/Customization/Animation/tree_2.png";
+import Tree3 from "../assets/Customization/Animation/tree_3.png";
+import Tree4 from "../assets/Customization/Animation/tree_4.png";
+import Tree5 from "../assets/Customization/Animation/tree_5.png";
+import Tree6 from "../assets/Customization/Animation/tree_6.png";
+import Tree7 from "../assets/Customization/Animation/tree_7.png";
+
+// GALAXY
+import Galaxy1 from "../assets/Customization/Animation/galaxy_1.png";
+import Galaxy2 from "../assets/Customization/Animation/galaxy_2.png";
+import Galaxy3 from "../assets/Customization/Animation/galaxy_3.png";
+import Galaxy4 from "../assets/Customization/Animation/galaxy_4.png";
+import Galaxy5 from "../assets/Customization/Animation/galaxy_5.png";
+import Galaxy6 from "../assets/Customization/Animation/galaxy_6.png";
+import Galaxy7 from "../assets/Customization/Animation/galaxy_7.png";
+import Galaxy8 from "../assets/Customization/Animation/galaxy_8.png";
+
+// SNOW
+import Snow1 from "../assets/Customization/Animation/snow_1.png";
+import Snow2 from "../assets/Customization/Animation/snow_2.png";
+import Snow3 from "../assets/Customization/Animation/snow_3.png";
+import Snow4 from "../assets/Customization/Animation/snow_4.png";
+
+// SUNSET
+import Sunset1 from "../assets/Customization/Animation/sunset_1.png";
+import Sunset2 from "../assets/Customization/Animation/sunset_2.png";
+import Sunset3 from "../assets/Customization/Animation/sunset_3.png";
+import Sunset4 from "../assets/Customization/Animation/sunset_4.png";
+
+// ARM FRAMES
+import Arm1 from "../assets/Customization/Animation/arm_1.png";
+import Arm2 from "../assets/Customization/Animation/arm_2.png";
+import Arm3 from "../assets/Customization/Animation/arm_3.png";
+
+// DEFAULT SLEEVE
+import SleeveDefault1 from "../assets/Customization/Animation/sleeve_1.png";
+import SleeveDefault2 from "../assets/Customization/Animation/sleeve_1.png";
+import SleeveDefault3 from "../assets/Customization/Animation/sleeve_1.png";
+
+// BLUE SLEEVE
+import SleeveBlue1 from "../assets/Customization/Animation/sleeve_2.png";
+import SleeveBlue2 from "../assets/Customization/Animation/sleeve_2.png";
+import SleeveBlue3 from "../assets/Customization/Animation/sleeve_2.png";
+
+// DARK SLEEVE
+import SleeveDark1 from "../assets/Customization/Animation/sleeve_3.png";
+import SleeveDark2 from "../assets/Customization/Animation/sleeve_3.png";
+import SleeveDark3 from "../assets/Customization/Animation/sleeve_3.png";
+
+// WALLPAPER
+import WallpaperDefault from "../assets/Customization/wallpaper_1.png";
+import WallpaperPink from "../assets/Customization/wallpaper_2.png";
+import WallpaperBlue from "../assets/Customization/wallpaper_3.png";
+
+// WINDOW FRAME
+import WindowFrame from "../assets/Customization/window.png";
+
+// DESK
+import DeskDefault from "../assets/Customization/desk_1.png";
+import DeskGaming from "../assets/Customization/desk_2.png";
+
+// DRAWER
+import Drawer from "../assets/Customization/laci.png";
+
+// CHAIR
+import ChairDefault from "../assets/Customization/chair_1.png";
+import ChairGaming from "../assets/Customization/chair_2.png";
+
+function SceneRenderer({
+  equippedHair,
+  equippedClothes,
+
+  equippedWallpaper,
+  equippedDesk,
+  equippedChair,
+  equippedWindowView,
+}) {
+  // HAIR MAP
+  const hairMap = {
+    default: HairDefault,
+    silver: HairSilver,
+    blue: HairBlue,
+  };
+
+  // CLOTHES MAP
+  const clothesMap = {
+    default: ClothesDefault,
+    blue: ClothesBlue,
+    dark: ClothesDark,
+  };
+
+  // WALLPAPER MAP
+  const wallpaperMap = {
+    default: WallpaperDefault,
+    pink: WallpaperPink,
+    blue: WallpaperBlue,
+  };
+
+  // DESK MAP
+  const deskMap = {
+    default: DeskDefault,
+    gaming: DeskGaming,
+  };
+
+  // CHAIR MAP
+  const chairMap = {
+    default: ChairDefault,
+    gaming: ChairGaming,
+  };
+
+  // TREE
+  const treeFrames = [Tree1, Tree2, Tree3, Tree4, Tree5, Tree6, Tree7];
+
+  // GALAXY
+  const galaxyFrames = [
+    Galaxy1,
+    Galaxy2,
+    Galaxy3,
+    Galaxy4,
+    Galaxy5,
+    Galaxy6,
+    Galaxy7,
+    Galaxy8,
+  ];
+
+  // SNOW
+  const snowFrames = [Snow1, Snow2, Snow3, Snow4];
+
+  // SUNSET
+  const sunsetFrames = [Sunset1, Sunset2, Sunset3, Sunset4];
+
+  // VIEW ANIMATION MAP
+  const animationViewMap = {
+    default: treeFrames,
+    galaxy: galaxyFrames,
+    snow: snowFrames,
+    sunset: sunsetFrames,
+  };
+
+  // ARM ANIMATION
+  const armFrames = [Arm1, Arm2, Arm3];
+
+  // SLEEVE MAP
+  const sleeveMap = {
+    default: [SleeveDefault1, SleeveDefault2, SleeveDefault3],
+
+    blue: [SleeveBlue1, SleeveBlue2, SleeveBlue3],
+
+    dark: [SleeveDark1, SleeveDark2, SleeveDark3],
+  };
+
+  return (
+    <div className="scene-renderer">
+      {/* WALLPAPER */}
+      <img
+        src={wallpaperMap[equippedWallpaper]}
+        alt=""
+        className="scene-layer"
+      />
+
+      {/* ANIMATED VIEW */}
+      <AnimationLayer
+        frames={animationViewMap[equippedWindowView] || treeFrames}
+        frameDuration={220}
+        className="scene-layer"
+      />
+
+      {/* WINDOW */}
+      <img src={WindowFrame} alt="" className="scene-layer" />
+
+      {/* DRAWER */}
+      <img src={Drawer} alt="" className="scene-layer" />
+
+      {/* CHAIR */}
+      <img src={chairMap[equippedChair]} alt="" className="scene-layer" />
+
+      {/* BODY */}
+      <img src={Body} alt="" className="scene-layer" />
+
+      {/* CLOTHES */}
+      <img src={clothesMap[equippedClothes]} alt="" className="scene-layer" />
+
+      {/* DESK */}
+      <img src={deskMap[equippedDesk]} alt="" className="scene-layer" />
+
+      {/* ARM ANIMATION */}
+      <AnimationLayer
+        frames={armFrames}
+        frameDuration={220}
+        className="scene-layer"
+      />
+
+      {/* SLEEVE ANIMATION */}
+      <AnimationLayer
+        frames={sleeveMap[equippedClothes]}
+        frameDuration={220}
+        className="scene-layer"
+      />
+
+      {/* HAIR */}
+      <img src={hairMap[equippedHair]} alt="" className="scene-layer" />
+    </div>
+  );
+}
+
+export default SceneRenderer;
 
 
 
 
-## config.js
-import { initializeApp } from "firebase/app";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAEmn2P_0WFFb-RzejZ3UVEfzVC1fpmto4",
-  authDomain: "gamitivity.firebaseapp.com",
-  projectId: "gamitivity",
-  storageBucket: "gamitivity.firebasestorage.app",
-  messagingSenderId: "1065595999695",
-  appId: "1:1065595999695:web:6b7927a21066f46b792eba",
-};
-
-const app = initializeApp(firebaseConfig);
-
-export default app;
-
-
-
-
-
-
-# pages
-## MainScene.jsx
-import { useEffect, useState } from "react";
-
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import auth from "../firebase/auth";
-
-import Corkboard from "../components/Corkboard";
+## TimerDisplay.jsx
 import PauseIcon from "../assets/PauseIcon.png";
 import ResumeIcon from "../assets/ResumeIcon.png";
 import StopIcon from "../assets/StopIcon.png";
-import ProfilePlaceholder from "../assets/ProfilePlaceholder.png";
 
-import MenuPage from "./MenuPage";
-import TimerMenuPage from "./TimerMenuPage";
-import GrafikMenuPage from "./GrafikMenuPage";
-import TugasMenuPage from "./TugasMenuPage";
-import MemoMenuPage from "./MemoMenuPage";
-import JadwalMenuPage from "./JadwalMenuPage";
-import TokoMenuPage from "./TokoMenuPage";
-import BasicTimerPage from "./BasicTimerPage";
-import StopwatchPage from "./StopwatchPage";
-import PomodoroPage from "./PomodoroPage";
-import LoginPage from "./LoginPage";
-import RegisterPage from "./RegisterPage";
-import AccountPage from "./AccountPage";
+function TimerDisplay({
+  activeDisplay,
 
-function MainScene() {
-  // PAGE STATE
-  const [page, setPage] = useState("main");
-  // PROFILE DROPDOWN
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-  const [isProfilePageOpen, setIsProfilePageOpen] = useState(false);
-  // CURRENT USER
-  const [currentUser, setCurrentUser] = useState(null);
+  basicTimerHours,
+  basicTimerMinutes,
+  basicTimerSeconds,
+  isBasicTimerRunning,
+  setIsBasicTimerRunning,
+  setBasicTimerHours,
+  setBasicTimerMinutes,
+  setBasicTimerSeconds,
 
-  // ACTIVE DISPLAY
-  const [activeDisplay, setActiveDisplay] = useState("timer");
+  stopwatchHours,
+  stopwatchMinutes,
+  stopwatchSeconds,
+  isStopwatchRunning,
+  setIsStopwatchRunning,
+  setStopwatchHours,
+  setStopwatchMinutes,
+  setStopwatchSeconds,
 
-  // GLOBAL TIMER STATE
-  const [hours, setHours] = useState(0);
-  const [minutes, setMinutes] = useState(0);
-  const [seconds, setSeconds] = useState(0);
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  pomodoroHours,
+  pomodoroMinutes,
+  pomodoroSeconds,
+  pomodoroPhase,
+  isPomodoroRunning,
+  setIsPomodoroRunning,
+  setPomodoroHours,
+  setPomodoroMinutes,
+  setPomodoroSeconds,
+  setCurrentPomodoroSession,
+  setPomodoroPhase,
+}) {
+  return (
+    <>
+      <div className="main-timer-container">
+        <div className="main-timer-display">
+          {activeDisplay === "basicTimer" && (
+            <>
+              <div>
+                {String(basicTimerHours).padStart(2, "0")}:
+                {String(basicTimerMinutes).padStart(2, "0")}:
+                {String(basicTimerSeconds).padStart(2, "0")}
+              </div>
+
+              {(basicTimerHours > 0 ||
+                basicTimerMinutes > 0 ||
+                basicTimerSeconds > 0) && (
+                <div className="pomodoro-phase-text">Basic Timer</div>
+              )}
+            </>
+          )}
+
+          {activeDisplay === "stopwatch" && (
+            <>
+              <div>
+                {String(stopwatchHours).padStart(2, "0")}:
+                {String(stopwatchMinutes).padStart(2, "0")}:
+                {String(stopwatchSeconds).padStart(2, "0")}
+              </div>
+
+              {(stopwatchHours > 0 ||
+                stopwatchMinutes > 0 ||
+                stopwatchSeconds > 0) && (
+                <div className="pomodoro-phase-text">Stopwatch</div>
+              )}
+            </>
+          )}
+
+          {activeDisplay === "pomodoro" && (
+            <>
+              <div>
+                {String(pomodoroHours).padStart(2, "0")}:
+                {String(pomodoroMinutes).padStart(2, "0")}:
+                {String(pomodoroSeconds).padStart(2, "0")}
+              </div>
+              {(pomodoroHours > 0 ||
+                pomodoroMinutes > 0 ||
+                pomodoroSeconds > 0) && (
+                <div className="pomodoro-phase-text">
+                  {pomodoroPhase === "focus" ? "Focus Time" : "Break Time"}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+        {/* TIMER CONTROLS */}
+        {activeDisplay === "basicTimer" &&
+          (basicTimerHours > 0 ||
+            basicTimerMinutes > 0 ||
+            basicTimerSeconds > 0) && (
+            <>
+              <button
+                className="timer-control-button"
+                onClick={() => setIsBasicTimerRunning(!isBasicTimerRunning)}
+              >
+                <img
+                  src={isBasicTimerRunning ? PauseIcon : ResumeIcon}
+                  alt="Timer Control"
+                  className="timer-control-icon"
+                />
+              </button>
+
+              <button
+                className="timer-control-button"
+                onClick={() => {
+                  setBasicTimerHours(0);
+                  setBasicTimerMinutes(0);
+                  setBasicTimerSeconds(0);
+
+                  setIsBasicTimerRunning(false);
+                }}
+              >
+                <img src={StopIcon} alt="Stop" className="timer-control-icon" />
+              </button>
+            </>
+          )}
+
+        {/* STOPWATCH CONTROLS */}
+        {activeDisplay === "stopwatch" &&
+          (stopwatchHours > 0 ||
+            stopwatchMinutes > 0 ||
+            stopwatchSeconds > 0) && (
+            <>
+              <button
+                className="timer-control-button"
+                onClick={() => setIsStopwatchRunning(!isStopwatchRunning)}
+              >
+                <img
+                  src={isStopwatchRunning ? PauseIcon : ResumeIcon}
+                  alt="Stopwatch Control"
+                  className="timer-control-icon"
+                />
+              </button>
+
+              <button
+                className="timer-control-button"
+                onClick={() => {
+                  setIsStopwatchRunning(false);
+
+                  setStopwatchHours(0);
+                  setStopwatchMinutes(0);
+                  setStopwatchSeconds(0);
+                }}
+              >
+                <img src={StopIcon} alt="Stop" className="timer-control-icon" />
+              </button>
+            </>
+          )}
+
+        {/* POMODORO CONTROLS */}
+        {activeDisplay === "pomodoro" &&
+          (pomodoroHours > 0 || pomodoroMinutes > 0 || pomodoroSeconds > 0) && (
+            <>
+              <button
+                className="timer-control-button"
+                onClick={() => setIsPomodoroRunning(!isPomodoroRunning)}
+              >
+                <img
+                  src={isPomodoroRunning ? PauseIcon : ResumeIcon}
+                  alt="Pomodoro Control"
+                  className="timer-control-icon"
+                />
+              </button>
+
+              <button
+                className="timer-control-button"
+                onClick={() => {
+                  // STOP
+                  setIsPomodoroRunning(false);
+
+                  // RESET TIME
+                  setPomodoroHours(0);
+                  setPomodoroMinutes(0);
+                  setPomodoroSeconds(0);
+
+                  // RESET SESSION
+                  setCurrentPomodoroSession(1);
+
+                  // RESET PHASE
+                  setPomodoroPhase("focus");
+                }}
+              >
+                <img src={StopIcon} alt="Stop" className="timer-control-icon" />
+              </button>
+            </>
+          )}
+      </div>
+    </>
+  );
+}
+
+export default TimerDisplay;
+
+
+
+
+## TimerDisplayLogic.js
+import { useEffect, useState } from "react";
+
+function TimerDisplayLogic() {
+  // GLOBAL BASIC TIMER STATE
+  const [basicTimerHours, setBasicTimerHours] = useState(0);
+  const [basicTimerMinutes, setBasicTimerMinutes] = useState(0);
+  const [basicTimerSeconds, setBasicTimerSeconds] = useState(0);
+  const [isBasicTimerRunning, setIsBasicTimerRunning] = useState(false);
 
   // GLOBAL STOPWATCH STATE
   const [stopwatchHours, setStopwatchHours] = useState(0);
@@ -202,52 +723,38 @@ function MainScene() {
   const [pomodoroPhase, setPomodoroPhase] = useState("focus");
   const [isPomodoroRunning, setIsPomodoroRunning] = useState(false);
 
-  async function handleLogout() {
-    try {
-      await signOut(auth);
-
-      setIsProfileDropdownOpen(false);
-    } catch (error) {
-      alert(error.message);
-    }
-  }
-
-  // FIREBASE AUTH LISTENER
+  // BASIC TIMER COUNTDOWN
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  // TIMER COUNTDOWN
-  useEffect(() => {
-    if (!isTimerRunning) {
+    if (!isBasicTimerRunning) {
       return;
     }
 
     const interval = setInterval(() => {
       // HOURS : MINUTES : SECONDS
 
-      if (seconds > 0) {
-        setSeconds(seconds - 1);
-      } else if (minutes > 0) {
-        setMinutes(minutes - 1);
-        setSeconds(59);
-      } else if (hours > 0) {
-        setHours(hours - 1);
-        setMinutes(59);
-        setSeconds(59);
+      if (basicTimerSeconds > 0) {
+        setBasicTimerSeconds(basicTimerSeconds - 1);
+      } else if (basicTimerMinutes > 0) {
+        setBasicTimerMinutes(basicTimerMinutes - 1);
+        setBasicTimerSeconds(59);
+      } else if (basicTimerHours > 0) {
+        setBasicTimerHours(basicTimerHours - 1);
+        setBasicTimerMinutes(59);
+        setBasicTimerSeconds(59);
       } else {
-        setIsTimerRunning(false);
+        setIsBasicTimerRunning(false);
       }
     }, 1000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [isTimerRunning, hours, minutes, seconds]);
+  }, [
+    isBasicTimerRunning,
+    basicTimerHours,
+    basicTimerMinutes,
+    basicTimerSeconds,
+  ]);
 
   // STOPWATCH COUNTUP
   useEffect(() => {
@@ -359,601 +866,127 @@ function MainScene() {
     };
   }, [
     isPomodoroRunning,
-
     pomodoroHours,
     pomodoroMinutes,
     pomodoroSeconds,
-
     pomodoroPhase,
-
     pomodoroBreakMinutes,
     pomodoroSessionMinutes,
-
     currentPomodoroSession,
     pomodoroSessionCount,
   ]);
 
-  return (
-    <div
-      className={page === "main" ? "scene" : "scene modal-open"}
-      onClick={() => setIsProfileDropdownOpen(false)}
-    >
-      <>
-        {currentUser ? (
-          <div
-            className="profile-menu-container"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <button
-              className="profile-button"
-              onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-            >
-              <img
-                src={ProfilePlaceholder}
-                alt="Profile"
-                className="profile-image"
-              />
-            </button>
+  return {
+    // BASIC TIMER
+    basicTimerHours,
+    basicTimerMinutes,
+    basicTimerSeconds,
 
-            {isProfileDropdownOpen && (
-              <div className="profile-dropdown">
-                <button
-                  className="profile-dropdown-item"
-                  onClick={() => {
-                    setPage("account");
+    setBasicTimerHours,
+    setBasicTimerMinutes,
+    setBasicTimerSeconds,
 
-                    setIsProfileDropdownOpen(false);
-                  }}
-                >
-                  My Account
-                </button>
+    isBasicTimerRunning,
+    setIsBasicTimerRunning,
 
-                <button className="profile-dropdown-item">Tutorial</button>
+    // STOPWATCH
+    stopwatchHours,
+    stopwatchMinutes,
+    stopwatchSeconds,
 
-                <button className="profile-dropdown-item">Settings</button>
+    setStopwatchHours,
+    setStopwatchMinutes,
+    setStopwatchSeconds,
 
-                <button
-                  className="profile-dropdown-item"
-                  onClick={handleLogout}
-                >
-                  Log Out
-                </button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <button className="login-button" onClick={() => setPage("login")}>
-            LOGIN
-          </button>
-        )}
-        <Corkboard onClick={() => setPage("menu")} />
+    isStopwatchRunning,
+    setIsStopwatchRunning,
 
-        <div className="main-timer-container">
-          <div className="main-timer-display">
-            {activeDisplay === "timer" && (
-              <>
-                <div>
-                  {String(hours).padStart(2, "0")}:
-                  {String(minutes).padStart(2, "0")}:
-                  {String(seconds).padStart(2, "0")}
-                </div>
+    // POMODORO
+    pomodoroHours,
+    pomodoroMinutes,
+    pomodoroSeconds,
 
-                {(hours > 0 || minutes > 0 || seconds > 0) && (
-                  <div className="pomodoro-phase-text">Basic Timer</div>
-                )}
-              </>
-            )}
+    setPomodoroHours,
+    setPomodoroMinutes,
+    setPomodoroSeconds,
 
-            {activeDisplay === "stopwatch" && (
-              <>
-                <div>
-                  {String(stopwatchHours).padStart(2, "0")}:
-                  {String(stopwatchMinutes).padStart(2, "0")}:
-                  {String(stopwatchSeconds).padStart(2, "0")}
-                </div>
-
-                {(stopwatchHours > 0 ||
-                  stopwatchMinutes > 0 ||
-                  stopwatchSeconds > 0) && (
-                  <div className="pomodoro-phase-text">Stopwatch</div>
-                )}
-              </>
-            )}
-
-            {activeDisplay === "pomodoro" && (
-              <>
-                <div>
-                  {String(pomodoroHours).padStart(2, "0")}:
-                  {String(pomodoroMinutes).padStart(2, "0")}:
-                  {String(pomodoroSeconds).padStart(2, "0")}
-                </div>
-                {(pomodoroHours > 0 ||
-                  pomodoroMinutes > 0 ||
-                  pomodoroSeconds > 0) && (
-                  <div className="pomodoro-phase-text">
-                    {pomodoroPhase === "focus" ? "Focus Time" : "Break Time"}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-          {/* TIMER CONTROLS */}
-          {activeDisplay === "timer" &&
-            (hours > 0 || minutes > 0 || seconds > 0) && (
-              <>
-                <button
-                  className="timer-control-button"
-                  onClick={() => setIsTimerRunning(!isTimerRunning)}
-                >
-                  <img
-                    src={isTimerRunning ? PauseIcon : ResumeIcon}
-                    alt="Timer Control"
-                    className="timer-control-icon"
-                  />
-                </button>
-
-                <button
-                  className="timer-control-button"
-                  onClick={() => {
-                    setHours(0);
-                    setMinutes(0);
-                    setSeconds(0);
-
-                    setIsTimerRunning(false);
-                  }}
-                >
-                  <img
-                    src={StopIcon}
-                    alt="Stop"
-                    className="timer-control-icon"
-                  />
-                </button>
-              </>
-            )}
-
-          {/* STOPWATCH CONTROLS */}
-          {activeDisplay === "stopwatch" &&
-            (stopwatchHours > 0 ||
-              stopwatchMinutes > 0 ||
-              stopwatchSeconds > 0) && (
-              <>
-                <button
-                  className="timer-control-button"
-                  onClick={() => setIsStopwatchRunning(!isStopwatchRunning)}
-                >
-                  <img
-                    src={isStopwatchRunning ? PauseIcon : ResumeIcon}
-                    alt="Stopwatch Control"
-                    className="timer-control-icon"
-                  />
-                </button>
-
-                <button
-                  className="timer-control-button"
-                  onClick={() => {
-                    setIsStopwatchRunning(false);
-
-                    setStopwatchHours(0);
-                    setStopwatchMinutes(0);
-                    setStopwatchSeconds(0);
-                  }}
-                >
-                  <img
-                    src={StopIcon}
-                    alt="Stop"
-                    className="timer-control-icon"
-                  />
-                </button>
-              </>
-            )}
-
-          {/* POMODORO CONTROLS */}
-          {activeDisplay === "pomodoro" &&
-            (pomodoroHours > 0 ||
-              pomodoroMinutes > 0 ||
-              pomodoroSeconds > 0) && (
-              <>
-                <button
-                  className="timer-control-button"
-                  onClick={() => setIsPomodoroRunning(!isPomodoroRunning)}
-                >
-                  <img
-                    src={isPomodoroRunning ? PauseIcon : ResumeIcon}
-                    alt="Pomodoro Control"
-                    className="timer-control-icon"
-                  />
-                </button>
-
-                <button
-                  className="timer-control-button"
-                  onClick={() => {
-                    // STOP
-                    setIsPomodoroRunning(false);
-
-                    // RESET TIME
-                    setPomodoroHours(0);
-                    setPomodoroMinutes(0);
-                    setPomodoroSeconds(0);
-
-                    // RESET SESSION
-                    setCurrentPomodoroSession(1);
-
-                    // RESET PHASE
-                    setPomodoroPhase("focus");
-                  }}
-                >
-                  <img
-                    src={StopIcon}
-                    alt="Stop"
-                    className="timer-control-icon"
-                  />
-                </button>
-              </>
-            )}
-        </div>
-      </>
-
-      {page === "menu" && <MenuPage setPage={setPage} />}
-
-      {page === "timerMenu" && <TimerMenuPage setPage={setPage} />}
-
-      {page === "basicTimer" && (
-        <BasicTimerPage
-          setPage={setPage}
-          setMainHours={setHours}
-          setMainMinutes={setMinutes}
-          setMainSeconds={setSeconds}
-          setIsTimerRunning={setIsTimerRunning}
-          setStopwatchHours={setStopwatchHours}
-          setStopwatchMinutes={setStopwatchMinutes}
-          setStopwatchSeconds={setStopwatchSeconds}
-          setIsStopwatchRunning={setIsStopwatchRunning}
-          setActiveDisplay={setActiveDisplay}
-          setPomodoroHours={setPomodoroHours}
-          setPomodoroMinutes={setPomodoroMinutes}
-          setPomodoroSeconds={setPomodoroSeconds}
-          setIsPomodoroRunning={setIsPomodoroRunning}
-        />
-      )}
-
-      {page === "stopwatch" && (
-        <StopwatchPage
-          setPage={setPage}
-          stopwatchHours={stopwatchHours}
-          stopwatchMinutes={stopwatchMinutes}
-          stopwatchSeconds={stopwatchSeconds}
-          isStopwatchRunning={isStopwatchRunning}
-          setIsStopwatchRunning={setIsStopwatchRunning}
-          setStopwatchHours={setStopwatchHours}
-          setStopwatchMinutes={setStopwatchMinutes}
-          setStopwatchSeconds={setStopwatchSeconds}
-          setHours={setHours}
-          setMinutes={setMinutes}
-          setSeconds={setSeconds}
-          setIsTimerRunning={setIsTimerRunning}
-          setActiveDisplay={setActiveDisplay}
-          setPomodoroHours={setPomodoroHours}
-          setPomodoroMinutes={setPomodoroMinutes}
-          setPomodoroSeconds={setPomodoroSeconds}
-          setIsPomodoroRunning={setIsPomodoroRunning}
-        />
-      )}
-
-      {page === "pomodoro" && (
-        <PomodoroPage
-          setPage={setPage}
-          setActiveDisplay={setActiveDisplay}
-          setPomodoroHours={setPomodoroHours}
-          setPomodoroMinutes={setPomodoroMinutes}
-          setPomodoroSeconds={setPomodoroSeconds}
-          setPomodoroSessionMinutes={setPomodoroSessionMinutes}
-          setPomodoroBreakMinutes={setPomodoroBreakMinutes}
-          setPomodoroSessionCount={setPomodoroSessionCount}
-          setCurrentPomodoroSession={setCurrentPomodoroSession}
-          setPomodoroPhase={setPomodoroPhase}
-          setIsPomodoroRunning={setIsPomodoroRunning}
-          setHours={setHours}
-          setMinutes={setMinutes}
-          setSeconds={setSeconds}
-          setIsTimerRunning={setIsTimerRunning}
-          setStopwatchHours={setStopwatchHours}
-          setStopwatchMinutes={setStopwatchMinutes}
-          setStopwatchSeconds={setStopwatchSeconds}
-          setIsStopwatchRunning={setIsStopwatchRunning}
-        />
-      )}
-
-      {page === "grafikMenu" && <GrafikMenuPage setPage={setPage} />}
-
-      {page === "tugasMenu" && <TugasMenuPage setPage={setPage} />}
-
-      {page === "memoMenu" && <MemoMenuPage setPage={setPage} />}
-
-      {page === "jadwalMenu" && <JadwalMenuPage setPage={setPage} />}
-
-      {page === "tokoMenu" && <TokoMenuPage setPage={setPage} />}
-
-      {page === "login" && <LoginPage setPage={setPage} />}
-
-      {page === "register" && <RegisterPage setPage={setPage} />}
-
-      {page === "account" && (
-        <AccountPage
-          setPage={setPage}
-          currentUser={currentUser}
-          handleLogout={handleLogout}
-        />
-      )}
-    </div>
-  );
+    pomodoroSessionMinutes,
+    setPomodoroSessionMinutes,
+    pomodoroBreakMinutes,
+    setPomodoroBreakMinutes,
+    pomodoroSessionCount,
+    setPomodoroSessionCount,
+    currentPomodoroSession,
+    setCurrentPomodoroSession,
+    pomodoroPhase,
+    setPomodoroPhase,
+    isPomodoroRunning,
+    setIsPomodoroRunning,
+  };
 }
 
-export default MainScene;
+export default TimerDisplayLogic;
 
 
 
+# firebase
+## auth.js
+import { getAuth } from "firebase/auth";
 
+import app from "./config";
 
+const auth = getAuth(app);
 
+export default auth;
 
 
 
 
 
-## MenuPage.jsx
-import MenuCard from "../components/MenuCard";
 
-import GrafikIcon from "../assets/GrafikIcon.png";
-import TugasIcon from "../assets/TugasIcon.png";
-import MemoIcon from "../assets/MemoIcon.png";
-import TimerIcon from "../assets/TimerIcon.png";
-import JadwalIcon from "../assets/JadwalIcon.png";
-import TokoIcon from "../assets/TokoIcon.png";
+## config.js
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 
-function MenuPage({ setPage }) {
-  return (
-    <>
-      <div className="menu-overlay" onClick={() => setPage("main")} />
+const firebaseConfig = {
+  apiKey: "AIzaSyAEmn2P_0WFFb-RzejZ3UVEfzVC1fpmto4",
+  authDomain: "gamitivity.firebaseapp.com",
+  projectId: "gamitivity",
+  storageBucket: "gamitivity.firebasestorage.app",
+  messagingSenderId: "1065595999695",
+  appId: "1:1065595999695:web:6b7927a21066f46b792eba",
+};
 
-      <button className="back-button" onClick={() => setPage("main")}>
-        BACK
-      </button>
+const app = initializeApp(firebaseConfig);
 
-      <div className="menu-wrapper">
-        <div className="menu-grid">
-          <MenuCard
-            title="GRAFIK"
-            icon={GrafikIcon}
-            onClick={() => setPage("grafikMenu")}
-          />
+const db = getFirestore(app);
 
-          <MenuCard
-            title="TUGAS"
-            icon={TugasIcon}
-            onClick={() => setPage("tugasMenu")}
-          />
+export { db };
 
-          <MenuCard
-            title="MEMO"
-            icon={MemoIcon}
-            onClick={() => setPage("memoMenu")}
-          />
+export default app;
 
-          <MenuCard
-            title="TIMER"
-            icon={TimerIcon}
-            onClick={() => setPage("timerMenu")}
-          />
 
-          <MenuCard
-            title="JADWAL"
-            icon={JadwalIcon}
-            onClick={() => setPage("jadwalMenu")}
-          />
 
-          <MenuCard
-            title="TOKO"
-            icon={TokoIcon}
-            onClick={() => setPage("tokoMenu")}
-          />
-        </div>
-      </div>
-    </>
-  );
-}
 
-export default MenuPage;
 
 
 
 
-
-
-
-
-
-## TimerMenuPage.jsx
-import MenuCard from "../components/MenuCard";
-
-import BasicTimerIcon from "../assets/BasicTimerIcon.png";
-import StopwatchIcon from "../assets/StopwatchIcon.png";
-import PomodoroIcon from "../assets/PomodoroIcon.png";
-
-function TimerMenuPage({ setPage }) {
-  return (
-    <>
-      <div className="menu-overlay" onClick={() => setPage("main")} />
-
-      <button className="back-button" onClick={() => setPage("menu")}>
-        BACK
-      </button>
-
-      <div className="menu-wrapper">
-        <div className="menu-grid">
-          <MenuCard
-            title="BASIC TIMER"
-            icon={BasicTimerIcon}
-            onClick={() => {
-              setPage("basicTimer");
-            }}
-          />
-
-          <MenuCard
-            title="STOPWATCH"
-            icon={StopwatchIcon}
-            onClick={() => {
-              setPage("stopwatch");
-            }}
-          />
-
-          <MenuCard
-            title="POMODORO"
-            icon={PomodoroIcon}
-            onClick={() => {
-              setPage("pomodoro");
-            }}
-          />
-        </div>
-      </div>
-    </>
-  );
-}
-
-export default TimerMenuPage;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## GrafikMenuPage.jsx
-function GrafikMenuPage({ setPage }) {
-  return (
-    <>
-      <div className="menu-overlay" onClick={() => setPage("main")} />
-
-      <button className="back-button" onClick={() => setPage("menu")}>
-        BACK
-      </button>
-    </>
-  );
-}
-
-export default GrafikMenuPage;
-
-
-
-
-
-
-
-
-
-## JadwalMenuPage.jsx
-function JadwalMenuPage({ setPage }) {
-  return (
-    <>
-      <div className="menu-overlay" onClick={() => setPage("main")} />
-
-      <button className="back-button" onClick={() => setPage("menu")}>
-        BACK
-      </button>
-    </>
-  );
-}
-
-export default JadwalMenuPage;
-
-
-
-
-
-
-## TugasMenuPage.jsx
-function TugasMenuPage({ setPage }) {
-  return (
-    <>
-      <div className="menu-overlay" onClick={() => setPage("main")} />
-
-      <button className="back-button" onClick={() => setPage("menu")}>
-        BACK
-      </button>
-    </>
-  );
-}
-
-export default TugasMenuPage;
-
-
-
-
-
-
-
-
-## MemoMenuPage.jsx
-function MemoMenuPage({ setPage }) {
-  return (
-    <>
-      <div className="menu-overlay" onClick={() => setPage("main")} />
-
-      <button className="back-button" onClick={() => setPage("menu")}>
-        BACK
-      </button>
-    </>
-  );
-}
-
-export default MemoMenuPage;
-
-
-
-
-
-
-## TokoMenuPage.jsx
-function TokoMenuPage({ setPage }) {
-  return (
-    <>
-      <div className="menu-overlay" onClick={() => setPage("main")} />
-
-      <button className="back-button" onClick={() => setPage("menu")}>
-        BACK
-      </button>
-    </>
-  );
-}
-
-export default TokoMenuPage;
-
-
-
-
-
+# pages
 ## BasicTimerPage.jsx
 import { useEffect, useState } from "react";
 
 function BasicTimerPage({
   setPage,
 
-  setMainHours,
-  setMainMinutes,
-  setMainSeconds,
-
-  setIsTimerRunning,
+  setBasicTimerHours,
+  setBasicTimerMinutes,
+  setBasicTimerSeconds,
+  setIsBasicTimerRunning,
 
   setStopwatchHours,
   setStopwatchMinutes,
   setStopwatchSeconds,
-
   setIsStopwatchRunning,
 
   setActiveDisplay,
@@ -961,18 +994,17 @@ function BasicTimerPage({
   setPomodoroHours,
   setPomodoroMinutes,
   setPomodoroSeconds,
-
   setIsPomodoroRunning,
 }) {
-  // TIMER SELECTION STATE
+  // BASIC TIMER SELECTION STATE
   const [selectedPart, setSelectedPart] = useState(null);
 
-  // LOCAL TIMER EDITOR STATE
+  // LOCAL BASIC TIMER EDITOR STATE
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
 
-  // INCREMENT TIMER VALUE
+  // INCREMENT BASIC TIMER VALUE
   function incrementTime(part) {
     setSelectedPart(part);
     // HOURS
@@ -1003,7 +1035,7 @@ function BasicTimerPage({
     }
   }
 
-  // DECREMENT TIMER VALUE
+  // DECREMENT BASIC TIMER VALUE
   function decrementTime(part) {
     setSelectedPart(part);
     // HOURS
@@ -1042,15 +1074,12 @@ function BasicTimerPage({
         if (selectedPart === "hours") {
           setHours(0);
         }
-
         if (selectedPart === "minutes") {
           setMinutes(0);
         }
-
         if (selectedPart === "seconds") {
           setSeconds(0);
         }
-
         return;
       }
 
@@ -1060,19 +1089,14 @@ function BasicTimerPage({
 
       if (selectedPart === "hours") {
         const currentValue = String(hours).padStart(2, "0");
-
         const newValueString = currentValue[1] + key;
-
         setHours(Number(newValueString));
       }
 
       if (selectedPart === "minutes") {
         const currentValue = String(minutes).padStart(2, "0");
-
         const newValueString = currentValue[1] + key;
-
         let newValue = Number(newValueString);
-
         if (newValue > 59) {
           newValue = Number("0" + key);
         }
@@ -1082,11 +1106,8 @@ function BasicTimerPage({
 
       if (selectedPart === "seconds") {
         const currentValue = String(seconds).padStart(2, "0");
-
         const newValueString = currentValue[1] + key;
-
         let newValue = Number(newValueString);
-
         if (newValue > 59) {
           newValue = Number("0" + key);
         }
@@ -1112,11 +1133,11 @@ function BasicTimerPage({
         BACK
       </button>
 
-      {/* TIMER LAYOUT */}
+      {/* BASIC TIMER LAYOUT */}
       <div className="menu-wrapper">
-        {/* TIMER PANEL */}
+        {/* BASIC TIMER PANEL */}
         <div className="timer-panel">
-          {/* TIMER DISPLAY */}
+          {/* BASIC TIMER DISPLAY */}
           <div className="timer-display">
             {/* HOURS */}
             <div className="time-column">
@@ -1233,16 +1254,16 @@ function BasicTimerPage({
               setStopwatchHours(0);
               setStopwatchMinutes(0);
               setStopwatchSeconds(0);
-              setActiveDisplay("timer");
-              setMainHours(hours);
-              setMainMinutes(minutes);
-              setMainSeconds(seconds);
+              setActiveDisplay("basicTimer");
+              setBasicTimerHours(hours);
+              setBasicTimerMinutes(minutes);
+              setBasicTimerSeconds(seconds);
 
               // STOP POMODORO
               setIsPomodoroRunning(false);
 
-              // START TIMER
-              setIsTimerRunning(true);
+              // START BASIC TIMER
+              setIsBasicTimerRunning(true);
               setPomodoroHours(0);
               setPomodoroMinutes(0);
               setPomodoroSeconds(0);
@@ -1263,148 +1284,1106 @@ export default BasicTimerPage;
 
 
 
+## CustomizationPage.jsx
+import { useState } from "react";
 
+import HairIcon from "../assets/HairIcon.svg";
+import ClothesIcon from "../assets/ClothesIcon.svg";
+import WallpaperIcon from "../assets/WallpaperIcon.svg";
+import WindowViewIcon from "../assets/WindowView.svg";
+import DeskSetIcon from "../assets/DeskSet.svg";
+import ItemCard from "../components/ItemCard";
 
+import ArrowDownIcon from "../assets/ArrowDownIcon.png";
 
+// HAIR ICONS
+import IconHair1 from "../assets/Customization/Icons/icon_hair_1.png";
+import IconHair2 from "../assets/Customization/Icons/icon_hair_2.png";
+import IconHair3 from "../assets/Customization/Icons/icon_hair_3.png";
 
+// CLOTHES ICONS
+import IconClothes1 from "../assets/Customization/Icons/icon_clothes_1.png";
+import IconClothes2 from "../assets/Customization/Icons/icon_clothes_2.png";
+import IconClothes3 from "../assets/Customization/Icons/icon_clothes_3.png";
 
+// DESK ICONS
+import IconDeskset1 from "../assets/Customization/Icons/icon_deskset_1.png";
+import IconDeskset2 from "../assets/Customization/Icons/icon_deskset_2.png";
 
-## StopwatchPage.jsx
-import PauseIcon from "../assets/PauseIcon.png";
-import ResumeIcon from "../assets/ResumeIcon.png";
-import StopIcon from "../assets/StopIcon.png";
+// VIEW ICONS
+import IconTree from "../assets/Customization/Icons/icon_tree_1.png";
+import IconGalaxy from "../assets/Customization/Icons/icon_galaxy.png";
+import IconSnow from "../assets/Customization/Icons/icon_snow.png";
+import IconSunset from "../assets/Customization/Icons/icon_sunset_1.png";
 
-function StopwatchPage({
+// WALLPAPER ICONS
+import IconWallpaper1 from "../assets/Customization/Icons/icon_wallpaper_1.png";
+import IconWallpaper2 from "../assets/Customization/Icons/icon_wallpaper_2.png";
+import IconWallpaper3 from "../assets/Customization/Icons/icon_wallpaper_3.png";
+import IconWallpaper4 from "../assets/Customization/Icons/icon_wallpaper_4.png";
+import IconWallpaper5 from "../assets/Customization/Icons/icon_wallpaper_5.png";
+
+function CustomizationPage({
   setPage,
+  isClosingCustomization,
+  setIsClosingCustomization,
 
-  stopwatchHours,
-  stopwatchMinutes,
-  stopwatchSeconds,
+  equippedHair,
+  setEquippedHair,
 
-  isStopwatchRunning,
-  setIsStopwatchRunning,
+  equippedClothes,
+  setEquippedClothes,
 
-  setStopwatchHours,
-  setStopwatchMinutes,
-  setStopwatchSeconds,
+  equippedWallpaper,
+  setEquippedWallpaper,
 
-  setHours,
-  setMinutes,
-  setSeconds,
+  equippedDesk,
+  setEquippedDesk,
 
-  setActiveDisplay,
-  setIsTimerRunning,
+  equippedChair,
+  setEquippedChair,
 
-  setPomodoroHours,
-  setPomodoroMinutes,
-  setPomodoroSeconds,
-
-  setIsPomodoroRunning,
+  equippedWindowView,
+  setEquippedWindowView,
 }) {
+  const [selectedCategory, setSelectedCategory] = useState("Rambut");
+  const categories = [
+    {
+      name: "Rambut",
+      icon: HairIcon,
+    },
+    {
+      name: "Baju",
+      icon: ClothesIcon,
+    },
+    {
+      name: "Dinding",
+      icon: WallpaperIcon,
+    },
+    {
+      name: "View",
+      icon: WindowViewIcon,
+    },
+    {
+      name: "Meja",
+      icon: DeskSetIcon,
+    },
+  ];
+
+  const [selectedItemId, setSelectedItemId] = useState(1);
+
+  const customizationItems = {
+    Rambut: [
+      {
+        id: 1,
+        key: "default",
+        name: "Rambut Pirang",
+        image: IconHair1,
+        owned: true,
+      },
+
+      {
+        id: 2,
+        key: "silver",
+        name: "Rambut Krem",
+        image: IconHair2,
+        owned: true,
+      },
+
+      {
+        id: 3,
+        key: "blue",
+        name: "Rambut Cokelat",
+        image: IconHair3,
+        owned: true,
+      },
+    ],
+
+    Baju: [
+      {
+        id: 4,
+        key: "default",
+        name: "Baju Default",
+        image: IconClothes1,
+        owned: true,
+      },
+
+      {
+        id: 5,
+        key: "blue",
+        name: "Hoodie Biru",
+        image: IconClothes2,
+        owned: true,
+      },
+
+      {
+        id: 6,
+        key: "dark",
+        name: "Jaket Hitam",
+        image: IconClothes3,
+        owned: true,
+      },
+    ],
+
+    Dinding: [
+      {
+        id: 7,
+        key: "default",
+        name: "Wallpaper Krem",
+        image: IconWallpaper1,
+        owned: true,
+      },
+      {
+        id: 8,
+        key: "pink",
+        name: "Wallpaper Biru",
+        image: IconWallpaper2,
+        owned: true,
+      },
+      {
+        id: 9,
+        key: "blue",
+        name: "Wallpaper Putih",
+        image: IconWallpaper3,
+        owned: true,
+      },
+    ],
+
+    View: [
+      {
+        id: 10,
+        key: "default",
+        name: "Hutan",
+        image: IconTree,
+        owned: true,
+      },
+
+      {
+        id: 11,
+        key: "galaxy",
+        name: "Langit Malam",
+        image: IconGalaxy,
+        owned: true,
+      },
+
+      {
+        id: 12,
+        key: "snow",
+        name: "Musim Salju",
+        image: IconSnow,
+        owned: true,
+      },
+
+      {
+        id: 13,
+        key: "sunset",
+        name: "Pantai",
+        image: IconSunset,
+        owned: true,
+      },
+    ],
+
+    Meja: [
+      {
+        id: 14,
+        key: "default",
+        name: "Meja Kayu",
+        image: IconDeskset1,
+        owned: true,
+      },
+      {
+        id: 15,
+        key: "gaming",
+        name: "Meja Gaming",
+        image: IconDeskset2,
+        owned: true,
+      },
+    ],
+  };
+
+  const currentItems = customizationItems[selectedCategory] || [];
+
+  function isItemEquipped(item) {
+    if (selectedCategory === "Rambut") {
+      return equippedHair === item.key;
+    }
+
+    if (selectedCategory === "Baju") {
+      return equippedClothes === item.key;
+    }
+
+    if (selectedCategory === "Dinding") {
+      return equippedWallpaper === item.key;
+    }
+
+    if (selectedCategory === "View") {
+      return equippedWindowView === item.key;
+    }
+
+    if (selectedCategory === "Meja") {
+      return equippedDesk === item.key;
+    }
+
+    return false;
+  }
+
   return (
     <>
-      {/* OVERLAY */}
-      <div className="menu-overlay" onClick={() => setPage("main")} />
+      {/* CUSTOMIZATION SIDEBAR */}
+      <div className="customization-wrapper">
+        <div
+          className={`customization-sidebar ${
+            isClosingCustomization
+              ? "customization-sidebar-close"
+              : "customization-sidebar-open"
+          }`}
+        >
+          <button
+            className="customization-close-button"
+            onClick={() => {
+              setIsClosingCustomization(true);
 
-      {/* BACK BUTTON */}
-      <button className="back-button" onClick={() => setPage("timerMenu")}>
-        BACK
-      </button>
+              setTimeout(() => {
+                setPage("main");
 
-      {/* STOPWATCH LAYOUT */}
-      <div className="menu-wrapper">
-        <div className="timer-panel">
-          {/* DISPLAY */}
-          <div className="timer-display">
-            <div className="time-column">
-              <div className="stopwatch-time-part">
-                {String(stopwatchHours).padStart(2, "0")}
-              </div>
-            </div>
-
-            <span className="time-separator">:</span>
-
-            <div className="time-column">
-              <div className="stopwatch-time-part">
-                {String(stopwatchMinutes).padStart(2, "0")}
-              </div>
-            </div>
-
-            <span className="time-separator">:</span>
-
-            <div className="time-column">
-              <div className="stopwatch-time-part">
-                {String(stopwatchSeconds).padStart(2, "0")}
-              </div>
-            </div>
-          </div>
-
-          {/* CONTROLS */}
-          {!isStopwatchRunning &&
-          stopwatchHours === 0 &&
-          stopwatchMinutes === 0 &&
-          stopwatchSeconds === 0 ? (
-            <button
-              className="set-timer-button"
-              onClick={() => {
-                // STOP TIMER
-                setIsTimerRunning(false);
-                setHours(0);
-                setMinutes(0);
-                setSeconds(0);
-                setActiveDisplay("stopwatch");
-
-                // STOP POMODORO
-                setIsPomodoroRunning(false);
-
-                setPomodoroHours(0);
-                setPomodoroMinutes(0);
-                setPomodoroSeconds(0);
-
-                // START STOPWATCH
-                setIsStopwatchRunning(true);
-              }}
-            >
-              START
-            </button>
-          ) : (
-            <div className="stopwatch-controls">
+                setIsClosingCustomization(false);
+              }, 300);
+            }}
+          >
+            <img
+              src={ArrowDownIcon}
+              alt="Close"
+              className="customization-close-icon"
+            />
+          </button>
+          <div className="customization-categories">
+            {categories.map((category) => (
               <button
-                className="timer-control-button"
-                onClick={() => setIsStopwatchRunning(!isStopwatchRunning)}
+                key={category.name}
+                className={`customization-category-button ${
+                  selectedCategory === category.name
+                    ? "customization-category-button-active"
+                    : ""
+                }`}
+                onClick={() => setSelectedCategory(category.name)}
               >
                 <img
-                  src={isStopwatchRunning ? PauseIcon : ResumeIcon}
-                  alt="Stopwatch Control"
-                  className="timer-control-icon"
+                  src={category.icon}
+                  alt={category.name}
+                  className="customization-category-icon"
                 />
-              </button>
 
-              <button
-                className="timer-control-button"
+                <span className="customization-category-text">
+                  {category.name}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <div className="customization-divider" />
+
+          <div className="customization-items-row">
+            {currentItems.map((item) => (
+              <ItemCard
+                key={item.id}
+                image={item.image}
+                name={item.name}
+                owned={item.owned}
+                equipped={isItemEquipped(item)}
+                selected={selectedItemId === item.id}
                 onClick={() => {
-                  setIsStopwatchRunning(false);
+                  setSelectedItemId(item.id);
 
-                  setStopwatchHours(0);
-                  setStopwatchMinutes(0);
-                  setStopwatchSeconds(0);
+                  if (!item.owned) {
+                    return;
+                  }
+
+                  // HAIR
+                  if (selectedCategory === "Rambut") {
+                    setEquippedHair(item.key);
+                  }
+
+                  // CLOTHES
+                  if (selectedCategory === "Baju") {
+                    setEquippedClothes(item.key);
+                  }
+
+                  // WALLPAPER
+                  if (selectedCategory === "Dinding") {
+                    setEquippedWallpaper(item.key);
+                  }
+
+                  // WINDOW VIEW
+                  if (selectedCategory === "View") {
+                    setEquippedWindowView(item.key);
+                  }
+
+                  // DESK
+                  if (selectedCategory === "Meja") {
+                    setEquippedDesk(item.key);
+                  }
                 }}
-              >
-                <img src={StopIcon} alt="Stop" className="timer-control-icon" />
-              </button>
-            </div>
-          )}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </>
   );
 }
 
-export default StopwatchPage;
+export default CustomizationPage;
 
 
 
 
+## GrafikMenuPage.jsx
+function GrafikMenuPage({ setPage }) {
+  return (
+    <>
+      <div className="menu-overlay" onClick={() => setPage("main")} />
+
+      <button className="back-button" onClick={() => setPage("menu")}>
+        BACK
+      </button>
+    </>
+  );
+}
+
+export default GrafikMenuPage;
+
+
+
+
+
+
+## JadwalMenuPage.jsx
+function JadwalMenuPage({ setPage }) {
+  return (
+    <>
+      <div className="menu-overlay" onClick={() => setPage("main")} />
+
+      <button className="back-button" onClick={() => setPage("menu")}>
+        BACK
+      </button>
+    </>
+  );
+}
+
+export default JadwalMenuPage;
+
+
+## LoginPage.jsx
+import { useState } from "react";
+
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
+
+import auth from "../firebase/auth";
+
+import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+
+import { db } from "../firebase/config";
+
+const provider = new GoogleAuthProvider();
+
+import PasswordVisible from "../assets/PasswordVisible.png";
+
+import PasswordInvisible from "../assets/PasswordInvisible.png";
+
+import GoogleIcon from "../assets/GoogleIcon.png";
+
+function LoginPage({ setPage }) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function handleLogin() {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+
+      alert("Login berhasil!");
+
+      setPage("main");
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
+  async function handleGoogleLogin() {
+    try {
+      const result = await signInWithPopup(auth, provider);
+
+      const user = result.user;
+
+      const userRef = doc(db, "users", user.uid);
+
+      const userSnap = await getDoc(userRef);
+
+      // USER BARU
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          username: user.displayName || "User",
+          motto: "Let's study with me!",
+          photoURL: "",
+
+          equippedHair: "default",
+          equippedClothes: "default",
+
+          equippedWallpaper: "default",
+          equippedDesk: "default",
+          equippedChair: "default",
+          equippedWindowView: "default",
+
+          createdAt: serverTimestamp(),
+        });
+      }
+
+      alert("Login Google berhasil!");
+
+      setPage("main");
+    } catch (error) {
+      if (error.code === "auth/popup-closed-by-user") {
+        return;
+      }
+      alert(error.message);
+    }
+  }
+
+  return (
+    <>
+      <div className="menu-overlay" onClick={() => setPage("main")} />
+
+      <button className="back-button" onClick={() => setPage("main")}>
+        BACK
+      </button>
+
+      <div className="login-wrapper">
+        <div className="login-panel">
+          {/* TITLE */}
+          <h1 className="login-title">LOG IN</h1>
+
+          <p className="login-subtitle">
+            Selamat datang! Silakan masuk untuk melanjutkan.
+          </p>
+
+          {/* GOOGLE LOGIN */}
+          <p className="google-label">Masuk dengan</p>
+
+          <button className="google-login-button" onClick={handleGoogleLogin}>
+            <img className="google-logo" src={GoogleIcon} alt="Google" />
+
+            <span>Lanjutkan dengan Google</span>
+          </button>
+
+          {/* DIVIDER */}
+          <div className="login-divider">
+            <div className="divider-line"></div>
+
+            <p>atau</p>
+
+            <div className="divider-line"></div>
+          </div>
+
+          {/* EMAIL */}
+          <div className="input-group">
+            <p className="input-label">Email</p>
+
+            <input
+              type="text"
+              placeholder="Masukkan email"
+              className="login-input"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
+          </div>
+
+          {/* PASSWORD */}
+          <div className="input-group">
+            <p className="input-label">Password</p>
+
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Masukkan password"
+                className="login-input"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+
+              <button
+                className="password-visibility-button"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                <img
+                  src={showPassword ? PasswordVisible : PasswordInvisible}
+                  alt="toggle password"
+                  className="password-visibility-icon"
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* REMEMBER + FORGOT */}
+          <div className="login-options-row">
+            <label className="remember-me">
+              <input type="checkbox" />
+
+              <span>Ingat saya</span>
+            </label>
+
+            <button className="forgot-password-button">Lupa password?</button>
+          </div>
+
+          {/* LOGIN BUTTON */}
+          <button className="login-submit-button" onClick={handleLogin}>
+            Masuk
+          </button>
+
+          {/* REGISTER */}
+          <p className="login-register-text">
+            Belum punya akun?
+            <span
+              className="login-register-link"
+              onClick={() => setPage("register")}
+            >
+              {" "}
+              Buat akun
+            </span>
+            .
+          </p>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default LoginPage;
+
+
+
+## MainScene.jsx
+import { useEffect, useState } from "react";
+
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import auth from "../firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../firebase/config";
+
+import MenuPage from "./MenuPage";
+import TimerMenuPage from "./TimerMenuPage";
+import GrafikMenuPage from "./GrafikMenuPage";
+import TugasMenuPage from "./TugasMenuPage";
+import MemoMenuPage from "./MemoMenuPage";
+import JadwalMenuPage from "./JadwalMenuPage";
+import TokoMenuPage from "./TokoMenuPage";
+import BasicTimerPage from "./BasicTimerPage";
+import StopwatchPage from "./StopwatchPage";
+import PomodoroPage from "./PomodoroPage";
+import LoginPage from "./LoginPage";
+import RegisterPage from "./RegisterPage";
+import ProfilePage from "./ProfilePage";
+import CustomizationPage from "./CustomizationPage";
+
+import ProfileDropdown from "../components/ProfileDropdown";
+import TimerDisplay from "../components/TimerDisplay";
+import TimerDisplayLogic from "../components/TimerDisplayLogic";
+import CustomizationButton from "../components/CustomizationButton";
+import SceneRenderer from "../components/SceneRenderer";
+
+import Corkboard from "../components/Corkboard";
+
+function MainScene() {
+  // PAGE STATE
+  const [page, setPage] = useState("main");
+  // PROFILE DROPDOWN
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  // CURRENT USER
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isCustomizationLoaded, setIsCustomizationLoaded] = useState(false);
+  // PROFILE PICTURE
+  const [profileImage, setProfileImage] = useState("");
+  // TIMER DISPLAY LOGIC
+  const {
+    // BASIC TIMER
+    basicTimerHours,
+    basicTimerMinutes,
+    basicTimerSeconds,
+    setBasicTimerHours,
+    setBasicTimerMinutes,
+    setBasicTimerSeconds,
+    isBasicTimerRunning,
+    setIsBasicTimerRunning,
+
+    // STOPWATCH
+    stopwatchHours,
+    stopwatchMinutes,
+    stopwatchSeconds,
+    setStopwatchHours,
+    setStopwatchMinutes,
+    setStopwatchSeconds,
+    isStopwatchRunning,
+    setIsStopwatchRunning,
+
+    // POMODORO
+    pomodoroHours,
+    pomodoroMinutes,
+    pomodoroSeconds,
+    setPomodoroHours,
+    setPomodoroMinutes,
+    setPomodoroSeconds,
+    pomodoroSessionMinutes,
+    setPomodoroSessionMinutes,
+    pomodoroBreakMinutes,
+    setPomodoroBreakMinutes,
+    pomodoroSessionCount,
+    setPomodoroSessionCount,
+    currentPomodoroSession,
+    setCurrentPomodoroSession,
+    pomodoroPhase,
+    setPomodoroPhase,
+    isPomodoroRunning,
+    setIsPomodoroRunning,
+  } = TimerDisplayLogic();
+  const [activeDisplay, setActiveDisplay] = useState("basicTimer");
+
+  const [isClosingCustomization, setIsClosingCustomization] = useState(false);
+
+  // EQUIPPED CUSTOMIZATION
+  const [equippedHair, setEquippedHair] = useState("default");
+
+  const [equippedClothes, setEquippedClothes] = useState("default");
+
+  const [equippedWallpaper, setEquippedWallpaper] = useState("default");
+
+  const [equippedDesk, setEquippedDesk] = useState("default");
+
+  const [equippedChair, setEquippedChair] = useState("default");
+
+  const [equippedWindowView, setEquippedWindowView] = useState("default");
+
+  async function handleLogout() {
+    try {
+      setIsLoggingOut(true);
+
+      await signOut(auth);
+
+      setPage("main");
+
+      setIsProfileDropdownOpen(false);
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  }
+  // FIREBASE AUTH LISTENER
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setCurrentUser(user);
+      setIsAuthLoading(true);
+
+      if (user) {
+        setIsCustomizationLoaded(false);
+
+        try {
+          const docRef = doc(db, "users", user.uid);
+
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+
+            setProfileImage(data.photoURL || "");
+
+            setEquippedHair(data.equippedHair || "default");
+
+            setEquippedClothes(data.equippedClothes || "default");
+
+            setEquippedWallpaper(data.equippedWallpaper || "default");
+
+            setEquippedDesk(data.equippedDesk || "default");
+
+            setEquippedChair(data.equippedChair || "default");
+
+            setEquippedWindowView(data.equippedWindowView || "default");
+
+            setIsCustomizationLoaded(true);
+          } else {
+            // USER DOC DOESN'T EXIST
+            setProfileImage("");
+
+            setEquippedHair("default");
+
+            setEquippedClothes("default");
+
+            setEquippedWallpaper("default");
+
+            setEquippedDesk("default");
+
+            setEquippedChair("default");
+
+            setEquippedWindowView("default");
+
+            setIsCustomizationLoaded(true);
+          }
+        } catch (error) {
+          console.error("FAILED LOAD CUSTOMIZATION:", error);
+        }
+      } else {
+        // LOGOUT RESET
+        setProfileImage("");
+
+        setEquippedHair("default");
+
+        setEquippedClothes("default");
+
+        setEquippedWallpaper("default");
+
+        setEquippedDesk("default");
+
+        setEquippedChair("default");
+
+        setEquippedWindowView("default");
+
+        setIsCustomizationLoaded(false);
+      }
+
+      setIsAuthLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // AUTO SAVE CUSTOMIZATION
+  useEffect(() => {
+    async function saveCustomization() {
+      if (!currentUser || isLoggingOut || !isCustomizationLoaded) {
+        return;
+      }
+
+      try {
+        await setDoc(
+          doc(db, "users", currentUser.uid),
+          {
+            equippedHair,
+            equippedClothes,
+            equippedWallpaper,
+            equippedDesk,
+            equippedChair,
+            equippedWindowView,
+          },
+          { merge: true },
+        );
+      } catch (error) {
+        console.error("FAILED SAVE CUSTOMIZATION:", error);
+      }
+    }
+
+    const timeout = setTimeout(() => {
+      saveCustomization();
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [
+    currentUser,
+    isLoggingOut,
+    isCustomizationLoaded,
+
+    equippedHair,
+    equippedClothes,
+    equippedWallpaper,
+    equippedDesk,
+    equippedChair,
+    equippedWindowView,
+  ]);
+
+  if (isAuthLoading) {
+    return null;
+  }
+
+  return (
+    <div
+      className={
+        page === "login" ||
+        page === "register" ||
+        page === "profile" ||
+        page === "menu" ||
+        page === "timerMenu" ||
+        page === "basicTimer" ||
+        page === "stopwatch" ||
+        page === "pomodoro" ||
+        page === "grafikMenu" ||
+        page === "tugasMenu" ||
+        page === "memoMenu" ||
+        page === "jadwalMenu" ||
+        page === "tokoMenu"
+          ? "scene modal-open"
+          : "scene"
+      }
+      onClick={() => setIsProfileDropdownOpen(false)}
+    >
+      <>
+        <SceneRenderer
+          equippedHair={equippedHair}
+          equippedClothes={equippedClothes}
+          equippedWallpaper={equippedWallpaper}
+          equippedDesk={equippedDesk}
+          equippedChair={equippedChair}
+          equippedWindowView={equippedWindowView}
+        />
+
+        <Corkboard onClick={() => setPage("menu")} />
+
+        <div className="top-right-ui">
+          {currentUser && <CustomizationButton setPage={setPage} />}
+
+          <ProfileDropdown
+            currentUser={currentUser}
+            profileImage={profileImage}
+            setPage={setPage}
+            handleLogout={handleLogout}
+            isProfileDropdownOpen={isProfileDropdownOpen}
+            setIsProfileDropdownOpen={setIsProfileDropdownOpen}
+          />
+        </div>
+
+        <TimerDisplay
+          activeDisplay={activeDisplay}
+          basicTimerHours={basicTimerHours}
+          basicTimerMinutes={basicTimerMinutes}
+          basicTimerSeconds={basicTimerSeconds}
+          isBasicTimerRunning={isBasicTimerRunning}
+          setIsBasicTimerRunning={setIsBasicTimerRunning}
+          setBasicTimerHours={setBasicTimerHours}
+          setBasicTimerMinutes={setBasicTimerMinutes}
+          setBasicTimerSeconds={setBasicTimerSeconds}
+          stopwatchHours={stopwatchHours}
+          stopwatchMinutes={stopwatchMinutes}
+          stopwatchSeconds={stopwatchSeconds}
+          isStopwatchRunning={isStopwatchRunning}
+          setIsStopwatchRunning={setIsStopwatchRunning}
+          setStopwatchHours={setStopwatchHours}
+          setStopwatchMinutes={setStopwatchMinutes}
+          setStopwatchSeconds={setStopwatchSeconds}
+          pomodoroHours={pomodoroHours}
+          pomodoroMinutes={pomodoroMinutes}
+          pomodoroSeconds={pomodoroSeconds}
+          pomodoroPhase={pomodoroPhase}
+          isPomodoroRunning={isPomodoroRunning}
+          setIsPomodoroRunning={setIsPomodoroRunning}
+          setPomodoroHours={setPomodoroHours}
+          setPomodoroMinutes={setPomodoroMinutes}
+          setPomodoroSeconds={setPomodoroSeconds}
+          setCurrentPomodoroSession={setCurrentPomodoroSession}
+          setPomodoroPhase={setPomodoroPhase}
+        />
+      </>
+
+      {page === "menu" && <MenuPage setPage={setPage} />}
+
+      {page === "timerMenu" && <TimerMenuPage setPage={setPage} />}
+
+      {page === "basicTimer" && (
+        <BasicTimerPage
+          setPage={setPage}
+          setBasicTimerHours={setBasicTimerHours}
+          setBasicTimerMinutes={setBasicTimerMinutes}
+          setBasicTimerSeconds={setBasicTimerSeconds}
+          setIsBasicTimerRunning={setIsBasicTimerRunning}
+          setStopwatchHours={setStopwatchHours}
+          setStopwatchMinutes={setStopwatchMinutes}
+          setStopwatchSeconds={setStopwatchSeconds}
+          setIsStopwatchRunning={setIsStopwatchRunning}
+          setActiveDisplay={setActiveDisplay}
+          setPomodoroHours={setPomodoroHours}
+          setPomodoroMinutes={setPomodoroMinutes}
+          setPomodoroSeconds={setPomodoroSeconds}
+          setIsPomodoroRunning={setIsPomodoroRunning}
+        />
+      )}
+
+      {page === "stopwatch" && (
+        <StopwatchPage
+          setPage={setPage}
+          stopwatchHours={stopwatchHours}
+          stopwatchMinutes={stopwatchMinutes}
+          stopwatchSeconds={stopwatchSeconds}
+          isStopwatchRunning={isStopwatchRunning}
+          setIsStopwatchRunning={setIsStopwatchRunning}
+          setStopwatchHours={setStopwatchHours}
+          setStopwatchMinutes={setStopwatchMinutes}
+          setStopwatchSeconds={setStopwatchSeconds}
+          setBasicTimerHours={setBasicTimerHours}
+          setBasicTimerMinutes={setBasicTimerMinutes}
+          setBasicTimerSeconds={setBasicTimerSeconds}
+          setIsBasicTimerRunning={setIsBasicTimerRunning}
+          setActiveDisplay={setActiveDisplay}
+          setPomodoroHours={setPomodoroHours}
+          setPomodoroMinutes={setPomodoroMinutes}
+          setPomodoroSeconds={setPomodoroSeconds}
+          setIsPomodoroRunning={setIsPomodoroRunning}
+        />
+      )}
+
+      {page === "pomodoro" && (
+        <PomodoroPage
+          setPage={setPage}
+          setActiveDisplay={setActiveDisplay}
+          setPomodoroHours={setPomodoroHours}
+          setPomodoroMinutes={setPomodoroMinutes}
+          setPomodoroSeconds={setPomodoroSeconds}
+          setPomodoroSessionMinutes={setPomodoroSessionMinutes}
+          setPomodoroBreakMinutes={setPomodoroBreakMinutes}
+          setPomodoroSessionCount={setPomodoroSessionCount}
+          setCurrentPomodoroSession={setCurrentPomodoroSession}
+          setPomodoroPhase={setPomodoroPhase}
+          setIsPomodoroRunning={setIsPomodoroRunning}
+          setBasicTimerHours={setBasicTimerHours}
+          setBasicTimerMinutes={setBasicTimerMinutes}
+          setBasicTimerSeconds={setBasicTimerSeconds}
+          setIsBasicTimerRunning={setIsBasicTimerRunning}
+          setStopwatchHours={setStopwatchHours}
+          setStopwatchMinutes={setStopwatchMinutes}
+          setStopwatchSeconds={setStopwatchSeconds}
+          setIsStopwatchRunning={setIsStopwatchRunning}
+        />
+      )}
+
+      {page === "grafikMenu" && <GrafikMenuPage setPage={setPage} />}
+
+      {page === "tugasMenu" && <TugasMenuPage setPage={setPage} />}
+
+      {page === "memoMenu" && <MemoMenuPage setPage={setPage} />}
+
+      {page === "jadwalMenu" && <JadwalMenuPage setPage={setPage} />}
+
+      {page === "tokoMenu" && <TokoMenuPage setPage={setPage} />}
+
+      {page === "login" && <LoginPage setPage={setPage} />}
+
+      {page === "register" && <RegisterPage setPage={setPage} />}
+
+      {page === "profile" && (
+        <ProfilePage
+          setPage={setPage}
+          currentUser={currentUser}
+          handleLogout={handleLogout}
+          setProfileImage={setProfileImage}
+        />
+      )}
+
+      {page === "customization" && (
+        <CustomizationPage
+          setPage={setPage}
+          isClosingCustomization={isClosingCustomization}
+          setIsClosingCustomization={setIsClosingCustomization}
+          equippedHair={equippedHair}
+          setEquippedHair={setEquippedHair}
+          equippedClothes={equippedClothes}
+          setEquippedClothes={setEquippedClothes}
+          equippedWallpaper={equippedWallpaper}
+          setEquippedWallpaper={setEquippedWallpaper}
+          equippedDesk={equippedDesk}
+          setEquippedDesk={setEquippedDesk}
+          equippedChair={equippedChair}
+          setEquippedChair={setEquippedChair}
+          equippedWindowView={equippedWindowView}
+          setEquippedWindowView={setEquippedWindowView}
+        />
+      )}
+    </div>
+  );
+}
+
+export default MainScene;
+
+
+
+## MemoMenuPage.jsx
+function MemoMenuPage({ setPage }) {
+  return (
+    <>
+      <div className="menu-overlay" onClick={() => setPage("main")} />
+
+      <button className="back-button" onClick={() => setPage("menu")}>
+        BACK
+      </button>
+    </>
+  );
+}
+
+export default MemoMenuPage;
+
+
+
+## MenuPage.jsx
+import MenuCard from "../components/MenuCard";
+
+import GrafikIcon from "../assets/GrafikIcon.png";
+import TugasIcon from "../assets/TugasIcon.png";
+import MemoIcon from "../assets/MemoIcon.png";
+import TimerIcon from "../assets/TimerIcon.png";
+import JadwalIcon from "../assets/JadwalIcon.png";
+import TokoIcon from "../assets/TokoIcon.png";
+
+function MenuPage({ setPage }) {
+  return (
+    <>
+      <div className="menu-overlay" onClick={() => setPage("main")} />
+
+      <button className="back-button" onClick={() => setPage("main")}>
+        BACK
+      </button>
+
+      <div className="menu-wrapper">
+        <div className="menu-grid">
+          <MenuCard
+            title="GRAFIK"
+            icon={GrafikIcon}
+            onClick={() => setPage("grafikMenu")}
+          />
+
+          <MenuCard
+            title="TUGAS"
+            icon={TugasIcon}
+            onClick={() => setPage("tugasMenu")}
+          />
+
+          <MenuCard
+            title="MEMO"
+            icon={MemoIcon}
+            onClick={() => setPage("memoMenu")}
+          />
+
+          <MenuCard
+            title="TIMER"
+            icon={TimerIcon}
+            onClick={() => setPage("timerMenu")}
+          />
+
+          <MenuCard
+            title="JADWAL"
+            icon={JadwalIcon}
+            onClick={() => setPage("jadwalMenu")}
+          />
+
+          <MenuCard
+            title="TOKO"
+            icon={TokoIcon}
+            onClick={() => setPage("tokoMenu")}
+          />
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default MenuPage;
 
 
 
@@ -1419,27 +2398,21 @@ function PomodoroPage({
   setPomodoroHours,
   setPomodoroMinutes,
   setPomodoroSeconds,
-
   setPomodoroSessionMinutes,
   setPomodoroBreakMinutes,
   setPomodoroSessionCount,
-
   setCurrentPomodoroSession,
-
   setPomodoroPhase,
-
   setIsPomodoroRunning,
 
-  setHours,
-  setMinutes,
-  setSeconds,
-
-  setIsTimerRunning,
+  setBasicTimerHours,
+  setBasicTimerMinutes,
+  setBasicTimerSeconds,
+  setIsBasicTimerRunning,
 
   setStopwatchHours,
   setStopwatchMinutes,
   setStopwatchSeconds,
-
   setIsStopwatchRunning,
 }) {
   // POMODORO SETTINGS STATE
@@ -1693,16 +2666,14 @@ function PomodoroPage({
               // SWITCH DISPLAY
               setActiveDisplay("pomodoro");
 
-              // STOP TIMER
-              setIsTimerRunning(false);
-
-              setHours(0);
-              setMinutes(0);
-              setSeconds(0);
+              // STOP BASIC TIMER
+              setIsBasicTimerRunning(false);
+              setBasicTimerHours(0);
+              setBasicTimerMinutes(0);
+              setBasicTimerSeconds(0);
 
               // STOP STOPWATCH
               setIsStopwatchRunning(false);
-
               setStopwatchHours(0);
               setStopwatchMinutes(0);
               setStopwatchSeconds(0);
@@ -1738,50 +2709,160 @@ export default PomodoroPage;
 
 
 
+## ProfilePage.jsx
+import { useEffect, useState } from "react";
 
+import ProfilePlaceholder from "../assets/ProfilePlaceholder.png";
 
+import UserIcon from "../assets/UserIcon.png";
+import EmailIcon from "../assets/EmailIcon.png";
+import CalendarIcon from "../assets/CalendarIcon.png";
+import MottoIcon from "../assets/MottoIcon.png";
 
-## LoginPage.jsx
-import { useState } from "react";
+import TotalFocusIcon from "../assets/TotalFocusIcon.png";
+import TotalCoinIcon from "../assets/TotalCoinIcon.png";
+import TotalTaskIcon from "../assets/TotalTaskIcon.png";
+import StreakIcon from "../assets/StreakIcon.png";
+import AchievementPlaceholder from "../assets/AchievementPlaceholder.png";
+import BackButton2 from "../assets/BackButton2.png";
+import UploadIcon from "../assets/UploadIcon.png";
 
-import {
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-} from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { updateProfile } from "firebase/auth";
+import { db } from "../firebase/config";
 
-import auth from "../firebase/auth";
+function ProfilePage({ setPage, currentUser, handleLogout, setProfileImage }) {
+  const [activeProfileTab, setActiveProfileTab] = useState("overview");
+  const [hasProfileChanges, setHasProfileChanges] = useState(false);
+  const [username, setUsername] = useState("");
+  const [motto, setMotto] = useState("");
+  const [savedUsername, setSavedUsername] = useState("");
+  const [savedMotto, setSavedMotto] = useState("");
+  const [originalUsername, setOriginalUsername] = useState("");
+  const [originalMotto, setOriginalMotto] = useState("");
+  const isUsernameEmpty = username.trim() === "";
+  const isUsernameTooLong = username.length > 20;
+  const isMottoTooLong = motto.length > 80;
+  const isProfileInvalid =
+    isUsernameEmpty || isUsernameTooLong || isMottoTooLong;
+  const [previewProfileImage, setPreviewProfileImage] = useState("");
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const [originalPhotoURL, setOriginalPhotoURL] = useState("");
+  const [memberSince, setMemberSince] = useState("-");
 
-const provider = new GoogleAuthProvider();
+  useEffect(() => {
+    async function loadProfileData() {
+      if (!currentUser) return;
 
-import PasswordVisible from "../assets/PasswordVisible.png";
+      const docRef = doc(db, "users", currentUser.uid);
 
-import PasswordInvisible from "../assets/PasswordInvisible.png";
+      const docSnap = await getDoc(docRef);
 
-function LoginPage({ setPage }) {
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+      if (docSnap.exists()) {
+        const data = docSnap.data();
 
-  async function handleLogin() {
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
+        setUsername(data.username || "");
+        setMotto(data.motto || "Let's study with me!");
 
-      alert("Login berhasil!");
+        setSavedUsername(data.username || "");
+        setSavedMotto(data.motto || "Let's study with me!");
 
-      setPage("main");
-    } catch (error) {
-      alert(error.message);
+        setPreviewProfileImage(data.photoURL || "");
+        setOriginalPhotoURL(data.photoURL || "");
+
+        if (data.createdAt) {
+          const formattedDate = data.createdAt
+            .toDate()
+            .toLocaleDateString("en-US", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            });
+
+          setMemberSince(formattedDate);
+        }
+
+        setOriginalUsername(data.username || "");
+        setOriginalMotto(data.motto || "Let's study with me!");
+      }
     }
+
+    loadProfileData();
+  }, [currentUser]);
+
+  useEffect(() => {
+    const hasChanges =
+      username !== originalUsername ||
+      motto !== originalMotto ||
+      previewProfileImage !== originalPhotoURL;
+
+    setHasProfileChanges(hasChanges && !isProfileInvalid);
+  }, [
+    username,
+    motto,
+    previewProfileImage,
+    originalUsername,
+    originalMotto,
+    originalPhotoURL,
+    isProfileInvalid,
+  ]);
+
+  function handleCancelEditProfile() {
+    setUsername(savedUsername);
+    setMotto(savedMotto);
+    setActiveProfileTab("overview");
   }
 
-  async function handleGoogleLogin() {
+  async function handleSaveProfile() {
+    if (!currentUser) return;
+
     try {
-      await signInWithPopup(auth, provider);
+      let photoURL = previewProfileImage;
 
-      alert("Login Google berhasil!");
+      if (selectedImageFile) {
+        const formData = new FormData();
 
-      setPage("main");
+        formData.append("file", selectedImageFile);
+
+        formData.append("upload_preset", "gamitivity_profile_pic");
+
+        const response = await fetch(
+          "https://api.cloudinary.com/v1_1/dohfdsrho/image/upload",
+          {
+            method: "POST",
+            body: formData,
+          },
+        );
+
+        const data = await response.json();
+
+        photoURL = data.secure_url;
+      }
+      await updateProfile(currentUser, {
+        displayName: username,
+      });
+
+      await setDoc(
+        doc(db, "users", currentUser.uid),
+        {
+          username,
+          motto,
+          photoURL,
+        },
+        { merge: true },
+      );
+
+      setOriginalUsername(username);
+      setOriginalMotto(motto);
+
+      setSavedUsername(username);
+      setSavedMotto(motto);
+      setOriginalPhotoURL(photoURL);
+      setPreviewProfileImage(photoURL);
+      setProfileImage(photoURL);
+
+      alert("Profile updated!");
+      setActiveProfileTab("overview");
     } catch (error) {
       alert(error.message);
     }
@@ -1791,130 +2872,380 @@ function LoginPage({ setPage }) {
     <>
       <div className="menu-overlay" onClick={() => setPage("main")} />
 
-      <button className="back-button" onClick={() => setPage("main")}>
-        BACK
-      </button>
+      <div className="profilepage-wrapper">
+        <div className="profilepage-container">
+          {/* CLOSE BUTTON */}
+          {activeProfileTab !== "editProfile" && (
+            <button
+              className="profilepage-close-button"
+              onClick={() => setPage("main")}
+            >
+              ✕
+            </button>
+          )}
 
-      <div className="login-wrapper">
-        <div className="modern-login-panel">
-          {/* TITLE */}
-          <h1 className="modern-login-title">LOG IN</h1>
-
-          <p className="modern-login-subtitle">
-            Selamat datang! Silakan masuk untuk melanjutkan.
-          </p>
-
-          {/* GOOGLE LOGIN */}
-          <p className="modern-google-label">Masuk dengan</p>
-
-          <button className="google-login-button" onClick={handleGoogleLogin}>
-            <span className="google-logo">G</span>
-
-            <span>Lanjutkan dengan Google</span>
-          </button>
-
-          {/* DIVIDER */}
-          <div className="login-divider">
-            <div className="divider-line"></div>
-
-            <p>atau</p>
-
-            <div className="divider-line"></div>
-          </div>
-
-          {/* EMAIL */}
-          <div className="modern-input-group">
-            <p className="modern-input-label">Email</p>
-
-            <input
-              type="text"
-              placeholder="Masukkan email"
-              className="modern-login-input"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
+          {/* SIDEBAR */}
+          <div className="profilepage-sidebar">
+            <img
+              src={originalPhotoURL || ProfilePlaceholder}
+              alt="Profile"
+              className="profilepage-avatar"
             />
-          </div>
 
-          {/* PASSWORD */}
-          <div className="modern-input-group">
-            <p className="modern-input-label">Password</p>
+            <h2 className="profilepage-username">{savedUsername || "User"}</h2>
 
-            <div className="password-input-wrapper">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Masukkan password"
-                className="modern-login-input"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
+            <p className="profilepage-email">{currentUser?.email}</p>
+
+            <div className="profilepage-badge">✨ Focus Explorer</div>
+
+            <div className="profilepage-sidebar-menu">
+              <button
+                className={
+                  activeProfileTab === "overview" ||
+                  activeProfileTab === "editProfile"
+                    ? "profilepage-sidebar-item active"
+                    : "profilepage-sidebar-item"
+                }
+                onClick={() => setActiveProfileTab("overview")}
+              >
+                Overview
+              </button>
+
+              <button className="profilepage-sidebar-item">Stats</button>
 
               <button
-                className="password-visibility-button"
-                onClick={() => setShowPassword(!showPassword)}
+                className={
+                  activeProfileTab === "achievements"
+                    ? "profilepage-sidebar-item active"
+                    : "profilepage-sidebar-item"
+                }
+                onClick={() => setActiveProfileTab("achievements")}
               >
-                <img
-                  src={showPassword ? PasswordVisible : PasswordInvisible}
-                  alt="toggle password"
-                  className="password-visibility-icon"
-                />
+                Achievements
               </button>
+
+              <button className="profilepage-sidebar-item">
+                Customization
+              </button>
+
+              <button className="profilepage-sidebar-item">
+                Profile Settings
+              </button>
+
+              <button className="profilepage-sidebar-item">App Settings</button>
             </div>
           </div>
 
-          {/* REMEMBER + FORGOT */}
-          <div className="login-options-row">
-            <label className="remember-me">
-              <input type="checkbox" />
+          {/* CONTENT */}
+          <div className="profilepage-content">
+            {activeProfileTab === "overview" && (
+              <>
+                <h1 className="profilepage-title">My Profile</h1>
+                <p className="profilepage-subtitle">
+                  Here's your productivity journey! ✨
+                </p>
+              </>
+            )}
 
-              <span>Ingat saya</span>
-            </label>
+            {activeProfileTab === "overview" && (
+              <>
+                {/* PROFILE INFO */}
+                <div className="profilepage-info-box">
+                  <div className="profilepage-info-row">
+                    <img
+                      src={UserIcon}
+                      alt=""
+                      className="profilepage-info-icon"
+                    />
 
-            <button className="forgot-password-button">Lupa password?</button>
+                    <span>Username</span>
+
+                    <p>{savedUsername || "-"}</p>
+                  </div>
+
+                  <div className="profilepage-info-row">
+                    <img
+                      src={EmailIcon}
+                      alt=""
+                      className="profilepage-info-icon"
+                    />
+
+                    <span>Email</span>
+
+                    <p>{currentUser?.email || "-"}</p>
+                  </div>
+
+                  <div className="profilepage-info-row">
+                    <img
+                      src={CalendarIcon}
+                      alt=""
+                      className="profilepage-info-icon"
+                    />
+
+                    <span>Member Since</span>
+
+                    <p>{memberSince}</p>
+                  </div>
+
+                  <div className="profilepage-info-row">
+                    <img
+                      src={MottoIcon}
+                      alt=""
+                      className="profilepage-info-icon"
+                    />
+
+                    <span>Motto</span>
+
+                    <p>{savedMotto.trim() ? `"${savedMotto}"` : "-"}</p>
+                  </div>
+                </div>
+
+                {/* STATS */}
+                <h2 className="profilepage-section-title">
+                  Productivity Stats
+                </h2>
+
+                <div className="profilepage-stats">
+                  <div className="profilepage-stat-card">
+                    <img
+                      src={TotalFocusIcon}
+                      alt=""
+                      className="profilepage-stat-icon"
+                    />
+
+                    <h3>Focus Time</h3>
+
+                    <p>-</p>
+
+                    <span>Total</span>
+                  </div>
+
+                  <div className="profilepage-stat-card">
+                    <img
+                      src={TotalCoinIcon}
+                      alt=""
+                      className="profilepage-stat-icon"
+                    />
+
+                    <h3>Coins Earned</h3>
+
+                    <p>-</p>
+
+                    <span>Sessions</span>
+                  </div>
+
+                  <div className="profilepage-stat-card">
+                    <img
+                      src={TotalTaskIcon}
+                      alt=""
+                      className="profilepage-stat-icon"
+                    />
+
+                    <h3>Tasks Done</h3>
+
+                    <p>-</p>
+
+                    <span>Completed</span>
+                  </div>
+
+                  <div className="profilepage-stat-card">
+                    <img
+                      src={StreakIcon}
+                      alt=""
+                      className="profilepage-stat-icon"
+                    />
+
+                    <h3>Streak</h3>
+
+                    <p>-</p>
+
+                    <span>Days</span>
+                  </div>
+                </div>
+
+                {/* BUTTONS */}
+                <div className="profilepage-bottom-buttons">
+                  <button
+                    className="profilepage-edit-button"
+                    onClick={() => setActiveProfileTab("editProfile")}
+                  >
+                    Edit Profile
+                  </button>
+
+                  <button
+                    className="profilepage-logout-button"
+                    onClick={handleLogout}
+                  >
+                    Log Out
+                  </button>
+                </div>
+              </>
+            )}
+            {activeProfileTab === "achievements" && (
+              <>
+                <div className="profilepage-achievement-header">
+                  <h1 className="profilepage-title">Achievements</h1>
+                </div>
+
+                <div className="profilepage-achievement-box">
+                  <img
+                    src={AchievementPlaceholder}
+                    alt=""
+                    className="profilepage-achievement-placeholder"
+                  />
+
+                  <p>No achievements yet.</p>
+
+                  <span>Keep focusing and earn your first achievement!</span>
+                </div>
+              </>
+            )}
+            {activeProfileTab === "editProfile" && (
+              <>
+                <div className="editprofile-header">
+                  <button
+                    className="editprofile-back-button"
+                    onClick={handleCancelEditProfile}
+                  >
+                    <img src={BackButton2} alt="Back" />
+                  </button>
+
+                  <div>
+                    <h1 className="profilepage-title">Edit Profile</h1>
+
+                    <p className="profilepage-subtitle">
+                      Update your profile information ✨
+                    </p>
+                  </div>
+
+                  <button
+                    className={
+                      hasProfileChanges
+                        ? "editprofile-save-header-button active"
+                        : "editprofile-save-header-button"
+                    }
+                    onClick={handleSaveProfile}
+                    disabled={!hasProfileChanges}
+                  >
+                    Save Changes
+                  </button>
+                </div>
+
+                <div className="editprofile-grid">
+                  {/* USERNAME */}
+                  <div className="editprofile-card">
+                    <h2>Username</h2>
+
+                    <p>This is your display name.</p>
+
+                    <input
+                      type="text"
+                      className="editprofile-input"
+                      placeholder="Enter username"
+                      value={username}
+                      onChange={(event) => setUsername(event.target.value)}
+                    />
+
+                    {isUsernameEmpty && (
+                      <p className="profilepage-warning-text">
+                        * Username cannot be empty
+                      </p>
+                    )}
+
+                    {isUsernameTooLong && (
+                      <p className="profilepage-warning-text">
+                        * Username cannot exceed 20 characters
+                      </p>
+                    )}
+                  </div>
+
+                  {/* MOTTO */}
+                  <div className="editprofile-card">
+                    <h2>Motto</h2>
+
+                    <p>Your profile motto.</p>
+
+                    <textarea
+                      className="editprofile-textarea"
+                      placeholder="Write your motto..."
+                      value={motto}
+                      onChange={(event) => setMotto(event.target.value)}
+                    />
+
+                    {isMottoTooLong && (
+                      <p className="profilepage-warning-text">
+                        * Motto cannot exceed 80 characters
+                      </p>
+                    )}
+                  </div>
+
+                  {/* PROFILE PICTURE */}
+                  <div className="editprofile-picture-card">
+                    <div className="editprofile-picture-header">
+                      <h2>Profile Picture</h2>
+
+                      <p>Upload and update your profile picture.</p>
+                    </div>
+
+                    <div className="editprofile-picture-content">
+                      {/* PREVIEW */}
+                      <div className="editprofile-picture-preview">
+                        <img
+                          src={previewProfileImage || ProfilePlaceholder}
+                          alt="Preview"
+                          className="editprofile-picture-preview-image"
+                        />
+                      </div>
+
+                      {/* UPLOAD */}
+                      <div className="editprofile-upload-box">
+                        <input
+                          type="file"
+                          accept="image/png, image/jpeg"
+                          className="editprofile-file-input"
+                          onChange={(event) => {
+                            const file = event.target.files[0];
+
+                            if (!file) return;
+
+                            setSelectedImageFile(file);
+
+                            setPreviewProfileImage(URL.createObjectURL(file));
+                          }}
+                        />
+                        <img
+                          src={UploadIcon}
+                          alt="Upload"
+                          className="editprofile-upload-icon"
+                        />
+                        <p>Click to upload image</p>
+                        <span>JPG, PNG up to 2MB</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
-
-          {/* LOGIN BUTTON */}
-          <button className="modern-login-button" onClick={handleLogin}>
-            Masuk
-          </button>
-
-          {/* REGISTER */}
-          <p className="login-register-text">
-            Belum punya akun?
-            <span
-              className="login-register-link"
-              onClick={() => setPage("register")}
-            >
-              {" "}
-              Buat akun
-            </span>
-            .
-          </p>
         </div>
       </div>
     </>
   );
 }
 
-export default LoginPage;
-
-
-
-
-
-
-
-
-
-
+export default ProfilePage;
 
 
 
 ## RegisterPage.jsx
 import { useState } from "react";
 
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 import auth from "../firebase/auth";
+
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../firebase/config";
 
 import PasswordVisible from "../assets/PasswordVisible.png";
 
@@ -1929,13 +3260,49 @@ function RegisterPage({ setPage }) {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   async function handleRegister() {
+    const trimmedUsername = username.trim();
+
+    if (trimmedUsername === "") {
+      alert("Username tidak boleh kosong");
+      return;
+    }
+
+    if (trimmedUsername.length > 20) {
+      alert("Username tidak boleh lebih dari 20 karakter");
+      return;
+    }
+
     if (password !== confirmPassword) {
       alert("Password tidak sama");
       return;
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+
+      await updateProfile(userCredential.user, {
+        displayName: trimmedUsername,
+      });
+
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        username: trimmedUsername,
+        motto: "Let's study with me!",
+        photoURL: "",
+
+        equippedHair: "default",
+        equippedClothes: "default",
+
+        equippedWallpaper: "default",
+        equippedDesk: "default",
+        equippedChair: "default",
+        equippedWindowView: "default",
+
+        createdAt: serverTimestamp(),
+      });
 
       alert("Register berhasil!");
 
@@ -1958,7 +3325,7 @@ function RegisterPage({ setPage }) {
           <h1 className="register-title">REGISTER</h1>
 
           <p className="register-subtitle">
-            Buat akun baru untuk memulai perjalananmu.
+            Buat akun baru untuk memulai perjalananmu!
           </p>
 
           {/* USERNAME */}
@@ -2066,85 +3433,228 @@ export default RegisterPage;
 
 
 
+## StopwatchPage.jsx
+import PauseIcon from "../assets/PauseIcon.png";
+import ResumeIcon from "../assets/ResumeIcon.png";
+import StopIcon from "../assets/StopIcon.png";
 
-## AccountPage.jsx
-import ProfilePlaceholder from "../assets/ProfilePlaceholder.png";
+function StopwatchPage({
+  setPage,
 
-function AccountPage({ setPage, currentUser, handleLogout }) {
+  stopwatchHours,
+  stopwatchMinutes,
+  stopwatchSeconds,
+  isStopwatchRunning,
+  setIsStopwatchRunning,
+  setStopwatchHours,
+  setStopwatchMinutes,
+  setStopwatchSeconds,
+
+  setBasicTimerHours,
+  setBasicTimerMinutes,
+  setBasicTimerSeconds,
+  setActiveDisplay,
+  setIsBasicTimerRunning,
+
+  setPomodoroHours,
+  setPomodoroMinutes,
+  setPomodoroSeconds,
+  setIsPomodoroRunning,
+}) {
   return (
-    <div className="accountpage-overlay">
-      <div className="accountpage-container">
-        <button
-          className="accountpage-close-button"
-          onClick={() => setPage("main")}
-        >
-          ✕
-        </button>
+    <>
+      {/* OVERLAY */}
+      <div className="menu-overlay" onClick={() => setPage("main")} />
 
-        <h1 className="accountpage-title">My Profile</h1>
+      {/* BACK BUTTON */}
+      <button className="back-button" onClick={() => setPage("timerMenu")}>
+        BACK
+      </button>
 
-        <div className="accountpage-header">
-          <img
-            src={ProfilePlaceholder}
-            alt="Profile"
-            className="accountpage-avatar"
-          />
+      {/* STOPWATCH LAYOUT */}
+      <div className="menu-wrapper">
+        <div className="timer-panel">
+          {/* DISPLAY */}
+          <div className="timer-display">
+            <div className="time-column">
+              <div className="stopwatch-time-part">
+                {String(stopwatchHours).padStart(2, "0")}
+              </div>
+            </div>
 
-          <div className="accountpage-userinfo">
-            <h2>{currentUser?.displayName || "User"}</h2>
+            <span className="time-separator">:</span>
 
-            <p>{currentUser?.email}</p>
+            <div className="time-column">
+              <div className="stopwatch-time-part">
+                {String(stopwatchMinutes).padStart(2, "0")}
+              </div>
+            </div>
+
+            <span className="time-separator">:</span>
+
+            <div className="time-column">
+              <div className="stopwatch-time-part">
+                {String(stopwatchSeconds).padStart(2, "0")}
+              </div>
+            </div>
           </div>
+
+          {/* CONTROLS */}
+          {!isStopwatchRunning &&
+          stopwatchHours === 0 &&
+          stopwatchMinutes === 0 &&
+          stopwatchSeconds === 0 ? (
+            <button
+              className="set-timer-button"
+              onClick={() => {
+                // STOP BASIC TIMER
+                setIsBasicTimerRunning(false);
+                setBasicTimerHours(0);
+                setBasicTimerMinutes(0);
+                setBasicTimerSeconds(0);
+                setActiveDisplay("stopwatch");
+
+                // STOP POMODORO
+                setIsPomodoroRunning(false);
+                setPomodoroHours(0);
+                setPomodoroMinutes(0);
+                setPomodoroSeconds(0);
+
+                // START STOPWATCH
+                setIsStopwatchRunning(true);
+              }}
+            >
+              START
+            </button>
+          ) : (
+            <div className="stopwatch-controls">
+              <button
+                className="timer-control-button"
+                onClick={() => setIsStopwatchRunning(!isStopwatchRunning)}
+              >
+                <img
+                  src={isStopwatchRunning ? PauseIcon : ResumeIcon}
+                  alt="Stopwatch Control"
+                  className="timer-control-icon"
+                />
+              </button>
+
+              <button
+                className="timer-control-button"
+                onClick={() => {
+                  setIsStopwatchRunning(false);
+                  setStopwatchHours(0);
+                  setStopwatchMinutes(0);
+                  setStopwatchSeconds(0);
+                }}
+              >
+                <img src={StopIcon} alt="Stop" className="timer-control-icon" />
+              </button>
+            </div>
+          )}
         </div>
-
-        <div className="accountpage-stats">
-          <div className="accountpage-stat-card">
-            <h3>Focus Time</h3>
-
-            <p>0 Hours</p>
-          </div>
-
-          <div className="accountpage-stat-card">
-            <h3>Pomodoro</h3>
-
-            <p>0 Sessions</p>
-          </div>
-
-          <div className="accountpage-stat-card">
-            <h3>Tasks Done</h3>
-
-            <p>0 Tasks</p>
-          </div>
-        </div>
-
-        <button className="accountpage-logout-button" onClick={handleLogout}>
-          Logout
-        </button>
       </div>
-    </div>
+    </>
   );
 }
 
-export default AccountPage;
+export default StopwatchPage;
 
 
 
+## TimerMenuPage.jsx
+import MenuCard from "../components/MenuCard";
+
+import BasicTimerIcon from "../assets/BasicTimerIcon.png";
+import StopwatchIcon from "../assets/StopwatchIcon.png";
+import PomodoroIcon from "../assets/PomodoroIcon.png";
+
+function TimerMenuPage({ setPage }) {
+  return (
+    <>
+      <div className="menu-overlay" onClick={() => setPage("main")} />
+
+      <button className="back-button" onClick={() => setPage("menu")}>
+        BACK
+      </button>
+
+      <div className="menu-wrapper">
+        <div className="menu-grid">
+          <MenuCard
+            title="BASIC TIMER"
+            icon={BasicTimerIcon}
+            onClick={() => {
+              setPage("basicTimer");
+            }}
+          />
+
+          <MenuCard
+            title="STOPWATCH"
+            icon={StopwatchIcon}
+            onClick={() => {
+              setPage("stopwatch");
+            }}
+          />
+
+          <MenuCard
+            title="POMODORO"
+            icon={PomodoroIcon}
+            onClick={() => {
+              setPage("pomodoro");
+            }}
+          />
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default TimerMenuPage;
 
 
 
-# styles
+## TokoMenuPage.jsx
+function TokoMenuPage({ setPage }) {
+  return (
+    <>
+      <div className="menu-overlay" onClick={() => setPage("main")} />
+
+      <button className="back-button" onClick={() => setPage("menu")}>
+        BACK
+      </button>
+    </>
+  );
+}
+
+export default TokoMenuPage;
+
+
+
+## TugasMenuPage.jsx
+function TugasMenuPage({ setPage }) {
+  return (
+    <>
+      <div className="menu-overlay" onClick={() => setPage("main")} />
+
+      <button className="back-button" onClick={() => setPage("menu")}>
+        BACK
+      </button>
+    </>
+  );
+}
+
+export default TugasMenuPage;
+
+
+# Styles
 ## App.css
+/* Global */
+
 .scene {
   width: 100vw;
   height: 100vh;
 
   position: relative;
-
-  background-image: url("../assets/Background.png");
-
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 }
 
 .corkboard {
@@ -2152,12 +3662,1226 @@ export default AccountPage;
 
   position: absolute;
   top: 150px;
-  left: 80px;
+  left: 120px;
 
   cursor: pointer;
 
   user-select: none;
+
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease,
+    box-shadow 0.25s ease;
+
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.2));
 }
+
+.corkboard:hover {
+  transform: scale(1.05);
+
+  filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.28));
+}
+
+.corkboard:active {
+  transform: scale(1);
+
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.modal-open .corkboard {
+  pointer-events: none;
+}
+
+.modal-open .main-timer-container {
+  pointer-events: none;
+}
+
+.modal-open .login-button {
+  pointer-events: none;
+}
+
+.modal-open .profile-menu-container {
+  pointer-events: none;
+}
+
+/* SCENE RENDERER */
+
+.scene-renderer {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+}
+
+.scene-layer {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  pointer-events: none;
+
+  user-select: none;
+}
+
+
+
+## Button.css
+/* Reuseable Buttons */
+
+.back-button {
+  position: absolute;
+
+  top: 20px;
+  left: 20px;
+
+  z-index: 30;
+
+  padding: 12px 20px;
+
+  font-size: 1rem;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+/* Profile Dropdown & Login Button */
+
+.profile-menu-container {
+  position: relative;
+
+  z-index: 5;
+}
+
+.profile-button {
+  border: none;
+  border-radius: 28px;
+
+  padding: 8px 14px 8px 8px;
+
+  background: #342922;
+
+  backdrop-filter: blur(8px);
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  width: fit-content;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  transition:
+    filter 0.15s ease,
+    transform 0.05s ease;
+}
+
+.profile-button:hover {
+  filter: brightness(1.1);
+}
+
+.profile-image {
+  width: 56px;
+  height: 56px;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+
+  border: 2px solid #faebd8;
+
+  flex-shrink: 0;
+}
+
+.profile-username {
+  color: white;
+
+  font-size: 1.1rem;
+  font-weight: 500;
+
+  white-space: nowrap;
+}
+
+.profile-arrow-icon {
+  width: 20px;
+  height: 20px;
+
+  object-fit: contain;
+
+  opacity: 0.85;
+
+  transition: transform 0.15s ease;
+}
+
+.profile-arrow-open {
+  transform: rotate(180deg);
+}
+
+.profile-dropdown {
+  margin-top: 20px;
+
+  width: 180px;
+
+  background-color: white;
+
+  border-radius: 16px;
+
+  overflow: hidden;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+  display: flex;
+  flex-direction: column;
+
+  position: absolute;
+
+  top: 70px;
+  right: 0;
+}
+
+.profile-dropdown-item {
+  border: none;
+
+  background: white;
+
+  padding: 14px;
+
+  text-align: left;
+
+  font-size: 1rem;
+
+  cursor: pointer;
+
+  transition: background-color 0.15s ease;
+}
+
+.profile-dropdown-item:hover {
+  background-color: #f3f3f3;
+}
+
+.profile-dropdown-item-logout {
+  border: none;
+
+  background: white;
+
+  padding: 14px;
+
+  text-align: left;
+
+  font-size: 1rem;
+
+  cursor: pointer;
+
+  transition: background-color 0.15s ease;
+
+  color: #e45f5f;
+}
+
+.profile-dropdown-item-logout:hover {
+  background-color: #f3f3f3;
+
+  color: #e45f5f;
+}
+
+.login-button {
+  padding: 14px 28px;
+
+  min-width: 140px;
+
+  border: none;
+  border-radius: 18px;
+
+  background-color: #f07c7c;
+
+  color: white;
+
+  font-size: 1.1rem;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition:
+    filter 0.15s ease,
+    transform 0.05s ease;
+}
+
+.login-button:hover {
+  filter: brightness(0.94);
+}
+
+.login-button:active {
+  filter: brightness(0.82);
+
+  transform: scale(0.97);
+}
+
+.auth-buttons {
+  position: absolute;
+
+  top: 20px;
+  right: 20px;
+
+  display: flex;
+
+  gap: 14px;
+
+  z-index: 5;
+}
+
+.register-button {
+  padding: 14px 28px;
+
+  min-width: 140px;
+
+  border: none;
+  border-radius: 18px;
+
+  background-color: #f07c7c;
+
+  color: white;
+
+  font-size: 1.1rem;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition:
+    filter 0.15s ease,
+    transform 0.05s ease;
+}
+
+.register-button:hover {
+  filter: brightness(0.94);
+}
+
+.register-button:active {
+  filter: brightness(0.82);
+
+  transform: scale(0.97);
+}
+
+/* CUSTOMIZATION BUTTON */
+
+.top-right-ui {
+  position: absolute;
+
+  top: 20px;
+  right: 25px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  z-index: 5;
+}
+
+.customization-button {
+  width: 70px;
+  height: 70px;
+
+  border: 2px solid #342922;
+  border-radius: 22px;
+
+  background: #342922;
+
+  backdrop-filter: blur(8px);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.customization-button:hover {
+  transform: scale(1.06);
+
+  filter: brightness(1.1);
+}
+
+.customization-button:active {
+  transform: scale(1);
+}
+
+.customization-icon {
+  width: 40px;
+  height: 40px;
+
+  object-fit: contain;
+
+  opacity: 0.92;
+}
+
+
+## Customization.css
+/* CUSTOMIZATION PAGE */
+
+.customization-wrapper {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 8;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+
+  pointer-events: none;
+}
+
+.customization-sidebar {
+  position: relative;
+
+  pointer-events: auto;
+
+  width: calc(100% - 36px);
+  height: 300px;
+
+  margin-bottom: 18px;
+
+  border-radius: 26px;
+
+  background: rgba(28, 18, 14, 0.92);
+
+  backdrop-filter: blur(16px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  padding: 0 26px 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 20px;
+
+  transform: translateY(0);
+
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+/* CATEGORY ROW */
+
+.customization-categories {
+  display: flex;
+  align-items: center;
+
+  gap: 0;
+
+  overflow-x: auto;
+
+  scrollbar-width: none;
+
+  padding-bottom: 4px;
+}
+
+.customization-categories::-webkit-scrollbar {
+  display: none;
+}
+
+/* CATEGORY BUTTON */
+
+.customization-category-button {
+  flex-shrink: 0;
+
+  border: none;
+
+  background: transparent;
+
+  width: 96px;
+  height: 74px;
+
+  padding: 0;
+
+  border-radius: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  gap: 5px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease;
+
+  position: relative;
+}
+
+.customization-category-button:last-child {
+  margin-right: 0;
+}
+
+.customization-category-button:hover {
+  background-color: rgba(36, 22, 18, 0.75);
+}
+
+/* CATEGORY ICON */
+
+.customization-category-icon {
+  width: 22px;
+  height: 22px;
+
+  object-fit: contain;
+
+  opacity: 0.9;
+
+  filter: brightness(0) invert(1);
+
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+.customization-category-button:hover .customization-category-icon {
+  opacity: 1;
+
+  transform: scale(1.06);
+}
+
+/* CATEGORY TEXT */
+
+.customization-category-text {
+  color: white;
+
+  font-size: 0.74rem;
+  font-weight: 500;
+
+  white-space: nowrap;
+}
+
+/* EMPTY ITEMS AREA */
+
+.customization-items-empty {
+  flex: 1;
+
+  border-radius: 18px;
+
+  border: 2px dashed rgba(255, 255, 255, 0.08);
+
+  background: rgba(255, 255, 255, 0.02);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: rgba(255, 255, 255, 0.5);
+
+  font-size: 1rem;
+}
+
+.customization-items-row {
+  display: flex;
+
+  gap: 16px;
+
+  overflow-x: auto;
+
+  scrollbar-width: none;
+
+  padding-bottom: 4px;
+}
+
+.customization-items-row::-webkit-scrollbar {
+  display: none;
+}
+
+/* OPEN/CLOSE ANIMATION */
+
+.customization-sidebar-open {
+  animation: customizationSlideUp 0.3s ease;
+}
+
+.customization-sidebar-close {
+  transform: translateY(120%);
+
+  opacity: 0;
+}
+
+/* KEYFRAMES */
+
+@keyframes customizationSlideUp {
+  from {
+    transform: translateY(120%);
+
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+
+    opacity: 1;
+  }
+}
+
+/* CLOSE BUTTON */
+
+.customization-close-button {
+  position: absolute;
+
+  top: -22px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: 52px;
+  height: 52px;
+
+  border: none;
+  border-radius: 18px;
+
+  background: rgba(28, 18, 14, 0.96);
+
+  backdrop-filter: blur(12px);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease;
+
+  z-index: 50;
+}
+
+.customization-close-button:hover {
+  transform: translateX(-50%) scale(1.06);
+
+  filter: brightness(1.08);
+}
+
+.customization-close-button:active {
+  transform: translateX(-50%) scale(0.94);
+}
+
+.customization-close-icon {
+  width: 22px;
+  height: 22px;
+
+  object-fit: contain;
+
+  filter: brightness(0) invert(1);
+
+  opacity: 0.9;
+}
+
+/* ACTIVE CATEGORY */
+
+.customization-category-button-active {
+  position: relative;
+
+  background-color: rgba(24, 14, 12, 0.96);
+}
+
+.customization-category-button-active .customization-category-text {
+  color: #ff8c7a;
+}
+
+.customization-category-button-active .customization-category-icon {
+  filter: brightness(0) saturate(100%) invert(67%) sepia(32%) saturate(714%)
+    hue-rotate(320deg) brightness(101%) contrast(101%);
+
+  opacity: 1;
+}
+
+.customization-category-button-active::after {
+  content: "";
+
+  position: absolute;
+
+  bottom: 2px;
+  left: 0;
+
+  width: 100%;
+  height: 3px;
+
+  background-color: #ff8c7a;
+}
+
+/* DIVIDER */
+
+.customization-divider {
+  width: calc(100% + 52px);
+
+  height: 1px;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  margin-left: -26px;
+
+  margin-top: -28px;
+}
+
+/* ITEM CARD */
+
+.item-card {
+  width: 150px;
+  min-height: 160px;
+
+  border: none;
+  border-radius: 22px;
+
+  background: rgba(255, 255, 255, 0.06);
+
+  padding: 14px 12px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease,
+    border-color 0.15s ease;
+
+  flex-shrink: 0;
+}
+
+/* SELECTED */
+
+.item-card-selected {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* IMAGE */
+
+.item-card-image-wrapper {
+  width: 100%;
+  height: 90px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-bottom: 14px;
+}
+
+.item-card-image {
+  max-width: 100%;
+  max-height: 100%;
+
+  object-fit: contain;
+}
+
+/* NAME */
+
+.item-card-name {
+  color: white;
+
+  font-size: 0.95rem;
+  font-weight: 500;
+
+  text-align: center;
+
+  margin-bottom: 12px;
+}
+
+/* STATUS */
+
+.item-card-status {
+  margin-top: auto;
+}
+
+/* EQUIPPED */
+
+.item-card-equipped {
+  background: #6cc46c;
+
+  color: white;
+
+  font-size: 0.82rem;
+  font-weight: 600;
+
+  padding: 6px 12px;
+
+  border-radius: 999px;
+}
+
+/* OWNED */
+
+.item-card-owned {
+  color: #ffd27a;
+
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* LOCKED */
+
+.item-card-locked {
+  color: rgba(255, 255, 255, 0.55);
+
+  font-size: 0.8rem;
+}
+
+
+
+## LoginRegister.css
+/* LoginRegister */
+
+/* Reuseable */
+
+.login-wrapper {
+  position: absolute;
+  inset: 0;
+
+  z-index: 20;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-input {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  border-radius: 999px;
+  border: 5px solid #f07c7c;
+
+  outline: none;
+
+  padding: 14px 22px;
+  font-size: 1rem;
+
+  margin-bottom: 20px;
+
+  background-color: #f5f5f5;
+}
+
+/* LOGIN PAGE */
+
+.login-panel {
+  width: 380px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-title {
+  font-size: 2.8rem;
+
+  color: #d17b00;
+
+  margin-bottom: 12px;
+}
+
+.login-subtitle {
+  color: #e8e8e8;
+
+  font-size: 1rem;
+
+  text-align: center;
+
+  margin-bottom: 18px;
+}
+
+.google-label {
+  color: white;
+
+  font-size: 1rem;
+  font-weight: bold;
+
+  margin-bottom: 8px;
+}
+
+.google-login-button {
+  width: 100%;
+
+  padding: 12px;
+  font-size: 1rem;
+
+  border: none;
+  border-radius: 10px;
+
+  background-color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+
+  cursor: pointer;
+
+  margin-bottom: 18px;
+
+  transition: filter 0.15s ease;
+}
+
+.google-login-button:hover {
+  filter: brightness(0.95);
+}
+
+.google-login-button:active {
+  filter: brightness(0.9);
+}
+
+.google-logo {
+  width: 22px;
+  height: 22px;
+
+  object-fit: contain;
+}
+
+.login-divider {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  color: white;
+
+  font-size: 1rem;
+
+  margin-bottom: 10px;
+}
+
+.divider-line {
+  flex: 1;
+
+  height: 2px;
+
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.input-group {
+  width: 100%;
+
+  margin-bottom: 0px;
+}
+
+.input-label {
+  color: white;
+
+  font-size: 1rem;
+
+  margin-bottom: 10px;
+}
+
+.login-input {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 12px 20px;
+  font-size: 1rem;
+
+  border-radius: 999px;
+  border: 5px solid #f07c7c;
+
+  outline: none;
+
+  background-color: #f5f5f5;
+}
+
+.login-options-row {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 2px;
+  margin-bottom: 18px;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  color: white;
+
+  font-size: 1rem;
+}
+
+.remember-me input {
+  width: 22px;
+  height: 22px;
+}
+
+.forgot-password-button {
+  border: none;
+  background: transparent;
+
+  color: #ff8b8b;
+
+  font-size: 1rem;
+
+  cursor: pointer;
+}
+
+.login-register-text {
+  margin-top: 20px;
+
+  color: white;
+
+  font-size: 1rem;
+}
+
+.login-register-link {
+  color: #4ea3ff;
+
+  cursor: pointer;
+}
+
+.login-submit-button {
+  align-self: center;
+
+  border: none;
+  border-radius: 20px;
+
+  background-color: #f07c7c;
+
+  color: white;
+
+  font-size: 1.2rem;
+  padding: 12px 42px;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: filter 0.15s ease;
+}
+
+.login-submit-button:hover {
+  filter: brightness(0.95);
+}
+
+.login-submit-button:active {
+  filter: brightness(0.85);
+}
+
+/* Register Page */
+
+.register-panel {
+  width: 360px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.register-title {
+  font-size: 2.8rem;
+
+  color: #d17b00;
+
+  margin-bottom: 10px;
+}
+
+.register-subtitle {
+  color: #e0e0e0;
+
+  font-size: 1rem;
+
+  margin-bottom: 15px;
+}
+
+.register-input-group {
+  width: 100%;
+
+  margin-bottom: -8px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.register-label {
+  width: 100%;
+
+  color: #f0f0f0;
+
+  font-size: 1rem;
+
+  margin-bottom: 8px;
+}
+
+.register-submit-button {
+  align-self: center;
+
+  margin-top: 6px;
+
+  font-size: 1.2rem;
+  padding: 12px 42px;
+
+  border: none;
+  border-radius: 20px;
+
+  background-color: #f07c7c;
+
+  color: white;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: filter 0.15s ease;
+}
+
+.register-submit-button:hover {
+  filter: brightness(0.95);
+}
+
+.register-submit-button:active {
+  filter: brightness(0.85);
+}
+
+.register-login-text {
+  width: 100%;
+
+  text-align: center;
+
+  color: #f0f0f0;
+
+  font-size: 1rem;
+
+  margin-top: 20px;
+}
+
+.register-login-link {
+  color: #4ea3ff;
+
+  cursor: pointer;
+}
+
+/* Password Visibility */
+
+.password-input-wrapper {
+  position: relative;
+
+  width: 100%;
+}
+
+.password-visibility-button {
+  position: absolute;
+
+  top: calc(50% - 10px);
+  right: 28px;
+
+  transform: translateY(-50%);
+
+  border: none;
+  background: transparent;
+
+  padding: 0;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-visibility-icon {
+  width: 28px;
+  height: 28px;
+
+  object-fit: contain;
+
+  opacity: 0.7;
+
+  transition: opacity 0.15s ease;
+}
+
+.password-visibility-button:hover .password-visibility-icon {
+  opacity: 1;
+}
+
+/* =========================
+   LOGIN & REGISTER RESPONSIVE
+========================= */
+
+/* Monitor besar */
+@media (min-width: 1600px) {
+  .login-panel,
+  .register-panel {
+    transform: scale(1.3);
+  }
+}
+
+/* Monitor sangat besar */
+@media (min-width: 2200px) {
+  .login-panel,
+  .register-panel {
+    transform: scale(1.5);
+  }
+}
+
+/* Laptop kecil */
+@media (max-width: 900px) {
+  .login-panel,
+  .register-panel {
+    transform: scale(0.95);
+  }
+}
+
+/* Tablet / layar kecil */
+@media (max-width: 700px) {
+  .login-panel,
+  .register-panel {
+    transform: scale(0.85);
+  }
+}
+
+/* HP */
+@media (max-width: 500px) {
+  .login-panel,
+  .register-panel {
+    transform: scale(0.75);
+  }
+}
+
+
+
+## Menu.css
+/* Menu */
 
 .menu-card {
   width: 260px;
@@ -2247,21 +4971,731 @@ export default AccountPage;
   transform: scale(0.9);
 }
 
-.back-button {
+@media (min-width: 1600px) {
+  .menu-grid {
+    transform: scale(1.1);
+  }
+}
+
+@media (max-width: 1200px) {
+  .menu-grid {
+    transform: scale(0.8);
+  }
+}
+
+@media (max-width: 900px) {
+  .menu-grid {
+    transform: scale(0.7);
+  }
+}
+
+
+
+## Profile.css
+/* Profile Page */
+
+.profilepage-wrapper {
+  position: absolute;
+  inset: 0;
+
+  z-index: 20;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profilepage-container {
+  width: 900px;
+  height: 550px;
+
+  background-color: #f8efe5;
+
+  border-radius: 36px;
+
+  overflow: hidden;
+
+  display: flex;
+
+  position: relative;
+
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.profilepage-close-button {
   position: absolute;
 
-  top: 20px;
-  left: 20px;
+  top: 7px;
+  right: 30px;
 
-  z-index: 30;
+  border: none;
+  background: none;
 
-  padding: 12px 20px;
+  font-size: 42px;
 
-  font-size: 1rem;
+  cursor: pointer;
+
+  color: #3f2d20;
+
+  z-index: 5;
+
+  transition: filter 0.15s ease;
+}
+
+.profilepage-close-button:hover {
+  filter: brightness(1.35);
+}
+
+.profilepage-sidebar {
+  width: 240px;
+
+  background: linear-gradient(to bottom, #f5e3cc, #efd9bb);
+
+  padding: 32px 24px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profilepage-avatar {
+  width: 115px;
+  height: 115px;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+
+  border: 3px solid white;
+
+  margin-bottom: 14px;
+}
+
+.profilepage-username {
+  font-size: 20px;
+
+  color: #2f241d;
+
+  margin-bottom: 10px;
+
+  width: 100%;
+
+  text-align: center;
+
+  line-height: 1.1;
+
+  word-break: break-word;
+}
+
+.profilepage-email {
+  font-size: 14px;
+
+  color: rgba(0, 0, 0, 0.6);
+
+  margin-bottom: 24px;
+}
+
+.profilepage-badge {
+  background-color: #ffe5a8;
+
+  padding: 8px 18px;
+
+  border-radius: 999px;
+
+  font-size: 15px;
+  font-weight: bold;
+
+  color: #7c5a00;
+
+  margin-top: -8px;
+  margin-bottom: 22px;
+}
+
+.profilepage-sidebar-menu {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+
+  margin-top: -6px;
+}
+
+.profilepage-sidebar-item {
+  border: none;
+
+  background: transparent;
+
+  padding: 10px 14px;
+
+  border-radius: 18px;
+
+  text-align: left;
+
+  font-size: 15px;
+
+  cursor: pointer;
+
+  transition: background-color 0.15s ease;
+}
+
+.profilepage-sidebar-item:hover {
+  background-color: rgba(255, 255, 255, 0.45);
+}
+
+.profilepage-sidebar-item.active {
+  background-color: white;
+}
+
+.profilepage-content {
+  flex: 1;
+
+  padding: 24px 32px 32px 32px;
+}
+
+.profilepage-title {
+  font-size: 22px;
+
+  color: #2f241d;
+
+  margin-bottom: 4px;
+}
+
+.profilepage-subtitle {
+  font-size: 13px;
+
+  color: rgba(0, 0, 0, 0.65);
+
+  margin-bottom: 8px;
+}
+
+.profilepage-info-box {
+  border: 2px solid #e6d5c3;
+
+  border-radius: 26px;
+
+  padding: 20px;
+
+  margin-bottom: 24px;
+}
+
+.profilepage-info-row {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  margin-bottom: 16px;
+
+  font-size: 13px;
+}
+
+.profilepage-info-row:last-child {
+  margin-bottom: 0;
+}
+
+.profilepage-info-icon {
+  width: 20px;
+  height: 20px;
+
+  object-fit: contain;
+}
+
+.profilepage-info-row span {
+  width: 180px;
+
+  color: #5a5149;
+
+  flex-shrink: 0;
+}
+
+.profilepage-info-row p {
+  font-weight: bold;
+
+  color: #2f241d;
+  flex: 1;
+  margin: 0;
+
+  word-break: break-word;
+}
+
+.profilepage-section-title {
+  font-size: 18px;
+
+  color: #2f241d;
+
+  margin-bottom: 10px;
+
+  margin-top: -8px;
+}
+
+.profilepage-stats {
+  display: flex;
+
+  gap: 12px;
+
+  margin-bottom: 24px;
+}
+
+.profilepage-stat-card {
+  flex: 1;
+
+  background-color: white;
+
+  border-radius: 18px;
+
+  padding: 16px;
+
+  text-align: center;
+}
+
+.profilepage-stat-icon {
+  width: 42px;
+  height: 42px;
+
+  object-fit: contain;
+
+  margin-bottom: 16px;
+}
+
+.profilepage-stat-card h3 {
+  font-size: 14px;
+
+  color: #4a4037;
+
+  margin-bottom: 10px;
+}
+
+.profilepage-stat-card p {
+  font-size: 20px;
+  font-weight: bold;
+
+  color: #2f241d;
+
+  margin-bottom: 6px;
+}
+
+.profilepage-stat-card span {
+  font-size: 12px;
+
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.profilepage-achievement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 18px;
+}
+
+.profilepage-achievement-box {
+  height: 120px;
+
+  border: 2px dashed #d7c3ae;
+
+  border-radius: 26px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+
+  margin-bottom: 40px;
+}
+
+.profilepage-achievement-placeholder {
+  width: 42px;
+
+  margin-bottom: 16px;
+}
+
+.profilepage-achievement-box p {
+  font-size: 16px;
+
+  color: #2f241d;
+
+  margin-bottom: 8px;
+}
+
+.profilepage-achievement-box span {
+  font-size: 12px;
+
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.profilepage-bottom-buttons {
+  display: flex;
+
+  gap: 16px;
+
+  margin-top: -8px;
+}
+
+.profilepage-edit-button,
+.profilepage-logout-button {
+  width: calc(50% - 8px);
+
+  border: none;
+
+  border-radius: 22px;
+
+  padding: 12px;
+
+  font-size: 14px;
   font-weight: bold;
 
   cursor: pointer;
 }
+
+.profilepage-edit-button {
+  background-color: white;
+
+  color: #2f241d;
+}
+
+.profilepage-logout-button {
+  background-color: #f07c7c;
+
+  color: white;
+}
+
+/* EDIT PROFILE */
+
+.editprofile-grid {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 14px;
+
+  margin-top: -5px;
+}
+
+.editprofile-card {
+  border: 2px solid #e6d5c3;
+
+  border-radius: 24px;
+
+  padding: 16px;
+
+  background-color: transparent;
+
+  min-height: 185px;
+}
+
+.editprofile-card h2 {
+  font-size: 18px;
+
+  color: #2f241d;
+
+  margin-bottom: 6px;
+}
+
+.editprofile-card p {
+  font-size: 13px;
+
+  color: rgba(0, 0, 0, 0.6);
+
+  margin-bottom: 14px;
+}
+
+.editprofile-input {
+  width: 100%;
+
+  height: 48px;
+
+  border-radius: 16px;
+
+  border: 2px solid #e6d5c3;
+
+  padding: 0 14px;
+
+  font-size: 14px;
+
+  background-color: white;
+
+  outline: none;
+}
+
+.editprofile-textarea {
+  width: 100%;
+  height: 90px;
+
+  border-radius: 16px;
+
+  border: 2px solid #e6d5c3;
+
+  padding: 14px;
+
+  font-size: 14px;
+
+  resize: none;
+
+  background-color: white;
+
+  outline: none;
+}
+
+.editprofile-header {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 14px;
+
+  margin-bottom: 10px;
+}
+
+.editprofile-back-button {
+  border: none;
+  background: transparent;
+
+  cursor: pointer;
+
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: filter 0.15s ease;
+}
+
+.editprofile-back-button:hover {
+  filter: brightness(1.2);
+}
+
+.editprofile-back-button img {
+  width: 34px;
+  height: 34px;
+
+  object-fit: contain;
+
+  margin-top: -5px;
+}
+
+.editprofile-save-header-button {
+  margin-left: auto;
+
+  border: none;
+
+  border-radius: 14px;
+
+  padding: 10px 18px;
+
+  font-size: 14px;
+  font-weight: bold;
+
+  background-color: #d3d3d3;
+
+  color: white;
+
+  cursor: default;
+
+  transition:
+    background-color 0.15s ease,
+    filter 0.15s ease;
+}
+
+.editprofile-save-header-button.active {
+  background-color: #6dbb75;
+
+  cursor: pointer;
+}
+
+.editprofile-save-header-button.active:hover {
+  filter: brightness(1.08);
+}
+
+.editprofile-picture-card {
+  grid-column: span 2;
+
+  border: 2px solid #e6d5c3;
+
+  border-radius: 24px;
+
+  padding: 18px;
+
+  background-color: transparent;
+}
+
+.editprofile-picture-header h2 {
+  font-size: 18px;
+
+  color: #2f241d;
+
+  margin-bottom: 6px;
+}
+
+.editprofile-picture-header p {
+  font-size: 13px;
+
+  color: rgba(0, 0, 0, 0.6);
+
+  margin-bottom: 18px;
+}
+
+.editprofile-picture-content {
+  display: flex;
+  align-items: center;
+
+  gap: 18px;
+}
+
+.editprofile-picture-preview {
+  width: 140px;
+  height: 140px;
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  flex-shrink: 0;
+
+  background-color: white;
+
+  border: 2px solid #e6d5c3;
+}
+
+.editprofile-picture-preview-image {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.editprofile-upload-box {
+  position: relative;
+  overflow: hidden;
+
+  flex: 1;
+
+  height: 140px;
+
+  border: 2px dashed #d7c3ae;
+
+  border-radius: 20px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  gap: 8px;
+
+  font-weight: bold;
+  font-size: 20px;
+
+  color: #7c5a00;
+
+  background-color: rgba(255, 255, 255, 0.4);
+
+  cursor: pointer;
+}
+
+.editprofile-upload-box span {
+  font-size: 11px;
+  font-weight: normal;
+
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.editprofile-upload-icon {
+  width: 32px;
+  height: 32px;
+
+  object-fit: contain;
+
+  margin-bottom: 4px;
+}
+
+.editprofile-upload-box p {
+  font-size: 15px;
+  font-weight: bold;
+
+  color: #2f241d;
+}
+
+.profilepage-warning-text {
+  color: #e45b5b !important;
+
+  font-size: 12px;
+
+  font-weight: 500;
+
+  margin-top: 8px;
+}
+
+/* =========================
+   PROFILE RESPONSIVE
+========================= */
+
+/* Monitor besar */
+@media (min-width: 1600px) {
+  .profilepage-container {
+    transform: scale(1.35);
+  }
+}
+
+/* Monitor sangat besar */
+@media (min-width: 2200px) {
+  .profilepage-container {
+    transform: scale(1.55);
+  }
+}
+
+/* Laptop kecil */
+@media (max-width: 1200px) {
+  .profilepage-container {
+    transform: scale(0.9);
+  }
+}
+
+/* Laptop lebih kecil */
+@media (max-width: 1000px) {
+  .profilepage-container {
+    transform: scale(0.8);
+  }
+}
+
+/* Tablet */
+@media (max-width: 850px) {
+  .profilepage-container {
+    transform: scale(0.7);
+  }
+}
+
+/* HP besar */
+@media (max-width: 650px) {
+  .profilepage-container {
+    transform: scale(0.58);
+  }
+}
+
+/* HP kecil */
+@media (max-width: 500px) {
+  .profilepage-container {
+    transform: scale(0.48);
+  }
+}
+
+.editprofile-file-input {
+  position: absolute;
+
+  inset: 0;
+
+  opacity: 0;
+
+  cursor: pointer;
+}
+
+
+
+## Timer.css
+/* Timer */
 
 .timer-panel {
   pointer-events: auto;
@@ -2319,24 +5753,6 @@ export default AccountPage;
 
 .time-part.selected {
   background-color: rgba(0, 0, 0, 0.14);
-}
-
-@media (min-width: 1600px) {
-  .menu-grid {
-    transform: scale(1.1);
-  }
-}
-
-@media (max-width: 1200px) {
-  .menu-grid {
-    transform: scale(0.8);
-  }
-}
-
-@media (max-width: 900px) {
-  .menu-grid {
-    transform: scale(0.7);
-  }
 }
 
 .time-column {
@@ -2594,790 +6010,6 @@ export default AccountPage;
   font-weight: bold;
 }
 
-/* PROFILE MENU */
-
-.profile-menu-container {
-  position: absolute;
-
-  top: 20px;
-  right: 20px;
-
-  z-index: 5;
-}
-
-.profile-button {
-  border: none;
-
-  background-color: transparent;
-
-  cursor: pointer;
-
-  padding: 0;
-
-  transition:
-    filter 0.15s ease,
-    transform 0.05s ease;
-}
-
-.profile-button:hover {
-  filter: brightness(0.9);
-}
-
-.profile-button:active {
-  filter: brightness(0.9);
-}
-
-.profile-image {
-  width: 70px;
-  height: 70px;
-
-  border-radius: 50%;
-
-  object-fit: cover;
-}
-
-.profile-dropdown {
-  margin-top: 10px;
-
-  width: 180px;
-
-  background-color: white;
-
-  border-radius: 16px;
-
-  overflow: hidden;
-
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-
-  display: flex;
-  flex-direction: column;
-
-  position: absolute;
-
-  top: 70px;
-  right: 0;
-}
-
-.profile-dropdown-item {
-  border: none;
-
-  background: white;
-
-  padding: 14px;
-
-  text-align: left;
-
-  font-size: 1rem;
-
-  cursor: pointer;
-
-  transition: background-color 0.15s ease;
-}
-
-.profile-dropdown-item:hover {
-  background-color: #f3f3f3;
-}
-
-/* LOGIN BUTTON */
-
-.login-button {
-  position: absolute;
-
-  top: 20px;
-  right: 20px;
-
-  z-index: 5;
-
-  padding: 14px 28px;
-
-  border: none;
-  border-radius: 18px;
-
-  background-color: #f07c7c;
-
-  color: white;
-
-  font-size: 1.1rem;
-  font-weight: bold;
-
-  cursor: pointer;
-
-  transition:
-    filter 0.15s ease,
-    transform 0.05s ease;
-}
-
-.login-button:hover {
-  filter: brightness(0.94);
-}
-
-.login-button:active {
-  filter: brightness(0.82);
-
-  transform: scale(0.97);
-}
-
-/* MODAL OPEN */
-
-.modal-open .corkboard {
-  pointer-events: none;
-}
-
-.modal-open .main-timer-container {
-  pointer-events: none;
-}
-
-.modal-open .login-button {
-  pointer-events: none;
-}
-
-.modal-open .profile-menu-container {
-  pointer-events: none;
-}
-
-/* LOGIN PAGE */
-
-.login-wrapper {
-  position: absolute;
-  inset: 0;
-
-  z-index: 20;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.login-panel {
-  width: 420px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.login-title {
-  font-size: 3.8rem;
-  color: #d17b00;
-
-  margin-bottom: 20px;
-}
-
-.login-subtitle {
-  color: #ddd;
-
-  font-size: 1.1rem;
-
-  margin-bottom: 20px;
-}
-
-.social-login-row {
-  display: flex;
-  gap: 20px;
-
-  margin-bottom: 30px;
-}
-
-.social-button {
-  width: 48px;
-  height: 48px;
-
-  border-radius: 50%;
-  border: none;
-
-  font-size: 1.5rem;
-
-  cursor: pointer;
-
-  transition: filter 0.15s ease;
-}
-
-.social-button:hover {
-  filter: brightness(0.9);
-}
-
-.login-input {
-  width: 100%;
-
-  box-sizing: border-box;
-
-  border-radius: 999px;
-  border: 5px solid #f07c7c;
-
-  outline: none;
-
-  padding: 14px 22px;
-  font-size: 1rem;
-
-  margin-bottom: 20px;
-
-  background-color: #f5f5f5;
-}
-
-.login-submit-button {
-  padding: 12px 28px;
-
-  border: none;
-  border-radius: 20px;
-
-  background-color: #f07c7c;
-
-  color: white;
-
-  font-size: 1.2rem;
-  font-weight: bold;
-
-  cursor: pointer;
-
-  transition: filter 0.15s ease;
-}
-
-.login-submit-button:hover {
-  filter: brightness(1.1);
-}
-
-.login-submit-button:active {
-  filter: brightness(0.9);
-}
-
-.register-link {
-  margin-top: 16px;
-
-  border: none;
-  background: transparent;
-
-  color: #4ea3ff;
-
-  font-size: 1rem;
-
-  cursor: pointer;
-}
-
-/* REGISTER PAGE */
-
-.register-panel {
-  width: 400px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.register-title {
-  font-size: 2.8rem;
-
-  color: #d17b00;
-
-  margin-bottom: 10px;
-}
-
-.register-subtitle {
-  color: #e0e0e0;
-
-  font-size: 1rem;
-
-  margin-bottom: 15px;
-}
-
-.register-input-group {
-  width: 100%;
-
-  margin-bottom: -8px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.register-label {
-  width: 100%;
-
-  color: #f0f0f0;
-
-  font-size: 1rem;
-
-  margin-bottom: 8px;
-}
-
-.register-submit-button {
-  align-self: center;
-
-  margin-top: 10px;
-
-  font-size: 1.2rem;
-  padding: 12px 42px;
-
-  border: none;
-  border-radius: 20px;
-
-  background-color: #f07c7c;
-
-  color: white;
-
-  font-weight: bold;
-
-  cursor: pointer;
-
-  transition: filter 0.15s ease;
-}
-
-.register-submit-button:hover {
-  filter: brightness(0.95);
-}
-
-.register-submit-button:active {
-  filter: brightness(0.85);
-}
-
-.register-login-text {
-  width: 100%;
-
-  text-align: center;
-
-  color: #f0f0f0;
-
-  font-size: 1rem;
-
-  margin-top: 20px;
-}
-
-.register-login-link {
-  color: #ff7f7f;
-
-  cursor: pointer;
-}
-
-/* MODERN LOGIN PAGE */
-
-.modern-login-panel {
-  width: 400px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.modern-login-title {
-  font-size: 3.2rem;
-
-  color: #d17b00;
-
-  margin-bottom: 12px;
-}
-
-.modern-login-subtitle {
-  color: #e8e8e8;
-
-  font-size: 1rem;
-
-  text-align: center;
-
-  margin-bottom: 18px;
-}
-
-.modern-google-label {
-  color: white;
-
-  font-size: 1rem;
-  font-weight: bold;
-
-  margin-bottom: 8px;
-}
-
-.google-login-button {
-  width: 100%;
-
-  padding: 12px;
-  font-size: 1rem;
-
-  border: none;
-  border-radius: 10px;
-
-  background-color: white;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-
-  cursor: pointer;
-
-  margin-bottom: 18px;
-
-  transition: filter 0.15s ease;
-}
-
-.google-login-button:hover {
-  filter: brightness(0.95);
-}
-
-.google-login-button:active {
-  filter: brightness(0.9);
-}
-
-.google-logo {
-  font-weight: bold;
-
-  color: #4285f4;
-}
-
-.login-divider {
-  width: 100%;
-
-  display: flex;
-  align-items: center;
-  gap: 16px;
-
-  color: white;
-
-  font-size: 1rem;
-
-  margin-bottom: 10px;
-}
-
-.divider-line {
-  flex: 1;
-
-  height: 2px;
-
-  background-color: rgba(255, 255, 255, 0.5);
-}
-
-.modern-input-group {
-  width: 100%;
-
-  margin-bottom: 14px;
-}
-
-.modern-input-label {
-  color: white;
-
-  font-size: 1rem;
-
-  margin-bottom: 10px;
-}
-
-.modern-login-input {
-  width: 100%;
-
-  box-sizing: border-box;
-
-  padding: 14px 22px;
-  font-size: 1rem;
-
-  border-radius: 999px;
-  border: 5px solid #f07c7c;
-
-  outline: none;
-
-  background-color: #f5f5f5;
-}
-
-.login-options-row {
-  width: 100%;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  margin-top: 2px;
-  margin-bottom: 18px;
-}
-
-.remember-me {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  color: white;
-
-  font-size: 1rem;
-}
-
-.remember-me input {
-  width: 22px;
-  height: 22px;
-}
-
-.forgot-password-button {
-  border: none;
-  background: transparent;
-
-  color: #ff8b8b;
-
-  font-size: 1rem;
-
-  cursor: pointer;
-}
-
-.modern-login-button {
-  border: none;
-  border-radius: 20px;
-
-  background-color: #f07c7c;
-
-  color: white;
-
-  font-size: 1.2rem;
-  padding: 12px 42px;
-
-  font-weight: bold;
-
-  cursor: pointer;
-
-  transition: filter 0.15s ease;
-}
-
-.modern-login-button:hover {
-  filter: brightness(0.95);
-}
-
-.modern-login-button:active {
-  filter: brightness(0.85);
-}
-
-.login-register-text {
-  margin-top: 20px;
-
-  color: white;
-
-  font-size: 1rem;
-}
-
-.login-register-link {
-  color: #4ea3ff;
-
-  cursor: pointer;
-}
-
-/* PASSWORD VISIBILITY */
-
-.password-input-wrapper {
-  position: relative;
-
-  width: 100%;
-}
-
-.password-visibility-button {
-  position: absolute;
-
-  top: 50%;
-  right: 28px;
-
-  transform: translateY(-50%);
-
-  border: none;
-  background: transparent;
-
-  padding: 0;
-
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.password-visibility-icon {
-  width: 28px;
-  height: 28px;
-
-  object-fit: contain;
-
-  opacity: 0.7;
-
-  transition: opacity 0.15s ease;
-}
-
-.password-visibility-button:hover .password-visibility-icon {
-  opacity: 1;
-}
-
-/* REGISTER PASSWORD ICON FIX */
-
-.register-panel .password-visibility-button {
-  top: calc(50% - 10px);
-}
-
-/* =========================
-   LOGIN & REGISTER RESPONSIVE
-========================= */
-
-/* Monitor besar */
-@media (min-width: 1600px) {
-  .modern-login-panel,
-  .register-panel {
-    transform: scale(1.1);
-  }
-}
-
-/* Monitor sangat besar */
-@media (min-width: 2200px) {
-  .modern-login-panel,
-  .register-panel {
-    transform: scale(1.5);
-  }
-}
-
-/* Laptop kecil */
-@media (max-width: 900px) {
-  .modern-login-panel,
-  .register-panel {
-    transform: scale(0.95);
-  }
-}
-
-/* Tablet / layar kecil */
-@media (max-width: 700px) {
-  .modern-login-panel,
-  .register-panel {
-    transform: scale(0.85);
-  }
-}
-
-/* HP */
-@media (max-width: 500px) {
-  .modern-login-panel,
-  .register-panel {
-    transform: scale(0.75);
-  }
-}
-
-.accountpage-overlay {
-  position: fixed;
-
-  top: 0;
-  left: 0;
-
-  width: 100%;
-  height: 100%;
-
-  background-color: rgba(0, 0, 0, 0.5);
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  z-index: 999;
-}
-
-.accountpage-container {
-  position: relative;
-
-  width: 750px;
-  max-width: 90%;
-
-  background-color: #f8efe5;
-
-  border-radius: 28px;
-
-  padding: 40px;
-}
-
-.accountpage-close-button {
-  position: absolute;
-
-  top: 20px;
-  right: 20px;
-
-  border: none;
-  background: none;
-
-  font-size: 28px;
-
-  cursor: pointer;
-}
-
-.accountpage-title {
-  margin-bottom: 32px;
-
-  font-size: 42px;
-}
-
-.accountpage-header {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-
-  margin-bottom: 40px;
-}
-
-.accountpage-avatar {
-  width: 120px;
-  height: 120px;
-
-  border-radius: 50%;
-
-  object-fit: cover;
-}
-
-.accountpage-userinfo h2 {
-  margin-bottom: 12px;
-
-  font-size: 32px;
-}
-
-.accountpage-userinfo p {
-  opacity: 0.7;
-
-  font-size: 18px;
-}
-
-.accountpage-stats {
-  display: flex;
-  gap: 20px;
-
-  margin-bottom: 40px;
-}
-
-.accountpage-stat-card {
-  flex: 1;
-
-  background-color: white;
-
-  border-radius: 18px;
-
-  padding: 24px;
-
-  text-align: center;
-}
-
-.accountpage-stat-card h3 {
-  margin-bottom: 12px;
-}
-
-.accountpage-stat-card p {
-  font-size: 24px;
-
-  font-weight: bold;
-}
-
-.accountpage-logout-button {
-  width: 100%;
-
-  padding: 16px;
-
-  border: none;
-
-  border-radius: 16px;
-
-  background-color: #ef7b7b;
-
-  color: white;
-
-  font-size: 20px;
-  font-weight: bold;
-
-  cursor: pointer;
-}
-
-
-
-
-
-
-
-
 ## index.css
 * {
   margin: 0;
@@ -3392,23 +6024,21 @@ body {
 
 
 
-
-
-
-
-
 # App.jsx
-import MainScene from "./pages/MainScene"
+import MainScene from "./pages/MainScene";
 import "./styles/App.css";
+import "./styles/Menu.css";
+import "./styles/Button.css";
+import "./styles/Profile.css";
+import "./styles/Timer.css";
+import "./styles/LoginRegister.css";
+import "./styles/Customization.css";
 
 function App() {
-  return <MainScene />
+  return <MainScene />;
 }
 
-export default App
-
-
-
+export default App;
 
 
 
@@ -3426,22 +6056,4 @@ createRoot(document.getElementById('root')).render(
 )
 
 
-
-
-
-
-# index.html
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>project-gamitivity</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
 
