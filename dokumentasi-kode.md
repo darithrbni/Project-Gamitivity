@@ -3,7 +3,7 @@ src/
 ├── assets/
 │
 ├── components/
-│   ├── AnimatedLayer.jsx
+│   ├── AnimationLayer.jsx
 │   ├── Corkboard.jsx
 │   ├── CustomizationButton.jsx
 │   ├── ItemCard.jsx
