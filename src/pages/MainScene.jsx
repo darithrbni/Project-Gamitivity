@@ -355,7 +355,13 @@ function MainScene() {
 
       {page === "memoMenu" && <MemoMenuPage setPage={setPage} />}
 
-      {page === "jadwalMenu" && <JadwalMenuPage setPage={setPage} />}
+      {page === "jadwalMenu" && (
+        <JadwalMenuPage setPage={setPage} 
+          setPage={setPage}
+          
+        />
+        
+      )}
 
       {page === "tokoMenu" && <TokoMenuPage setPage={setPage} />}
 
