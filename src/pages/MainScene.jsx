@@ -150,7 +150,7 @@ function MainScene() {
           if (docSnap.exists()) {
             const data = docSnap.data();
             setTasks(data.tasks || []);
-            setCoins(data.coins || 0);
+            setCoins(data.coins || 99999);
             setMemos(data.memos || []);
 
             setProfileImage(data.photoURL || "");
@@ -170,7 +170,7 @@ function MainScene() {
             setIsCustomizationLoaded(true);
           } else {
             // USER DOC DOESN'T EXIST
-            setCoins(0);
+            setCoins(99999);
             setProfileImage("");
 
             setEquippedItems({
@@ -191,7 +191,7 @@ function MainScene() {
       } else {
         // LOGOUT RESET
         setTasks([]);
-        setCoins(0);
+        setCoins(999999);
         setProfileImage("");
         setMemos([]);
 

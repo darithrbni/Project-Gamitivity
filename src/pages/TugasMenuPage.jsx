@@ -61,7 +61,7 @@ function TugasMenuPage({ setPage, currentUser, tasks, setTasks, setCoins }) {
     );
 
     // REWARD
-    setCoins((prev) => prev + 50);
+    setCoins((prev) => prev + 999999);
   }
 
   function handleDeleteTask(taskId) {
