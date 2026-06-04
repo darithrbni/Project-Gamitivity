@@ -19,6 +19,7 @@ import LoginPage from "./LoginPage";
 import RegisterPage from "./RegisterPage";
 import ProfilePage from "./ProfilePage";
 import CustomizationPage from "./CustomizationPage";
+import MiniTaskBoard from "../components/MiniTaskBoard";
 
 import ProfileDropdown from "../components/ProfileDropdown";
 import TimerDisplay from "../components/TimerDisplay";
@@ -40,6 +41,7 @@ function MainScene() {
   const [isCustomizationLoaded, setIsCustomizationLoaded] = useState(false);
   // PROFILE PICTURE
   const [profileImage, setProfileImage] = useState("");
+  const [tasks, setTasks] = useState([]);
   // TIMER DISPLAY LOGIC
   const {
     // BASIC TIMER
@@ -126,6 +128,7 @@ function MainScene() {
 
           if (docSnap.exists()) {
             const data = docSnap.data();
+            setTasks(data.tasks || []);
 
             setProfileImage(data.photoURL || "");
 
@@ -159,6 +162,8 @@ function MainScene() {
         }
       } else {
         // LOGOUT RESET
+        setTasks([]);
+
         setProfileImage("");
 
         setEquippedItems({
@@ -204,6 +209,36 @@ function MainScene() {
     return () => clearTimeout(timeout);
   }, [currentUser, isLoggingOut, isCustomizationLoaded, equippedItems]);
 
+  useEffect(() => {
+    async function saveTasks() {
+      if (!currentUser || isLoggingOut) {
+        return;
+      }
+
+      try {
+        await setDoc(
+          doc(db, "users", currentUser.uid),
+
+          {
+            tasks,
+          },
+
+          {
+            merge: true,
+          },
+        );
+      } catch (error) {
+        console.error("FAILED SAVE TASKS:", error);
+      }
+    }
+
+    const timeout = setTimeout(() => {
+      saveTasks();
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [tasks, currentUser, isLoggingOut]);
+
   if (isAuthLoading) {
     return null;
   }
@@ -246,6 +281,10 @@ function MainScene() {
             setIsProfileDropdownOpen={setIsProfileDropdownOpen}
           />
         </div>
+
+        {tasks.length > 0 && (
+          <MiniTaskBoard tasks={tasks} setTasks={setTasks} />
+        )}
 
         <TimerDisplay
           activeDisplay={activeDisplay}
@@ -351,7 +390,14 @@ function MainScene() {
 
       {page === "grafikMenu" && <GrafikMenuPage setPage={setPage} />}
 
-      {page === "tugasMenu" && <TugasMenuPage setPage={setPage} />}
+      {page === "tugasMenu" && (
+        <TugasMenuPage
+          setPage={setPage}
+          currentUser={currentUser}
+          tasks={tasks}
+          setTasks={setTasks}
+        />
+      )}
 
       {page === "memoMenu" && <MemoMenuPage setPage={setPage} />}
 
