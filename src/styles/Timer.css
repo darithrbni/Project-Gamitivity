@@ -16,7 +16,7 @@
   justify-content: center;
   align-items: center;
 
-  z-index: 20;
+  z-index: 10;
 }
 
 .timer-display {
@@ -311,4 +311,85 @@
   color: #d86d55;
 
   font-weight: bold;
+
+  text-align: center;
+}
+
+.main-timer-wrapper {
+  transform: scale(0.88);
+
+  transform-origin: top left;
+
+  position: fixed;
+
+  top: 14px;
+  left: 14px;
+
+  min-height: 138px;
+
+  padding: 16px 20px;
+
+  border-radius: 20px;
+
+  background: rgba(255, 248, 240, 0.96);
+
+  border: 3px solid #f07c7c;
+
+  box-shadow: 0 8px 24px rgba(70, 40, 20, 0.16);
+
+  backdrop-filter: blur(2px);
+
+  z-index: 10;
+}
+
+.main-timer-wrapper.realtime-mode {
+  width: 290px;
+}
+
+.main-timer-wrapper.timer-mode {
+  width: 380px;
+}
+
+.main-timer-display {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+
+  color: #d26e56;
+
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.realtime-clock-row {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 8px;
+}
+
+.timezone-text {
+  margin-top: 8px;
+
+  font-size: 22px;
+
+  opacity: 0.75;
+}
+
+.clock-content {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+}
+
+.clock-time-wrapper {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
 }

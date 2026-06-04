@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { AnimatePresence } from "framer-motion";
 
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import auth from "../firebase/auth";
@@ -282,9 +283,11 @@ function MainScene() {
           />
         </div>
 
-        {tasks.length > 0 && (
-          <MiniTaskBoard tasks={tasks} setTasks={setTasks} />
-        )}
+        <AnimatePresence>
+          {tasks.length > 0 && (
+            <MiniTaskBoard tasks={tasks} setTasks={setTasks} />
+          )}
+        </AnimatePresence>
 
         <TimerDisplay
           activeDisplay={activeDisplay}
