@@ -47,9 +47,9 @@ function MainScene() {
   const [tasks, setTasks] = useState([]);
   const [memos, setMemos] = useState([]);
   // PLAYER COINS
-  const [coins, setCoins] = useState(0);
+  //const [coins, setCoins] = useState(0);
   // PLAYER COINS CHEAT
-  //const [coins, setCoins] = useState(999999);
+  const [coins, setCoins] = useState(999999);
   // TIMER DISPLAY LOGIC
   const {
     // BASIC TIMER
