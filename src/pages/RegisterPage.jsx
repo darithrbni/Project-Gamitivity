@@ -1,4 +1,5 @@
 import { useState } from "react";
+import IconBackMenu from "../assets/IconBackMenu.png";
 
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
@@ -77,7 +78,7 @@ function RegisterPage({ setPage }) {
       <div className="menu-overlay" onClick={() => setPage("main")} />
 
       <button className="back-button" onClick={() => setPage("main")}>
-        BACK
+        <img src={IconBackMenu} alt="Back" className="back-button-icon" />
       </button>
 
       <div className="login-wrapper">

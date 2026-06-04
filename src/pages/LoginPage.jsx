@@ -1,4 +1,5 @@
 import { useState } from "react";
+import IconBackMenu from "../assets/IconBackMenu.png";
 
 import {
   signInWithEmailAndPassword,
@@ -82,7 +83,7 @@ function LoginPage({ setPage }) {
       <div className="menu-overlay" onClick={() => setPage("main")} />
 
       <button className="back-button" onClick={() => setPage("main")}>
-        BACK
+        <img src={IconBackMenu} alt="Back" className="back-button-icon" />
       </button>
 
       <div className="login-wrapper">
