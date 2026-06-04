@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import IconBackMenu from "../assets/IconBackMenu.png";
 
 function PomodoroPage({
   setPage,
@@ -24,6 +25,8 @@ function PomodoroPage({
   setStopwatchMinutes,
   setStopwatchSeconds,
   setIsStopwatchRunning,
+
+  setCoins,
 }) {
   // POMODORO SETTINGS STATE
   const [sessionMinutes, setSessionMinutes] = useState(60);
@@ -138,7 +141,7 @@ function PomodoroPage({
 
       {/* BACK BUTTON */}
       <button className="back-button" onClick={() => setPage("timerMenu")}>
-        BACK
+        <img src={IconBackMenu} alt="Back" className="back-button-icon" />
       </button>
 
       {/* POMODORO LAYOUT */}

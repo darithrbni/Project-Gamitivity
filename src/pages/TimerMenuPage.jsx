@@ -1,5 +1,6 @@
 import MenuCard from "../components/MenuCard";
 
+import IconBackMenu from "../assets/IconBackMenu.png";
 import BasicTimerIcon from "../assets/BasicTimerIcon.png";
 import StopwatchIcon from "../assets/StopwatchIcon.png";
 import PomodoroIcon from "../assets/PomodoroIcon.png";
@@ -10,7 +11,7 @@ function TimerMenuPage({ setPage }) {
       <div className="menu-overlay" onClick={() => setPage("main")} />
 
       <button className="back-button" onClick={() => setPage("menu")}>
-        BACK
+        <img src={IconBackMenu} alt="Back" className="back-button-icon" />
       </button>
 
       <div className="menu-wrapper">

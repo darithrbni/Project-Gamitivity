@@ -411,7 +411,34 @@
 /* LOCKED */
 
 .item-card-locked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 4px;
+
   color: rgba(255, 255, 255, 0.55);
 
   font-size: 0.8rem;
+}
+
+.item-card-locked-text {
+  font-weight: 600;
+}
+
+.item-card-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+
+  color: white;
+}
+
+.item-card-coin-icon {
+  width: 16px;
+  height: 16px;
+
+  object-fit: contain;
 }

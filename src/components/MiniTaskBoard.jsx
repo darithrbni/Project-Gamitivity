@@ -1,11 +1,14 @@
 import MiniTaskPaper from "../assets/TaskPaper.svg";
 import { motion } from "framer-motion";
 
-function MiniTaskBoard({ tasks, setTasks }) {
+function MiniTaskBoard({ tasks, setTasks, setCoins }) {
   function handleCompleteTask(taskId) {
     setTasks((previousTasks) =>
       previousTasks.filter((task) => task.id !== taskId),
     );
+
+    // REWARD
+    setCoins((prev) => prev + 50);
   }
 
   return (

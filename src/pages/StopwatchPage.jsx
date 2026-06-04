@@ -1,6 +1,7 @@
 import PauseIcon from "../assets/PauseIcon.png";
 import ResumeIcon from "../assets/ResumeIcon.png";
 import StopIcon from "../assets/StopIcon.png";
+import IconBackMenu from "../assets/IconBackMenu.png";
 
 function StopwatchPage({
   setPage,
@@ -24,6 +25,8 @@ function StopwatchPage({
   setPomodoroMinutes,
   setPomodoroSeconds,
   setIsPomodoroRunning,
+
+  setCoins,
 }) {
   return (
     <>
@@ -32,7 +35,7 @@ function StopwatchPage({
 
       {/* BACK BUTTON */}
       <button className="back-button" onClick={() => setPage("timerMenu")}>
-        BACK
+        <img src={IconBackMenu} alt="Back" className="back-button-icon" />
       </button>
 
       {/* STOPWATCH LAYOUT */}
@@ -106,7 +109,17 @@ function StopwatchPage({
               <button
                 className="timer-control-button"
                 onClick={() => {
+                  // GIVE REWARD
+                  if (
+                    stopwatchHours > 0 ||
+                    stopwatchMinutes > 0 ||
+                    stopwatchSeconds > 0
+                  ) {
+                    setCoins((prev) => prev + 100);
+                  }
+
                   setIsStopwatchRunning(false);
+
                   setStopwatchHours(0);
                   setStopwatchMinutes(0);
                   setStopwatchSeconds(0);

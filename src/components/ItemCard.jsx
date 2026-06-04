@@ -1,4 +1,6 @@
-function ItemCard({ image, name, owned, equipped, selected, onClick }) {
+import CoinIcon from "../assets/CoinIcon.png";
+
+function ItemCard({ image, name, price, owned, equipped, selected, onClick }) {
   return (
     <button
       className={`item-card ${selected ? "item-card-selected" : ""}`}
@@ -19,7 +21,15 @@ function ItemCard({ image, name, owned, equipped, selected, onClick }) {
         ) : owned ? (
           <div className="item-card-owned">Dimiliki</div>
         ) : (
-          <div className="item-card-locked">Belum dimiliki</div>
+          <div className="item-card-locked">
+            <span className="item-card-locked-text">Locked</span>
+
+            <div className="item-card-price-row">
+              <span>{price}</span>
+
+              <img src={CoinIcon} alt="Coin" className="item-card-coin-icon" />
+            </div>
+          </div>
         )}
       </div>
     </button>

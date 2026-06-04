@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import IconBackMenu from "../assets/IconBackMenu.png";
 
 function BasicTimerPage({
   setPage,
@@ -154,7 +155,7 @@ function BasicTimerPage({
 
       {/* BACK BUTTON */}
       <button className="back-button" onClick={() => setPage("timerMenu")}>
-        BACK
+        <img src={IconBackMenu} alt="Back" className="back-button-icon" />
       </button>
 
       {/* BASIC TIMER LAYOUT */}

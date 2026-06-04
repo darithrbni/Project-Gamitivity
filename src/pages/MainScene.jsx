@@ -6,6 +6,8 @@ import auth from "../firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
 
+import CoinDisplay from "../components/CoinDisplay";
+
 import MenuPage from "./MenuPage";
 import TimerMenuPage from "./TimerMenuPage";
 import GrafikMenuPage from "./GrafikMenuPage";
@@ -43,6 +45,11 @@ function MainScene() {
   // PROFILE PICTURE
   const [profileImage, setProfileImage] = useState("");
   const [tasks, setTasks] = useState([]);
+  const [memos, setMemos] = useState([]);
+  // PLAYER COINS
+  const [coins, setCoins] = useState(0);
+  // PLAYER COINS CHEAT
+  //const [coins, setCoins] = useState(999999);
   // TIMER DISPLAY LOGIC
   const {
     // BASIC TIMER
@@ -93,9 +100,22 @@ function MainScene() {
   const [equippedItems, setEquippedItems] = useState({
     hair: "default",
     clothes: "default",
+    accessory: "default",
     wallpaper: "default",
-    windowView: "default",
+    window: "default",
+    windowView: "forest",
     desk: "default",
+  });
+
+  // OWNED CUSTOMIZATION ITEMS
+  const [ownedItems, setOwnedItems] = useState({
+    hair: ["default"],
+    clothes: ["default"],
+    accessory: ["default"],
+    wallpaper: ["default"],
+    window: ["default"],
+    windowView: ["forest"],
+    desk: ["default"],
   });
 
   async function handleLogout() {
@@ -130,6 +150,8 @@ function MainScene() {
           if (docSnap.exists()) {
             const data = docSnap.data();
             setTasks(data.tasks || []);
+            setCoins(data.coins || 0);
+            setMemos(data.memos || []);
 
             setProfileImage(data.photoURL || "");
 
@@ -137,8 +159,10 @@ function MainScene() {
               data.equippedItems || {
                 hair: "default",
                 clothes: "default",
+                accessory: "default",
                 wallpaper: "default",
-                windowView: "default",
+                window: "default",
+                windowView: "forest",
                 desk: "default",
               },
             );
@@ -146,13 +170,16 @@ function MainScene() {
             setIsCustomizationLoaded(true);
           } else {
             // USER DOC DOESN'T EXIST
+            setCoins(0);
             setProfileImage("");
 
             setEquippedItems({
               hair: "default",
               clothes: "default",
+              accessory: "default",
               wallpaper: "default",
-              windowView: "default",
+              window: "default",
+              windowView: "forest",
               desk: "default",
             });
 
@@ -164,14 +191,17 @@ function MainScene() {
       } else {
         // LOGOUT RESET
         setTasks([]);
-
+        setCoins(0);
         setProfileImage("");
+        setMemos([]);
 
         setEquippedItems({
           hair: "default",
           clothes: "default",
+          accessory: "default",
           wallpaper: "default",
-          windowView: "default",
+          window: "default",
+          windowView: "forest",
           desk: "default",
         });
 
@@ -240,6 +270,66 @@ function MainScene() {
     return () => clearTimeout(timeout);
   }, [tasks, currentUser, isLoggingOut]);
 
+  useEffect(() => {
+    async function saveCoins() {
+      if (!currentUser || isLoggingOut) {
+        return;
+      }
+
+      try {
+        await setDoc(
+          doc(db, "users", currentUser.uid),
+
+          {
+            coins,
+          },
+
+          {
+            merge: true,
+          },
+        );
+      } catch (error) {
+        console.error("FAILED SAVE COINS:", error);
+      }
+    }
+
+    const timeout = setTimeout(() => {
+      saveCoins();
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [coins, currentUser, isLoggingOut]);
+
+  useEffect(() => {
+    async function saveMemos() {
+      if (!currentUser || isLoggingOut) {
+        return;
+      }
+
+      try {
+        await setDoc(
+          doc(db, "users", currentUser.uid),
+
+          {
+            memos,
+          },
+
+          {
+            merge: true,
+          },
+        );
+      } catch (error) {
+        console.error("FAILED SAVE MEMOS:", error);
+      }
+    }
+
+    const timeout = setTimeout(() => {
+      saveMemos();
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [memos, currentUser, isLoggingOut]);
+
   if (isAuthLoading) {
     return null;
   }
@@ -271,6 +361,7 @@ function MainScene() {
         <Corkboard onClick={() => setPage("menu")} />
 
         <div className="top-right-ui">
+          {currentUser && <CoinDisplay coins={coins} />}
           {currentUser && <CustomizationButton setPage={setPage} />}
 
           <ProfileDropdown
@@ -285,7 +376,11 @@ function MainScene() {
 
         <AnimatePresence>
           {tasks.length > 0 && (
-            <MiniTaskBoard tasks={tasks} setTasks={setTasks} />
+            <MiniTaskBoard
+              tasks={tasks}
+              setTasks={setTasks}
+              setCoins={setCoins}
+            />
           )}
         </AnimatePresence>
 
@@ -364,6 +459,7 @@ function MainScene() {
           setPomodoroMinutes={setPomodoroMinutes}
           setPomodoroSeconds={setPomodoroSeconds}
           setIsPomodoroRunning={setIsPomodoroRunning}
+          setCoins={setCoins}
         />
       )}
 
@@ -388,6 +484,7 @@ function MainScene() {
           setStopwatchMinutes={setStopwatchMinutes}
           setStopwatchSeconds={setStopwatchSeconds}
           setIsStopwatchRunning={setIsStopwatchRunning}
+          setCoins={setCoins}
         />
       )}
 
@@ -399,10 +496,13 @@ function MainScene() {
           currentUser={currentUser}
           tasks={tasks}
           setTasks={setTasks}
+          setCoins={setCoins}
         />
       )}
 
-      {page === "memoMenu" && <MemoMenuPage setPage={setPage} />}
+      {page === "memoMenu" && (
+        <MemoMenuPage setPage={setPage} memos={memos} setMemos={setMemos} />
+      )}
 
       {page === "jadwalMenu" && <JadwalMenuPage setPage={setPage} />}
 
@@ -428,6 +528,10 @@ function MainScene() {
           setIsClosingCustomization={setIsClosingCustomization}
           equippedItems={equippedItems}
           setEquippedItems={setEquippedItems}
+          coins={coins}
+          setCoins={setCoins}
+          ownedItems={ownedItems}
+          setOwnedItems={setOwnedItems}
         />
       )}
     </div>

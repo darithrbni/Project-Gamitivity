@@ -10,9 +10,11 @@ import TaskCard from "../components/TaskCard";
 import TaskBoard from "../assets/TaskBoard.svg";
 import AddTaskButton from "../assets/TambahTugas.png";
 
+import IconBackMenu from "../assets/IconBackMenu.png";
+
 import { AnimatePresence, Reorder } from "framer-motion";
 
-function TugasMenuPage({ setPage, currentUser, tasks, setTasks }) {
+function TugasMenuPage({ setPage, currentUser, tasks, setTasks, setCoins }) {
   // MODAL
   const [isAddingTask, setIsAddingTask] = useState(false);
 
@@ -57,6 +59,9 @@ function TugasMenuPage({ setPage, currentUser, tasks, setTasks }) {
     setTasks((previousTasks) =>
       previousTasks.filter((task) => task.id !== taskId),
     );
+
+    // REWARD
+    setCoins((prev) => prev + 50);
   }
 
   function handleDeleteTask(taskId) {
@@ -89,7 +94,7 @@ function TugasMenuPage({ setPage, currentUser, tasks, setTasks }) {
 
       {/* BACK BUTTON */}
       <button className="back-button" onClick={() => setPage("menu")}>
-        BACK
+        <img src={IconBackMenu} alt="Back" className="back-button-icon" />
       </button>
 
       {/* TASK BOARD */}

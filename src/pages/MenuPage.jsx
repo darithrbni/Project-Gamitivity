@@ -1,11 +1,12 @@
 import MenuCard from "../components/MenuCard";
 
-import GrafikIcon from "../assets/GrafikIcon.png";
+// import GrafikIcon from "../assets/GrafikIcon.png";
 import TugasIcon from "../assets/TugasIcon.png";
 import MemoIcon from "../assets/MemoIcon.png";
 import TimerIcon from "../assets/TimerIcon.png";
-import JadwalIcon from "../assets/JadwalIcon.png";
-import TokoIcon from "../assets/TokoIcon.png";
+// import JadwalIcon from "../assets/JadwalIcon.png";
+// import TokoIcon from "../assets/TokoIcon.png";
+import IconBackMenu from "../assets/IconBackMenu.png";
 
 function MenuPage({ setPage }) {
   return (
@@ -13,15 +14,21 @@ function MenuPage({ setPage }) {
       <div className="menu-overlay" onClick={() => setPage("main")} />
 
       <button className="back-button" onClick={() => setPage("main")}>
-        BACK
+        <img src={IconBackMenu} alt="Back" className="back-button-icon" />
       </button>
 
       <div className="menu-wrapper">
         <div className="menu-grid">
-          <MenuCard
+          {/* <MenuCard
             title="GRAFIK"
             icon={GrafikIcon}
             onClick={() => setPage("grafikMenu")}
+          /> */}
+
+          <MenuCard
+            title="TIMER"
+            icon={TimerIcon}
+            onClick={() => setPage("timerMenu")}
           />
 
           <MenuCard
@@ -36,13 +43,7 @@ function MenuPage({ setPage }) {
             onClick={() => setPage("memoMenu")}
           />
 
-          <MenuCard
-            title="TIMER"
-            icon={TimerIcon}
-            onClick={() => setPage("timerMenu")}
-          />
-
-          <MenuCard
+          {/* <MenuCard
             title="JADWAL"
             icon={JadwalIcon}
             onClick={() => setPage("jadwalMenu")}
@@ -52,7 +53,7 @@ function MenuPage({ setPage }) {
             title="TOKO"
             icon={TokoIcon}
             onClick={() => setPage("tokoMenu")}
-          />
+          /> */}
         </div>
       </div>
     </>

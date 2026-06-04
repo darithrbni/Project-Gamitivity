@@ -942,3 +942,226 @@
     height: 24px;
   }
 }
+
+/* =========================
+   MEMO PAGE
+========================= */
+
+.memo-page-wrapper {
+  position: absolute;
+  inset: 0;
+
+  z-index: 20;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+
+  overflow: hidden;
+}
+
+.memo-paper-wrapper {
+  position: relative;
+
+  width: 760px;
+
+  margin-bottom: -6px;
+}
+
+.memo-paper-image {
+  width: 100%;
+
+  display: block;
+}
+
+.memo-paper-content {
+  position: absolute;
+  inset: 0;
+
+  padding: 90px 82px 60px 82px;
+
+  overflow: hidden;
+}
+
+.memo-title {
+  color: #d98600;
+
+  font-size: 3rem;
+  font-weight: 700;
+
+  margin-bottom: 22px;
+}
+
+.memo-input-section {
+  display: flex;
+  flex-direction: column;
+
+  gap: 14px;
+
+  margin-bottom: 30px;
+}
+
+.memo-input,
+.memo-textarea {
+  border: 2px solid #f0a0a0;
+  border-radius: 16px;
+
+  padding: 14px 18px;
+
+  font-size: 0.95rem;
+
+  background: rgba(255, 255, 255, 0.82);
+
+  outline: none;
+}
+
+.memo-textarea {
+  min-height: 90px;
+
+  resize: none;
+}
+
+.memo-add-button {
+  align-self: flex-start;
+
+  border: none;
+  border-radius: 16px;
+
+  background: #f07c7c;
+
+  color: white;
+
+  padding: 14px 22px;
+
+  font-size: 1rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease;
+}
+
+.memo-add-button:hover {
+  transform: scale(1.05);
+
+  filter: brightness(1.05);
+}
+
+.memo-list {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 18px;
+
+  max-height: 340px;
+
+  overflow-y: auto;
+
+  padding-right: 6px;
+}
+
+.memo-card {
+  position: relative;
+
+  background: rgba(255, 255, 255, 0.72);
+
+  border-radius: 18px;
+
+  padding: 18px;
+
+  min-height: 140px;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.memo-card h3 {
+  color: #2f211c;
+
+  margin-bottom: 8px;
+
+  font-size: 1.1rem;
+}
+
+.memo-card p {
+  color: #3d302a;
+
+  line-height: 1.4;
+
+  font-size: 0.88rem;
+}
+
+.memo-delete-button {
+  position: absolute;
+
+  top: 14px;
+  right: 14px;
+
+  border: none;
+  background: transparent;
+
+  color: #cc6666;
+
+  font-size: 1.1rem;
+
+  cursor: pointer;
+}
+
+/* =========================
+   LARGE MONITOR
+========================= */
+
+@media (min-width: 1900px) {
+  .memo-paper-wrapper {
+    width: 1100px;
+  }
+
+  .memo-paper-content {
+    padding: 120px 100px 80px 100px;
+  }
+
+  .memo-title {
+    font-size: 4.2rem;
+  }
+
+  .memo-input,
+  .memo-textarea {
+    font-size: 1.15rem;
+
+    padding: 18px 22px;
+  }
+
+  .memo-textarea {
+    min-height: 130px;
+  }
+
+  .memo-add-button {
+    font-size: 1.1rem;
+
+    padding: 16px 28px;
+  }
+
+  .memo-list {
+    gap: 24px;
+
+    max-height: 460px;
+  }
+
+  .memo-card {
+    min-height: 180px;
+
+    padding: 22px;
+  }
+
+  .memo-card h3 {
+    font-size: 1.45rem;
+  }
+
+  .memo-card p {
+    font-size: 1rem;
+
+    line-height: 1.55;
+  }
+}
