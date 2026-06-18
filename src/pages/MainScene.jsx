@@ -504,7 +504,13 @@ function MainScene() {
         <MemoMenuPage setPage={setPage} memos={memos} setMemos={setMemos} />
       )}
 
-      {page === "jadwalMenu" && <JadwalMenuPage setPage={setPage} />}
+      {page === "jadwalMenu" && (
+        <JadwalMenuPage setPage={setPage} 
+          setPage={setPage}
+          
+        />
+        
+      )}
 
       {page === "tokoMenu" && <TokoMenuPage setPage={setPage} />}
 
